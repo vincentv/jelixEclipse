@@ -13,6 +13,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+
+
 /**
  * The activator class controls the plug-in life cycle
  */
