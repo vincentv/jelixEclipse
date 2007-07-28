@@ -35,6 +35,7 @@ import jelixeclipse.wizards.JelixIni;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import java.io.*;
+import jelixeclipse.utils.*;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -135,73 +136,42 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		throws CoreException {
 		monitor.beginTask("Creation du projet " + jelixApplication, 2);
 		
-		/* on récupère l'objet de preference */
+		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-						
-		/* on traite le chemin vers php et vers le repertoire de script */
-		String cheminPhp = store.getString(PreferenceConstants.P_PATH_JELIX_PHP).replace("\\", "/");
-		String cheminScript = store.getString(PreferenceConstants.P_PATH_JELIX_SCRIPT.replace("\\", "/"));
-		if (!cheminScript.endsWith("/")){
-			cheminScript += "/";
-		}
-		cheminScript += "lib/jelix-scripts";
 		
-		String appli = jelixApplication;
-		String chemin = cheminPhp + " " + cheminScript + "/jelix.php";
+		/* on prepare la commande jelix */
 		String cmd = " --" + jelixApplication + " createapp ";
-
-		/* on lance l'éxécution du script */
-		try{	
-			Process p = Runtime.getRuntime().exec(chemin + cmd);
-			p.waitFor();
-			
-			// on récupère le retour du script
-		    InputStream out=new BufferedInputStream(p.getInputStream());
-		    byte[] b=new byte[1024];
-		    int    n=out.read(b);
-		    
-		    // s'il y a un message, on le stocke
-		    if (n > 0){
-		    	for (int i=0; i<n; i++){
-		    		this.erreur += (char)b[i];
-		    	}
-		    }
-		}catch(Exception e){
-			throwCoreException("Erreur lors de la creation \n Vérifiez dans votre configuration" +
-					"\n -- le chemin de l'executable Php  " +
-					"\n -- le chemin du repertoire de script JELIX " +
-					"\n -- le chemin relatif du repertoire des modules" +
-					"\n \n Window -> Preferences -> JELIX");
-		}
 		
+		/* creation et lancement du shell jelix */
+		jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		Boolean res = js.play();
+		if (!res){
+			throwCoreException(js.getErreur());
+		}
+						
 		monitor.worked(1);
-		
-		/* Si message durant la génération, on l'affiche */
-		if (!this.erreur.equals("")){
-			throwCoreException("Erreur lors de la génération JELIX \n " + this.erreur);
-		}		
-
-		
+				
+		/* Preparation a l'ouverture du fichier de propriete */
 		String dossier = "";
-		
-		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli + "/";
-		}else{
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + "/" + appli + "/";
-		}
+		String separateur = js.getSeparateur();
+		String appli = jelixApplication;
 		String fichier =   "application.init.php";
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
+			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli + separateur;
+		}else{
+			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + separateur + appli + separateur;
+		}
 		
 		// on raffraichit le projet courant
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject pp = root.getProject(store.getString(PreferenceConstants.P_PATH_JELIX));
 		pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				
-		IResource resource = root.findMember(new Path(dossier));
 		
+		
+		IResource resource = root.findMember(new Path(dossier));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
-		
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
 		
@@ -211,13 +181,14 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		/* Si les paramètres de connexions MySQL sont définis, 
 		 * on valorise le fichier dbprofil.ini.php*/
 		
-		final IFile fileDb = container.getFile(new Path("var/config/dbprofils.ini.php"));
+		//final IFile fileDb = container.getFile(new Path("var/config/dbprofils.ini.php"));
+		final IFile fileDb = container.getFile(new Path("var" + separateur + "config" + separateur + "dbprofils.ini.php"));
 		if (fileDb.exists()){
 			// on traite le fichier
 			this.valoriserDbProfil(fileDb);
 		}
 		
-		/* on essaye d'ouvrir le fichier créé */
+		/* on essaye d'ouvrir le fichier cree */
 		monitor.setTaskName("Ouverture du fichier ...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -232,7 +203,6 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		}else{
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
-		
 		
 		// on stocke le nom de l'application
 		store.setValue(PreferenceConstants.P_NAME_APP_JELIX, jelixApplication);
