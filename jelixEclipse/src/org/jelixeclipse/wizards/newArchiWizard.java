@@ -32,7 +32,6 @@ import org.eclipse.ui.ide.IDE;
 import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.*;
-import org.jelixeclipse.wizards.JelixIni;
 import org.jelixeclipse.wizards.pages.newArchiWizardPage;
 
 import java.io.*;
@@ -221,7 +220,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	private void valoriserDbProfil(IFile f){
 		if (this.mysqlConf){
 			// on instancie l'objet template ini
-			org.jelixeclipse.wizards.JelixIni template = new JelixIni();
+			org.jelixeclipse.utils.JelixIni template = new JelixIni();
 			try{
 				FileOutputStream fout = new FileOutputStream(f.getLocation().toOSString());
 				
