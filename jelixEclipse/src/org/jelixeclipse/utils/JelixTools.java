@@ -74,15 +74,5 @@ public class JelixTools {
 		return ((IResource) adapter).getProject();
 	}
 	
-	/*
-	 * Retourne le caractere de separation de fichier selon le systeme
-	 * utilise.
-	 */
-	public static String getSystemeSeparateur(){
-		if (File.pathSeparator.equals(";")){
-			return "\\";
-		}else{
-			return "/";
-		}
-	}
+
 }
