@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -66,8 +65,26 @@ public class JelixTools {
 		}
 	}
 
-	public static IProject currentProject(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection))
+	
+	/**
+	 * Retourne le projet en cours d'utilisation
+	 * 
+	 * @param selection
+	 * @return
+	 */
+	public static IProject currentProject(IStructuredSelection selection) {
+		Object element = selection.getFirstElement();
+		
+		if (element instanceof IResource)
+			return ((IResource) element).getProject();
+		
+		if (!(element instanceof IAdaptable))
+			return null;
+		IAdaptable adaptable = (IAdaptable) element;
+		Object adapter = adaptable.getAdapter(IResource.class);
+		return ((IResource) adapter).getProject();
+		
+/*		if (!(selection instanceof IStructuredSelection))
 			return null;
 		IStructuredSelection ss = (IStructuredSelection) selection;
 		Object element = ss.getFirstElement();
@@ -77,7 +94,7 @@ public class JelixTools {
 			return null;
 		IAdaptable adaptable = (IAdaptable) element;
 		Object adapter = adaptable.getAdapter(IResource.class);
-		return ((IResource) adapter).getProject();
+		return ((IResource) adapter).getProject();*/
 	}
 
 	public static boolean unzip(File archive, IPath destination) {

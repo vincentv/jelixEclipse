@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -230,19 +231,19 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @return la destination de l'archive Jelix
 	 */
 	private IPath localJelix(String jelixVersion, IProgressMonitor monitor) {
-		String source;
-		IPath destination;
+		Path source = new Path(this.page1.getJelixLibrairiesLocal());
 
-		// copie des sources
-
-		source = this.page1.getJelixLibrairiesLocal();
-		destination = jTemp.getLocation();
-
-		if (!newStructureJelix.copier(source, JelixTools.dirpath(destination))) {
-			// this.throwCoreException("Erreur lors de la copie des librairies
-			// JELIX");
+		File sourceFile = source.toFile();
+		IFile destFile = newProject.getFile(sourceFile.getName());
+		
+		try {
+			((IFile) source.toFile()).copy(destFile.getLocation(), true, monitor);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return destination;
+		
+		return destFile.getLocation();
 	}
 
 	/**
