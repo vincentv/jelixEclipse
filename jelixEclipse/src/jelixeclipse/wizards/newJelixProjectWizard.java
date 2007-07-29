@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import jelixeclipse.util.OutilsZip;
+import jelixeclipse.utils.OutilsZip;
 import jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
 
 import org.eclipse.core.resources.IFile;

@@ -32,11 +32,12 @@
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="jelixeclipse.wizards.newStructureJelix"
+            class="jelixeclipse.wizards.newJelixProjectWizard"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newStructureJelix"
             name="Projet JELIX"
-            preferredPerspectives="jelixEclipse.perspective1"/>
+            preferredPerspectives="jelixEclipse.perspective1"
+            project="true"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

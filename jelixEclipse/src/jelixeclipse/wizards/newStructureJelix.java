@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import jelixeclipse.Activator;
 import jelixeclipse.preferences.PreferenceConstants;
+import jelixeclipse.utils.OutilsZip;
 
 
 /**
@@ -132,7 +133,7 @@ public class newStructureJelix extends Wizard implements INewWizard {
 		
 		monitor.beginTask("Creation du projet JELIX ", 2);
 
-		monitor.setTaskName("Création du projet JELIX...");
+		monitor.setTaskName("Crï¿½ation du projet JELIX...");
 		// creation du projet Eclipse
 		String emplacement = this.jelixProjetEmplacement;
 
@@ -147,12 +148,12 @@ public class newStructureJelix extends Wizard implements INewWizard {
 		folder.create(true, true, monitor);
 		folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-		// recup des repertoires JELIX si demandé
+		// recup des repertoires JELIX si demandï¿½
 		if (this.jelixRecupSource) {
-			// download des repertoires JELIX si demandé
+			// download des repertoires JELIX si demandï¿½
 			String destination;
 			if (this.jelixRecupSourceDownload) {
-				monitor.setTaskName("Téléchargement des librairies JELIX...");
+				monitor.setTaskName("Tï¿½lï¿½chargement des librairies JELIX...");
 				String source;
 				if (this.jelixrecupSourceDownloadBerlios1){
 					source = "http://download.berlios.de/jelix/" + versionJelixZip;
@@ -173,9 +174,9 @@ public class newStructureJelix extends Wizard implements INewWizard {
 			}
 
 			// on dezippe
-			monitor.setTaskName("Décompression des librairies JELIX ...");
+			monitor.setTaskName("Dï¿½compression des librairies JELIX ...");
 			try {
-				jelixeclipse.wizards.OutilsZip.unzipToDir(destination
+				OutilsZip.unzipToDir(destination
 						+ versionJelixZip, destination);
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
@@ -192,12 +193,12 @@ public class newStructureJelix extends Wizard implements INewWizard {
 			listeFichiers = f.listFiles();
 			for (int i = 0; i < listeFichiers.length; i++) {
 				if (listeFichiers[i].isDirectory()) {
-					// on créé le repertoire sur le projet
+					// on crï¿½ï¿½ le repertoire sur le projet
 					IFolder tmpFolder = project.getFolder(listeFichiers[i]
 							.getName());
 					tmpFolder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-					// on récupère le répertoire courant
+					// on rï¿½cupï¿½re le rï¿½pertoire courant
 					IFolder rep = jelixTemp.getFolder(listeFichiers[i]
 							.getName());
 					rep.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -205,11 +206,11 @@ public class newStructureJelix extends Wizard implements INewWizard {
 					// on copie dans le projet
 					rep.copy(tmpFolder.getFullPath(), true, monitor);
 				} else {
-					// on créé le fichier sur le projet
+					// on crï¿½ï¿½ le fichier sur le projet
 					IFile tmpFile = project.getFile(listeFichiers[i].getName());
 					tmpFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-					// on récupère le fichier courant
+					// on rï¿½cupï¿½re le fichier courant
 					IFile tmpf = jelixTemp.getFile(listeFichiers[i].getName());
 					tmpf.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -219,20 +220,20 @@ public class newStructureJelix extends Wizard implements INewWizard {
 				}
 			}
 
-			// on supprime l'archive et le dossier décompréssé*
+			// on supprime l'archive et le dossier dï¿½comprï¿½ssï¿½*
 			monitor.setTaskName("Suppression du repertoire temporaire ...");
 			folder.delete(true, monitor);
-		} // fin import source si demandé
+		} // fin import source si demandï¿½
 
-		monitor.setTaskName("Enregistrement des préférences ...");
+		monitor.setTaskName("Enregistrement des prï¿½fï¿½rences ...");
 		
-		// on enregistre le chemin relatif JELIX dans les préférences
+		// on enregistre le chemin relatif JELIX dans les prï¿½fï¿½rences
 		if (this.jelixProjetEmplacement.equals("")){
 			this.jelixProjetEmplacement = "\\";
 		}
 		store.setValue(PreferenceConstants.P_PATH_JELIX, this.jelixProjetEmplacement + this.jelixProjetNom);	
 		
-		// on enregistre le chemin du projet JELIX dans les préferences
+		// on enregistre le chemin du projet JELIX dans les prï¿½ferences
 		String cheminProjet = project.getLocation().toOSString() + this.jelixProjetEmplacement;
 		store.setValue(PreferenceConstants.P_PATH_JELIX_SCRIPT, cheminProjet);	
 		
@@ -304,7 +305,7 @@ public class newStructureJelix extends Wizard implements INewWizard {
 	}
 	
 	/** copie le fichier source dans le fichier resultat
-	 * retourne vrai si cela réussit
+	 * retourne vrai si cela rï¿½ussit
 	 */
 	public static boolean copier( String u, String path )
 	{
@@ -321,7 +322,7 @@ public class newStructureJelix extends Wizard implements INewWizard {
 	        	
 					java.io.File source = new java.io.File(u);
 					
-	        		// Création du fichier :
+	        		// Crï¿½ation du fichier :
 	        		destination.createNewFile();
 	                
 	                // Ouverture des flux
@@ -336,7 +337,7 @@ public class newStructureJelix extends Wizard implements INewWizard {
 	                        destinationFile.write(buffer, 0, nbLecture);
 	                } 
 	                
-	                // Copie réussie
+	                // Copie rï¿½ussie
 	                resultat = true;
 	        } catch( java.io.FileNotFoundException f ) {
 	                
