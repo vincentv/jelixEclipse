@@ -33,6 +33,7 @@ import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
+import org.jelixeclipse.utils.JelixTools;
 import org.jelixeclipse.wizards.pages.newModuleWizardPage;
 
 /**
@@ -46,10 +47,9 @@ import org.jelixeclipse.wizards.pages.newModuleWizardPage;
 
 public class newModuleWizard extends Wizard implements INewWizard {
 	private newModuleWizardPage page;
-
-	private ISelection selection;
-
-	private String erreur = "";
+	private ISelection mSelection;
+	private IWorkbench fWorkbench;
+	private IProject currentProject;
 
 	/**
 	 * Constructor for newModuleWizard.
@@ -64,7 +64,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newModuleWizardPage(selection);
+		page = new newModuleWizardPage(mSelection);
 		addPage(page);
 	}
 
@@ -75,6 +75,8 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String jelixModule = page.getjelixTextModule();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
+		final String jelixAppli = page.getJelixTextAppli();
+		this.currentProject = JelixTools.currentProject(this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixModule.equals("")) {
@@ -87,7 +89,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
-					doFinish(jelixModule, jelixOpenFile, monitor);
+					doFinish(jelixAppli, jelixModule, jelixOpenFile, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -114,17 +116,19 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 * file.
 	 */
 
-	private void doFinish(String jelixModule, Boolean jelixOpenFile,
-			IProgressMonitor monitor) throws CoreException {
+	private void doFinish(String jelixAppli, String jelixModule,
+			Boolean jelixOpenFile, IProgressMonitor monitor)
+			throws CoreException {
 		monitor.beginTask("Creation de " + jelixModule, 2);
 
 		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
-		String cmd = " --" + appli + " createmodule " + jelixModule;
+		//String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
+		String cmd = " --" + jelixAppli + " createmodule " + jelixModule;
 
 		/* on lance la generation du script */
-		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(
+				this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
@@ -137,33 +141,31 @@ public class newModuleWizard extends Wizard implements INewWizard {
 			/* on essaye d'ouvrir le fichier cree */
 			String dossier = "";
 			String separateur = File.separator;
-			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/")
-					|| store.getString(PreferenceConstants.P_PATH_JELIX)
-							.endsWith("\\")) {
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-						+ appli + separateur + "modules" + separateur + jelixModule + separateur + "controllers";
+
+			if (this.currentProject.getName().endsWith("/")
+					|| this.currentProject.getName().endsWith("\\")) {
+				dossier = separateur + this.currentProject.getName()
+						+ jelixAppli + separateur + "modules" + separateur
+						+ jelixModule + separateur + "controllers";
+				;
 			} else {
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-						+ separateur + appli + separateur + "modules" + separateur + jelixModule
-						+ separateur + "controllers";
+				dossier = separateur + this.currentProject.getName()
+						+ separateur + jelixAppli + separateur + "modules"
+						+ separateur + jelixModule + separateur + "controllers";
+				;
 			}
 
 			String fichier = "default.classic.php";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-			/* on raffraichit le projet courant */
-			IFolder pp = root.getFolder(new Path(dossier));
-			pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
 				throwCoreException("Echec lors de l'ouverture du fichier ");
 			}
-
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
 
-			/* on teste si le fichier est bien cree */
 			if (file.exists()) {
 				monitor.setTaskName("Ouverture du fichier ...");
 				JelixOpenPage.Open(this, file);
@@ -187,7 +189,8 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+		this.mSelection = selection;
+		this.fWorkbench = workbench;
 	}
 
 }
