@@ -32,19 +32,18 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixTools;
-import org.jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
+import org.jelixeclipse.wizards.pages.WizardNewJelixProjectPage;
 
 /**
  * @author vincent
  * 
  */
-public class newJelixProjectWizard extends Wizard implements INewWizard {
+public class WizardNewJelixProject extends Wizard implements INewWizard {
 
-	private wizardNewJelixProjectPage page1;
+	private WizardNewJelixProjectPage page1;
 	private IProject newProject;
 	private IFolder jTemp;
 	private String jelixVersion = "jelix-1.0b2.1-dev";
-	private IStructuredSelection mSelection;
 	private IWorkbench fWorkbench;
 	private IConfigurationElement fConfigElement;
 
@@ -140,18 +139,23 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 					/* on stocke les preferences */
 					monitor.setTaskName("Enregistrement des preferences ...");
 					String separateur = File.separator;
-					store.setValue(PreferenceConstants.P_PATH_JELIX, separateur + newProject.getName());	
-					
-					// on enregistre le chemin du projet JELIX dans les preferences
-					String cheminProjet = newProject.getLocation().toOSString() + separateur;
-					store.setValue(PreferenceConstants.P_PATH_JELIX_SCRIPT, cheminProjet);	
-					
+					store.setValue(PreferenceConstants.P_PATH_JELIX, separateur
+							+ newProject.getName());
+
+					// on enregistre le chemin du projet JELIX dans les
+					// preferences
+					String cheminProjet = newProject.getLocation().toOSString()
+							+ separateur;
+					store.setValue(PreferenceConstants.P_PATH_JELIX_SCRIPT,
+							cheminProjet);
+
 					// on vide le chemin vers l'appli
-					store.setValue(PreferenceConstants.P_NAME_APP_JELIX, "");	
-					
+					store.setValue(PreferenceConstants.P_NAME_APP_JELIX, "");
+
 					// on renseigne la valeur de la version jelix
-					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP, jelixVersion);
-					
+					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP,
+							jelixVersion);
+
 					monitor.worked(1);
 
 				} catch (CoreException e) {
@@ -187,8 +191,10 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		}
 
 		monitor.setTaskName("decompression des librairies Jelix ...");
-		success = JelixTools.unzip(new File(JelixTools.dirpath(destination) + jelixVersion + ".zip"), destination);
-		//OutilsZip.unzipToDir(destination + jelixVersion + ".zip",	destination);
+		success = JelixTools.unzip(new File(JelixTools.dirpath(destination)
+				+ jelixVersion + ".zip"), destination);
+		// OutilsZip.unzipToDir(destination + jelixVersion + ".zip",
+		// destination);
 
 		success = this.copyJelixLib(jelixVersion, monitor);
 
@@ -235,14 +241,14 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 
 		File sourceFile = source.toFile();
 		IFile destFile = newProject.getFile(sourceFile.getName());
-		
+
 		try {
-			((IFile) source.toFile()).copy(destFile.getLocation(), true, monitor);
+			((IFile) source.toFile()).copy(destFile.getLocation(), true,
+					monitor);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return destFile.getLocation();
 	}
 
@@ -303,14 +309,13 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		super.addPages();
 
 		setNeedsProgressMonitor(true);
-		page1 = new wizardNewJelixProjectPage("new.jelix.project1");
+		page1 = new WizardNewJelixProjectPage("new.jelix.project1");
 		page1.setTitle("Nouveau Projet Jelix");
 		page1.setDescription("Création d'un nouveau projet Jelix");
 		addPage(page1);
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.mSelection = selection;
 		this.fWorkbench = workbench;
 	}
 

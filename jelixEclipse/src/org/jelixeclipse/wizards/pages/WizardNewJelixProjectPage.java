@@ -18,7 +18,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
  * @author vincent
  * 
  */
-public class wizardNewJelixProjectPage extends WizardNewProjectCreationPage {
+public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 
 	private Button jelixImportationButton;
 	private Group jelixImportGroup;
@@ -32,7 +32,7 @@ public class wizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 	private Group jelixLocalGroup;
 	private FileFieldEditor jelixLibrairiesLocal;
 
-	public wizardNewJelixProjectPage(String pageName) {
+	public WizardNewJelixProjectPage(String pageName) {
 		super(pageName);
 	}
 
