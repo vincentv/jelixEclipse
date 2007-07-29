@@ -4,7 +4,6 @@
 package org.jelixeclipse.wizards;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
@@ -32,7 +31,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixTools;
-import org.jelixeclipse.utils.OutilsZip;
 import org.jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
 
 /**
@@ -176,7 +174,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 */
 	private boolean getJelixLib(IProgressMonitor monitor) {
 
-		String destination;
+		IPath destination;
 		boolean success = false;
 
 		// On télécharge le répertoire si demandé
@@ -187,15 +185,9 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 			destination = this.localJelix(jelixVersion, monitor);
 		}
 
-		// on dezippe
-		try {
-			monitor.setTaskName("decompression des librairies Jelix ...");
-			OutilsZip.unzipToDir(destination + jelixVersion + ".zip",
-					destination);
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
+		monitor.setTaskName("decompression des librairies Jelix ...");
+		success = JelixTools.unzip(new File(JelixTools.dirpath(destination) + jelixVersion + ".zip"), destination);
+		//OutilsZip.unzipToDir(destination + jelixVersion + ".zip",	destination);
 
 		success = this.copyJelixLib(jelixVersion, monitor);
 
@@ -210,10 +202,10 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @param monitor
 	 * @return la destination de l'archive Jelix
 	 */
-	private String downloadJelix(String jelixVersion, IProgressMonitor monitor) {
+	private IPath downloadJelix(String jelixVersion, IProgressMonitor monitor) {
 
 		String source;
-		String destination;
+		IPath destination;
 
 		if (this.page1.getJelixImportSrcDownloadBerlios1()) {
 			source = "http://download.berlios.de/jelix/" + jelixVersion
@@ -223,7 +215,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 					+ ".zip";
 		}
 
-		destination = jTemp.getLocation().toOSString() + "/";
+		destination = jTemp.getLocation();
 		JelixTools.download(source, destination);
 
 		return destination;
@@ -237,16 +229,16 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @param monitor
 	 * @return la destination de l'archive Jelix
 	 */
-	private String localJelix(String jelixVersion, IProgressMonitor monitor) {
+	private IPath localJelix(String jelixVersion, IProgressMonitor monitor) {
 		String source;
-		String destination;
+		IPath destination;
 
 		// copie des sources
 
 		source = this.page1.getJelixLibrairiesLocal();
-		destination = jTemp.getLocation().toOSString() + "/";
+		destination = jTemp.getLocation();
 
-		if (!newStructureJelix.copier(source, destination)) {
+		if (!newStructureJelix.copier(source, JelixTools.dirpath(destination))) {
 			// this.throwCoreException("Erreur lors de la copie des librairies
 			// JELIX");
 		}

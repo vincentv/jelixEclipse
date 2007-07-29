@@ -12,10 +12,10 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -33,12 +33,12 @@ public class JelixTools {
 	 * @param path
 	 *            dossier ou enregistrer le document
 	 */
-	public static void download(String urlDocument, String path) {
+	public static void download(String urlDocument, IPath path) {
 		java.io.FileOutputStream destinationFile = null;
 		try {
 			URL url = new URL(urlDocument);
-			java.io.File destination = new java.io.File(path
-					+ new java.io.File(urlDocument).getName());
+			
+			File destination = new File(dirpath(path) + new java.io.File(urlDocument).getName());
 
 			destination.createNewFile();
 
@@ -80,18 +80,14 @@ public class JelixTools {
 		return ((IResource) adapter).getProject();
 	}
 
-	public static boolean unzip(File archive, IFolder destination) {
+	public static boolean unzip(File archive, IPath destination) {
 		boolean success = true;
 
 		try {
 			ZipFile zf = new ZipFile(archive);
 			Enumeration zipEnum = zf.entries();
-			String dir = new String(".");
-
-			String pathDestination = destination.getLocation().toOSString();
-			if (!pathDestination.endsWith(File.pathSeparator)) {
-				pathDestination += File.pathSeparator;
-			}
+			String dir = dirpath(destination);
+			
 
 			while (zipEnum.hasMoreElements()) {
 				ZipEntry item = (ZipEntry) zipEnum.nextElement();
@@ -99,27 +95,21 @@ public class JelixTools {
 				if (item.isDirectory()) // Directory
 				{
 					File newdir = new File(dir + item.getName());
-					System.out.print("Creating directory " + newdir + "..");
 					newdir.mkdir();
-					System.out.println("Done!");
 				} else // File
 				{
 					String newfile = dir + item.getName();
-					System.out.print("Writing " + newfile + "..");
 
 					InputStream is = zf.getInputStream(item);
 					FileOutputStream fos = new FileOutputStream(newfile);
 
 					int ch;
-
 					while ((ch = is.read()) != -1) {
 						fos.write(ch);
 					}
 
 					is.close();
 					fos.close();
-
-					System.out.println("Done!");
 				}
 			}
 
@@ -129,5 +119,13 @@ public class JelixTools {
 			success = false;
 		}
 		return success;
+	}
+	
+	public static String dirpath(IPath dir){
+		String path = dir.toOSString();
+		if (!path.endsWith(File.separator)) {
+			path = path + File.separator;
+		}
+		return path;
 	}
 }
