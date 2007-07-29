@@ -151,7 +151,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 
 		/* Preparation a l'ouverture du fichier de propriete */
 		String dossier = "";
-		String separateur = js.getSeparateur();
+		String separateur = File.separator;
 		String appli = jelixApplication;
 		String fichier = "application.init.php";
 		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/")

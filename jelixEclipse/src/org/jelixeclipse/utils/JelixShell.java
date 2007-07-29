@@ -13,7 +13,7 @@ public class JelixShell {
 	private String commande;
 	private String erreur;
 	private IPreferenceStore store;
-	private String separateur;
+	private String separateur = File.separator;
 	
 	/*
 	 * Constructeur
@@ -21,7 +21,6 @@ public class JelixShell {
 	public JelixShell(String cmd, IPreferenceStore s){
 		this.setCommande(cmd);
 		this.setStore(s);
-		this.defineSeparateur();
 		this.setErreur("");
 	}
 	
@@ -102,17 +101,6 @@ public class JelixShell {
 			this.setErreur(e.getMessage());
 		}
 		return this.getErreur().equals("");
-	}
-	
-	/*
-	 * Definit le separateur en fonction du systeme
-	 */
-	public void defineSeparateur(){
-		if (File.pathSeparator.equals(";")){
-			this.setSeparateur("\\");
-		}else{
-			this.setSeparateur("/");
-		}
 	}
 	
 	/*

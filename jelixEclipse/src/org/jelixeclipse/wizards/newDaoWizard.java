@@ -19,6 +19,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -142,13 +144,13 @@ public class newDaoWizard extends Wizard implements INewWizard {
 			
 			/* on essaye d'ouvrir le fichier cree */			
 			String dossier = "";
-			
+			String separateur = File.separator;
 			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
 				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-					+ appli + "/modules/" + jelixModule + "/daos";
+					+ appli + separateur + "modules" + separateur + jelixModule + separateur + "daos";
 			}else{
 				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-					+ "/" + appli + "/modules/" + jelixModule + "/daos";
+					+ separateur + appli + separateur + "modules" + separateur + jelixModule + separateur + "daos";
 			}
 			
 			String fichier = jelixDao + ".dao.xml";
