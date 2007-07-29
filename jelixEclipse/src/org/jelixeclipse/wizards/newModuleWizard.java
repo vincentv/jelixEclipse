@@ -35,7 +35,6 @@ import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.wizards.pages.newModuleWizardPage;
 
-import java.io.*;
 
 /**
  * This is a sample new wizard. Its role is to create a new file resource in the
