@@ -7,6 +7,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.jelixeclipse.preferences.PreferenceConstants;
 
 import java.io.File;
+import org.eclipse.core.resources.*;
 
 public class JelixShell {
 	
@@ -14,13 +15,15 @@ public class JelixShell {
 	private String erreur;
 	private IPreferenceStore store;
 	private String separateur = File.separator;
+	private IProject project;
 	
 	/*
 	 * Constructeur
 	 */
-	public JelixShell(String cmd, IPreferenceStore s){
+	public JelixShell(IProject p, String cmd, IPreferenceStore s){
 		this.setCommande(cmd);
 		this.setStore(s);
+		this.setProject(p);
 		this.setErreur("");
 	}
 	
@@ -43,6 +46,10 @@ public class JelixShell {
 		return this.separateur;
 	}
 	
+	public IProject getProject(){
+		return this.project;
+	}
+	
 	public void setCommande(String c){
 		this.commande = c;
 	}
@@ -59,6 +66,10 @@ public class JelixShell {
 		this.separateur = s;
 	}
 	
+	public void setProject(IProject p){
+		this.project = p;
+	}
+	
 	/*
 	 * Permet de lancer le shell
 	 */
@@ -68,7 +79,7 @@ public class JelixShell {
 		cheminPhp = this.verifFormatChemin(cheminPhp);
 		
 		/* on recupere le chemin du fichier jelix.php */
-		String cheminScript = this.store.getString(PreferenceConstants.P_PATH_JELIX_SCRIPT);
+		String cheminScript = this.project.getLocation().toOSString();
 		cheminScript = this.verifFormatChemin(cheminScript);		
 		if (!cheminScript.endsWith("/") && !cheminScript.endsWith("\\")){
 			cheminScript += this.getSeparateur();
