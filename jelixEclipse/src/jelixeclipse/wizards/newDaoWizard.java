@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import jelixeclipse.Activator;
 import jelixeclipse.preferences.PreferenceConstants;
+import jelixeclipse.utils.JelixShell;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
@@ -123,59 +124,20 @@ public class newDaoWizard extends Wizard implements INewWizard {
 
 		/* on récupère l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-
-		/* on traite le chemin vers php et vers le repertoire de script */
-		String cheminPhp = store
-				.getString(PreferenceConstants.P_PATH_JELIX_PHP).replace("\\",
-						"/");
-		String cheminScript = store
-				.getString(PreferenceConstants.P_PATH_JELIX_SCRIPT.replace(
-						"\\", "/"));
-		
-		if (!cheminScript.endsWith("/")){
-			cheminScript += "/";
-		}
-		cheminScript += "lib/jelix-scripts";
-		
 		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
-		String chemin = cheminPhp + " " + cheminScript + "/jelix.php";
 		String cmd = " --" + appli + " createdao " + jelixModule + " "
 				+ jelixDao + " " + jelixTable;
-
-		/* on lance l'éxécution du script */
-		try {
-			Process p = Runtime.getRuntime().exec(chemin + cmd);
-			p.waitFor();
-			
-			// on récupère le retour du script
-		    InputStream out=new BufferedInputStream(p.getInputStream());
-		    byte[] b=new byte[1024];
-		    int    n=out.read(b);
-		    
-		    // s'il y a un message, on le stocke
-		    if (n > 0){
-		    	for (int i=0; i<n; i++){
-		    		this.erreur += (char)b[i];
-		    	}
-		    }
-			
-		} catch (Exception e) {
-			throwCoreException("Erreur lors de la creation \n Vérifiez dans votre configuration"
-					+ "\n -- le chemin de l'executable Php  "
-					+ "\n -- le nom de l'application JELIX "
-					+ "\n -- le chemin du repertoire de script JELIX "
-					+ "\n -- le chemin relatif du repertoire des modules"
-					+ "\n \n Window -> Preferences -> JELIX");
-
+		
+		/* on lance la generation du script */
+		jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		Boolean res = js.play();
+		if (!res){
+			throwCoreException(js.getErreur());
 		}
 
 		monitor.worked(1);
-		
-		/* Si message durant la génération, on l'affiche */
-		if (!this.erreur.equals("")){
-			throwCoreException("Erreur lors de la génération JELIX \n " + this.erreur);
-		}
 
+		
 		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
 			/* on essaye d'ouvrir le fichier créé */
