@@ -138,6 +138,21 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 						jTemp.delete(true, monitor);
 					}
 
+					/* on stocke les preferences */
+					monitor.setTaskName("Enregistrement des preferences ...");
+					String separateur = JelixTools.getSystemeSeparateur();
+					store.setValue(PreferenceConstants.P_PATH_JELIX, separateur + newProject.getName());	
+					
+					// on enregistre le chemin du projet JELIX dans les preferences
+					String cheminProjet = newProject.getLocation().toOSString() + separateur;
+					store.setValue(PreferenceConstants.P_PATH_JELIX_SCRIPT, cheminProjet);	
+					
+					// on vide le chemin vers l'appli
+					store.setValue(PreferenceConstants.P_NAME_APP_JELIX, "");	
+					
+					// on renseigne la valeur de la version jelix
+					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP, jelixVersion);
+					
 					monitor.worked(1);
 
 				} catch (CoreException e) {
@@ -165,6 +180,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		boolean success = false;
 
 		// On télécharge le répertoire si demandé
+		monitor.setTaskName("Telechargement des librairies Jelix ...");
 		if (this.page1.getJelixDownloadButton()) {
 			destination = this.downloadJelix(jelixVersion, monitor);
 		} else {
@@ -173,7 +189,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 
 		// on dezippe
 		try {
-
+			monitor.setTaskName("decompression des librairies Jelix ...");
 			OutilsZip.unzipToDir(destination + jelixVersion + ".zip",
 					destination);
 
