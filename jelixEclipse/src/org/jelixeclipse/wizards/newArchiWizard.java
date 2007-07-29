@@ -175,7 +175,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
 		
-		/* On teste si le fichier est bien cr�� */
+		/* On teste si le fichier est bien cree */
 		if (file.exists()){
 		
 		/* Si les param�tres de connexions MySQL sont d�finis, 
