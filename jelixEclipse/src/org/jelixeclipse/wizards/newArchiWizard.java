@@ -36,6 +36,8 @@ import org.jelixeclipse.wizards.pages.newArchiWizardPage;
 
 import java.io.*;
 
+import org.jelixeclipse.utils.JelixOpenPage;
+
 /**
  * This is a sample new wizard. Its role is to create a new file 
  * resource in the provided container. If the container resource
@@ -180,25 +182,16 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		/* Si les param�tres de connexions MySQL sont d�finis, 
 		 * on valorise le fichier dbprofil.ini.php*/
 		
-		//final IFile fileDb = container.getFile(new Path("var/config/dbprofils.ini.php"));
 		final IFile fileDb = container.getFile(new Path("var" + separateur + "config" + separateur + "dbprofils.ini.php"));
 		if (fileDb.exists()){
 			// on traite le fichier
 			this.valoriserDbProfil(fileDb);
 		}
 		
-		/* on essaye d'ouvrir le fichier cree */
+		/* on ouvre le fichier cree */
 		monitor.setTaskName("Ouverture du fichier ...");
-		getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
-			}
-		});
+		JelixOpenPage.Open(this, file);
+		
 		}else{
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
