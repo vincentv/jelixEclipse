@@ -269,8 +269,6 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 			return true;
 
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return false;
 		}
 
@@ -328,8 +326,6 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		// TODO Auto-generated method stub
-		
 	}
 
 
