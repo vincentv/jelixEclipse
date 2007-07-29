@@ -9,8 +9,13 @@
 
 package org.jelixeclipse.wizards.pages;
 
+import java.awt.List;
+import java.io.File;
+
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -18,9 +23,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.jelixeclipse.utils.JelixTools;
+import org.eclipse.core.resources.*;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -31,10 +39,10 @@ import org.eclipse.swt.widgets.Text;
 public class newModuleWizardPage extends WizardPage {
 	
 	private Text jelixTextModule;
-
 	private ISelection selection;
-	
+	private IProject currentProject;
 	private Button jelixOpenFile;
+	private Combo jelixComboAppli;
 
 	/**
 	 * Constructor for SampleNewWizardPage.
@@ -46,6 +54,7 @@ public class newModuleWizardPage extends WizardPage {
 		setTitle("Nouveau Module");
 		setDescription("Cet assistant va g�n�rer le squelette d'un module JELIX.");
 		this.selection = selection;
+		this.currentProject = JelixTools.currentProject(this.selection);
 	}
 
 	/**
@@ -57,12 +66,24 @@ public class newModuleWizardPage extends WizardPage {
 		container.setLayout(layout);
 		layout.numColumns = 2;
 		layout.verticalSpacing = 9;
-		Label label = new Label(container, SWT.NULL);
-		label.setText("&Nom du module :");
-
 		
-		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
+		// listage des applis présente ds le projet
+		Label label = new Label(container, SWT.NULL);
+		label.setText("&Nom de l'application :");
+		List ll = new List();
+		File f = new File(this.currentProject.getLocation().toOSString());
+		ll = this.listerRepertoire(f);
+		jelixComboAppli = new Combo(container, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		jelixComboAppli.setLayoutData(gd);
+		for (int k=0; k<ll.getItemCount(); k++){
+			jelixComboAppli.add(ll.getItem(k).toString());
+		}
+
+		label = new Label(container, SWT.NULL);
+		label.setText("&Nom du module :");
+		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextModule.setLayoutData(gd);
 		
 		label = new Label(container, SWT.NULL);
@@ -72,6 +93,7 @@ public class newModuleWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixOpenFile.setLayoutData(gd);
 		
+
 		initialize();
 		//dialogChanged();
 		setControl(container);
@@ -106,4 +128,25 @@ public class newModuleWizardPage extends WizardPage {
 	public Boolean getJelixOpenFile() {
 		return jelixOpenFile.getSelection();
 	}
+	
+	public String getJelixTextAppli(){
+		return jelixComboAppli.getText();
+	}
+	
+	public List listerRepertoire(File repertoire) {
+		File[] listefichiers;
+		List listeAppli = new List();
+		
+		int i;
+		listefichiers = repertoire.listFiles();
+		for (i = 0; i < listefichiers.length; i++) {	
+			if (listefichiers[i].isDirectory() == true) {
+				if (!listefichiers[i].getName().equals("lib") && !listefichiers[i].getName().equals("temp")){
+					listeAppli.add(listefichiers[i].getName());
+				}
+			}
+		}
+		return listeAppli;
+	}
+	
 }
