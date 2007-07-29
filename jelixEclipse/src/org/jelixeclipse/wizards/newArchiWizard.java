@@ -48,7 +48,8 @@ import org.jelixeclipse.utils.JelixOpenPage;
 
 public class newArchiWizard extends Wizard implements INewWizard {
 	private newArchiWizardPage page;
-	private ISelection selection;
+	private ISelection mSelection;
+	private IWorkbench fWorkbench;
 	private String erreur = "";
 	private Boolean mysqlConf = false;
 	private String mysqlNomConn = "";
@@ -58,6 +59,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	private String mysqlUser = "";
 	private String mysqlPwd = "";
 	private Boolean mysqlPersistence = false;
+	private IProject currentProject;
 
 	/**
 	 * Constructor for newArchiWizard.
@@ -72,7 +74,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newArchiWizardPage(selection);
+		page = new newArchiWizardPage(mSelection);
 		addPage(page);
 	}
 
@@ -91,6 +93,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		this.mysqlUser = page.getJelixMysqlUser();
 		this.mysqlPwd = page.getJelixMysqlPwd();
 		this.mysqlPersistence = page.getJelixMysqlPersistance();
+		this.currentProject = JelixTools.currentProject(this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixApplication.equals("")) {
@@ -141,56 +144,43 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		String cmd = " --" + jelixApplication + " createapp ";
 
 		/* creation et lancement du shell jelix */
-		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
 		}
 
-		monitor.worked(1);
-
 		/* Preparation a l'ouverture du fichier de propriete */
-		String dossier = "";
+
 		String separateur = File.separator;
-		String appli = jelixApplication;
 		String fichier = "application.init.php";
-		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/")
-				|| store.getString(PreferenceConstants.P_PATH_JELIX).endsWith(
-						"\\")) {
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli
-					+ separateur;
+		String dossier = "";
+		if (this.currentProject.getName().endsWith("/") || this.currentProject.getName().endsWith("\\")) {
+			 dossier = separateur + this.currentProject.getName() + jelixApplication + separateur;
 		} else {
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-					+ separateur + appli + separateur;
+			 dossier = separateur + this.currentProject.getName() + separateur + jelixApplication + separateur;
 		}
-
+			
 		// on raffraichit le projet courant
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject pp = root.getProject(store
-				.getString(PreferenceConstants.P_PATH_JELIX));
-		pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();		
+		this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		
 		IResource resource = root.findMember(new Path(dossier));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
+		
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
-
-		/* On teste si le fichier est bien cree */
+		
 		if (file.exists()) {
-
-			/*
-			 * Si les param�tres de connexions MySQL sont d�finis, on valorise
-			 * le fichier dbprofil.ini.php
-			 */
+			/* on valorise le fichier bdd */
 			final IFile fileDb = container.getFile(new Path("var" + separateur
 					+ "config" + separateur + "dbprofils.ini.php"));
 			if (fileDb.exists()) {
 				this.valoriserDbProfil(fileDb);
 			}
 
-			/* on ouvre le fichier cree */
 			monitor.setTaskName("Ouverture du fichier ...");
 			JelixOpenPage.Open(this, file);
 
@@ -200,7 +190,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 
 		// on stocke le nom de l'application
 		store.setValue(PreferenceConstants.P_NAME_APP_JELIX, jelixApplication);
-
+		monitor.worked(1);
 	}
 
 	/**
@@ -210,7 +200,8 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+		this.mSelection = selection;
+		this.fWorkbench = workbench;
 	}
 
 	private void valoriserDbProfil(IFile f) {
