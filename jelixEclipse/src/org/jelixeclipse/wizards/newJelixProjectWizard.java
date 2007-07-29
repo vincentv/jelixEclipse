@@ -140,7 +140,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 
 					/* on stocke les preferences */
 					monitor.setTaskName("Enregistrement des preferences ...");
-					String separateur = JelixTools.getSystemeSeparateur();
+					String separateur = File.separator;
 					store.setValue(PreferenceConstants.P_PATH_JELIX, separateur + newProject.getName());	
 					
 					// on enregistre le chemin du projet JELIX dans les preferences
