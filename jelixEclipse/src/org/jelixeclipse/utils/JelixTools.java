@@ -4,9 +4,15 @@
 package org.jelixeclipse.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -73,6 +79,55 @@ public class JelixTools {
 		Object adapter = adaptable.getAdapter(IResource.class);
 		return ((IResource) adapter).getProject();
 	}
-	
 
+	public static boolean unzip(File archive, IFolder destination) {
+		boolean success = true;
+
+		try {
+			ZipFile zf = new ZipFile(archive);
+			Enumeration zipEnum = zf.entries();
+			String dir = new String(".");
+
+			String pathDestination = destination.getLocation().toOSString();
+			if (!pathDestination.endsWith(File.pathSeparator)) {
+				pathDestination += File.pathSeparator;
+			}
+
+			while (zipEnum.hasMoreElements()) {
+				ZipEntry item = (ZipEntry) zipEnum.nextElement();
+
+				if (item.isDirectory()) // Directory
+				{
+					File newdir = new File(dir + item.getName());
+					System.out.print("Creating directory " + newdir + "..");
+					newdir.mkdir();
+					System.out.println("Done!");
+				} else // File
+				{
+					String newfile = dir + item.getName();
+					System.out.print("Writing " + newfile + "..");
+
+					InputStream is = zf.getInputStream(item);
+					FileOutputStream fos = new FileOutputStream(newfile);
+
+					int ch;
+
+					while ((ch = is.read()) != -1) {
+						fos.write(ch);
+					}
+
+					is.close();
+					fos.close();
+
+					System.out.println("Done!");
+				}
+			}
+
+			zf.close();
+		} catch (Exception e) {
+			System.err.println(e);
+			success = false;
+		}
+		return success;
+	}
 }
