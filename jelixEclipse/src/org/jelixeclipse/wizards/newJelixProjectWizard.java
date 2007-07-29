@@ -6,10 +6,6 @@ package org.jelixeclipse.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLConnection;
-
-//import jelixeclipse.newStructureJelix;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -19,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -30,8 +27,11 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.JelixTools;
 import org.jelixeclipse.utils.OutilsZip;
 import org.jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
 
@@ -45,6 +45,9 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	private IProject newProject;
 	private IFolder jTemp;
 	private String jelixVersion = "jelix-1.0b2.1-dev";
+	private IStructuredSelection mSelection;
+	private IWorkbench fWorkbench;
+	private IConfigurationElement fConfigElement;
 
 	/*
 	 * (non-Javadoc)
@@ -54,7 +57,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		boolean success = true;
-		
+
 		IRunnableWithProgress newProjectOp = new WorkspaceModifyDelegatingOperation(
 				doFinish());
 
@@ -67,6 +70,10 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 			success = false;
 		}
 
+		// Select and reveal the project in the workbench window
+		BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+		BasicNewResourceWizard.selectAndReveal(newProject, fWorkbench
+				.getActiveWorkbenchWindow());
 		return success;
 	}
 
@@ -82,16 +89,17 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				
-				
-				IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")){
+
+				IPreferenceStore store = Activator.getDefault()
+						.getPreferenceStore();
+				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")) {
 					// on affecte par default la valeur actuelle
-					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP, jelixVersion);
-				}else{
+					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP,
+							jelixVersion);
+				} else {
 					jelixVersion = PreferenceConstants.P_NAME_JELIX_ZIP;
 				}
-				
+
 				// On crée la description du projet
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				newProject = page1.getProjectHandle();
@@ -106,9 +114,9 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 					description.setLocation(newPath);
 				}
 
-				
 				// On ajoute la nature Jelix et PHP au projet
-				String[] natureIds = { "jelix", "org.eclipse.php.core.PHPNature" };
+				String[] natureIds = { "jelix",
+						"org.eclipse.php.core.PHPNature" };
 				description.setNatureIds(natureIds);
 
 				// Create and open the project
@@ -158,19 +166,17 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 
 		// On télécharge le répertoire si demandé
 		if (this.page1.getJelixDownloadButton()) {
-			destination = this.downloadJelix(jelixVersion,
-					monitor);
+			destination = this.downloadJelix(jelixVersion, monitor);
 		} else {
-			destination = this
-					.localJelix(jelixVersion, monitor);
+			destination = this.localJelix(jelixVersion, monitor);
 		}
 
 		// on dezippe
 		try {
 
-			OutilsZip.unzipToDir(destination + jelixVersion
-					+ ".zip", destination);
-			
+			OutilsZip.unzipToDir(destination + jelixVersion + ".zip",
+					destination);
+
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
@@ -188,20 +194,21 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @param monitor
 	 * @return la destination de l'archive Jelix
 	 */
-	private String downloadJelix(String jelixVersion,
-			IProgressMonitor monitor) {
+	private String downloadJelix(String jelixVersion, IProgressMonitor monitor) {
 
 		String source;
 		String destination;
 
 		if (this.page1.getJelixImportSrcDownloadBerlios1()) {
-			source = "http://download.berlios.de/jelix/" + jelixVersion + ".zip";
+			source = "http://download.berlios.de/jelix/" + jelixVersion
+					+ ".zip";
 		} else {
-			source = "http://download2.berlios.de/jelix/" + jelixVersion + ".zip";
+			source = "http://download2.berlios.de/jelix/" + jelixVersion
+					+ ".zip";
 		}
 
 		destination = jTemp.getLocation().toOSString() + "/";
-		this.download(source, destination);
+		JelixTools.download(source, destination);
 
 		return destination;
 	}
@@ -214,8 +221,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @param monitor
 	 * @return la destination de l'archive Jelix
 	 */
-	private String localJelix(String jelixVersion,
-			IProgressMonitor monitor) {
+	private String localJelix(String jelixVersion, IProgressMonitor monitor) {
 		String source;
 		String destination;
 
@@ -225,7 +231,8 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		destination = jTemp.getLocation().toOSString() + "/";
 
 		if (!newStructureJelix.copier(source, destination)) {
-			//this.throwCoreException("Erreur lors de la copie des librairies JELIX");
+			// this.throwCoreException("Erreur lors de la copie des librairies
+			// JELIX");
 		}
 		return destination;
 	}
@@ -238,7 +245,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	 * @param monitor
 	 * @return true si la copie c'est bien passé
 	 */
-	private boolean copyJelixLib(String jelixVersion,IProgressMonitor monitor) {
+	private boolean copyJelixLib(String jelixVersion, IProgressMonitor monitor) {
 		// on copie les repertoires et fichiers JELIX
 
 		try {
@@ -248,63 +255,31 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 			File f = new File(jelixTemp.getLocation().toOSString());
 			File[] listeFichiers;
 			listeFichiers = f.listFiles();
-			
+
 			for (File file : listeFichiers) {
 				if (file.isDirectory()) {
 					IFolder tmpFolder = newProject.getFolder(file.getName());
-					//tmpFolder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					// tmpFolder.refreshLocal(IResource.DEPTH_INFINITE,
+					// monitor);
 					IFolder rep = jelixTemp.getFolder(file.getName());
-					//rep.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					// rep.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					rep.copy(tmpFolder.getFullPath(), true, monitor);
 				} else {
 					IFile tmpFile = newProject.getFile(file.getName());
-					//tmpFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					// tmpFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					IFile tmpf = jelixTemp.getFile(file.getName());
-					//tmpf.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					// tmpf.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					tmpf.copy(tmpFile.getFullPath(), true, monitor);
 
 				}
 			}
-			
+
 			return true;
 
 		} catch (CoreException e) {
 			return false;
 		}
 
-	}
-
-	public void download(String u, String path) {
-		java.io.FileOutputStream destinationFile = null;
-		try {
-			URL url = new URL(u);
-			java.io.File destination = new java.io.File(path
-					+ new java.io.File(u).getName());
-
-			destination.createNewFile();
-
-			URLConnection connection = url.openConnection();
-			connection.setDoOutput(false);
-			destinationFile = new java.io.FileOutputStream(destination);
-
-			java.io.InputStream is = url.openStream();
-
-			byte[] buffer = new byte[512 * 1024];
-			int reads;
-
-			while ((reads = is.read(buffer)) != -1) {
-				destinationFile.write(buffer, 0, reads);
-			}
-		} catch (java.io.IOException ioe) {
-			System.out.println("I/O Error on Navigation.download()");
-		} catch (Exception e) {
-		} finally {
-			try {
-				destinationFile.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/*
@@ -326,8 +301,16 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.mSelection = selection;
+		this.fWorkbench = workbench;
 	}
 
-
-
+	/*
+	 * Stores the configuration element for the wizard. The config element will
+	 * be used in <code>performFinish</code> to set the result perspective.
+	 */
+	public void setInitializationData(IConfigurationElement cfig,
+			String propertyName, Object data) {
+		fConfigElement = cfig;
+	}
 }
