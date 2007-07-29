@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
