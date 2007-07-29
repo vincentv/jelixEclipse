@@ -32,6 +32,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.wizards.pages.newModuleWizardPage;
 
@@ -162,17 +163,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 			/* on teste si le fichier est bien cr�� */
 			if (file.exists()) {
 				monitor.setTaskName("Ouverture du fichier ...");
-				getShell().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						IWorkbenchPage page = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getActivePage();
-						try {
-							IDE.openEditor(page, file, true);
-							
-						} catch (PartInitException e) {
-						}
-					}
-				});
+				JelixOpenPage.Open(this, file);
 			} else {
 				throwCoreException("Echec lors de l'ouverture du fichier ");
 			}
