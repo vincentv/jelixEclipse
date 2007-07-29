@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import jelixeclipse.Activator;
+import jelixeclipse.preferences.PreferenceConstants;
 import jelixeclipse.utils.OutilsZip;
 import jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
 
@@ -25,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -50,7 +53,7 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		boolean success = true;
-
+		
 		IRunnableWithProgress newProjectOp = new WorkspaceModifyDelegatingOperation(
 				doFinish());
 
@@ -78,6 +81,15 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
+				
+				
+				IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")){
+					// on affecte par default la valeur actuelle
+					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP, jelixVersion);
+				}else{
+					jelixVersion = PreferenceConstants.P_NAME_JELIX_ZIP;
+				}
 				
 				// On crée la description du projet
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -314,15 +326,10 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		addPage(page1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
-	 *      org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+		// TODO Auto-generated method stub
+		
 	}
 
 }
