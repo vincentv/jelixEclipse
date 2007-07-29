@@ -3,6 +3,7 @@
  */
 package org.jelixeclipse.utils;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -71,5 +72,17 @@ public class JelixTools {
 		IAdaptable adaptable = (IAdaptable) element;
 		Object adapter = adaptable.getAdapter(IResource.class);
 		return ((IResource) adapter).getProject();
+	}
+	
+	/*
+	 * Retourne le caractere de separation de fichier selon le systeme
+	 * utilise.
+	 */
+	public static String getSystemeSeparateur(){
+		if (File.pathSeparator.equals(";")){
+			return "\\";
+		}else{
+			return "/";
+		}
 	}
 }
