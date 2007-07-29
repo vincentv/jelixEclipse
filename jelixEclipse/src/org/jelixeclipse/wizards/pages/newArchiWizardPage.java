@@ -7,7 +7,7 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards.pages;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -58,7 +58,7 @@ public class newArchiWizardPage extends WizardPage {
 	public newArchiWizardPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouvelle Application");
-		setDescription("Cet assistant va générer pour vous le squelette d'une application JELIX");
+		setDescription("Cet assistant va gï¿½nï¿½rer pour vous le squelette d'une application JELIX");
 		this.selection = selection;
 	}
 
@@ -104,7 +104,7 @@ public class newArchiWizardPage extends WizardPage {
 		jelixPanneauMysql.setLayout(lg);
 		lg.numColumns = 2;
 		lg.verticalSpacing = 9;
-		jelixPanneauMysql.setText(" Paramètres MySQL ");
+		jelixPanneauMysql.setText(" Paramï¿½tres MySQL ");
 		
 			// nom de la connexion
 			label = new Label(jelixPanneauMysql, SWT.NONE);
@@ -116,7 +116,7 @@ public class newArchiWizardPage extends WizardPage {
 		
 			// hote
 			label = new Label(jelixPanneauMysql, SWT.NONE);
-			label.setText("Hôte :");
+			label.setText("Hï¿½te :");
 			jelixTextMysqlHost = new Text(jelixPanneauMysql, SWT.BORDER | SWT.SINGLE);
 			ggd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixTextMysqlHost.setLayoutData(ggd);
@@ -132,7 +132,7 @@ public class newArchiWizardPage extends WizardPage {
 			
 			// nom de la base
 			label = new Label(jelixPanneauMysql, SWT.NONE);
-			label.setText("Base de données :");
+			label.setText("Base de donnï¿½es :");
 			jelixTextMysqlBd = new Text(jelixPanneauMysql, SWT.BORDER | SWT.SINGLE);
 			ggd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixTextMysqlBd.setLayoutData(ggd);

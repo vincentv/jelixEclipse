@@ -7,7 +7,7 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards.pages;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -26,13 +26,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Combo;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
 
 import java.awt.*;
 import java.io.File;
 
 
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -62,7 +62,7 @@ public class newDaoWizardPage extends WizardPage {
 	public newDaoWizardPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouveau DAO");
-		setDescription("Cet assistant va générer un DAO");
+		setDescription("Cet assistant va gï¿½nï¿½rer un DAO");
 		this.selection = selection;
 	}
 
@@ -95,10 +95,10 @@ public class newDaoWizardPage extends WizardPage {
 		List ll = new List();
 		File f = new File(myPath + "/modules");
 		
-		// on vérifie que le chemin annoncé est valide
+		// on vï¿½rifie que le chemin annoncï¿½ est valide
 		if (!f.exists()){
-			MessageDialog.openError(getShell(), "Erreur", "Erreur lors de la récupération des modules du projet \n \n" +
-					"Vérifiez dans votre configuration \n" +
+			MessageDialog.openError(getShell(), "Erreur", "Erreur lors de la rï¿½cupï¿½ration des modules du projet \n \n" +
+					"Vï¿½rifiez dans votre configuration \n" +
 					"-- le nom de l'application JELIX \n" +
 					"-- le chemin relatif du repertoire des modules \n" +
 					"\n Window -> Preferences -> JELIX");

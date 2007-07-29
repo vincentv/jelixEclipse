@@ -1,7 +1,7 @@
 /**
  * 
  */
-package jelixeclipse.wizards.pages;
+package org.jelixeclipse.wizards.pages;
 
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.SWT;

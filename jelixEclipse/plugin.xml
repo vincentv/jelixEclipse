@@ -11,28 +11,28 @@
       </category>
       <wizard
             category="jelixEclipse"
-            class="jelixeclipse.wizards.newArchiWizard"
+            class="org.jelixeclipse.wizards.newArchiWizard"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newArchiWizard"
             name="Squelette d&apos;application"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="jelixeclipse.wizards.newModuleWizard"
+            class="org.jelixeclipse.wizards.newModuleWizard"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newModuleWizard"
             name="Module"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="jelixeclipse.wizards.newDaoWizard"
+            class="org.jelixeclipse.wizards.newDaoWizard"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newDaoWizard"
             name="DAO"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="jelixeclipse.wizards.newJelixProjectWizard"
+            class="org.jelixeclipse.wizards.newJelixProjectWizard"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newStructureJelix"
             name="Projet JELIX"
@@ -42,20 +42,20 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="jelixeclipse.preferences.JelixPreferencePage"
+            class="org.jelixeclipse.preferences.JelixPreferencePage"
             id="jelixeclipse.preferences.JelixPreferencePage"
             name="JelixPreferences"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="jelixeclipse.preferences.PreferenceInitializer"/>
+      <initializer class="org.jelixeclipse.preferences.PreferenceInitializer"/>
    </extension>
    <extension
          id="perspectiveJelixId"
          name="perspectiveJelixName"
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="jelixeclipse.perspectives.PerspectiveFactory1"
+            class="org.jelixeclipse.perspectives.PerspectiveFactory1"
             icon="icons/iconeJelix.ico"
             id="jelixEclipse.perspective1"
             name="JelixPhp"/>

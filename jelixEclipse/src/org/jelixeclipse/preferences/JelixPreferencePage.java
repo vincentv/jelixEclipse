@@ -7,15 +7,19 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.preferences;
+package org.jelixeclipse.preferences;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
-import jelixeclipse.Activator;
+
+//import org.jelixeclipse.PreferenceConstants;
+
+
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.jelixeclipse.Activator;
 
 
 
@@ -61,10 +65,10 @@ public class JelixPreferencePage
 		lg.numColumns = 1;
 		lg.verticalSpacing = 9;
 
-		addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_PHP, "* Exécutable &PHP :", composite));
-	    addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_MYSQL, "* Exécutable &MySQL :", composite)); 
+		addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_PHP, "* Exï¿½cutable &PHP :", composite));
+	    addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_MYSQL, "* Exï¿½cutable &MySQL :", composite)); 
 
-	    addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH_JELIX_SCRIPT, "&Répertoire JELIX :", composite));
+	    addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH_JELIX_SCRIPT, "&Rï¿½pertoire JELIX :", composite));
 	    addField (new StringFieldEditor(PreferenceConstants.P_PATH_JELIX, "&Projet JELIX :", composite)); 		
 	    addField (new StringFieldEditor(PreferenceConstants.P_NAME_APP_JELIX, "&Application JELIX :", composite));
 

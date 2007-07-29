@@ -1,11 +1,12 @@
-package jelixeclipse.utils;
+package org.jelixeclipse.utils;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
+
 import java.io.File;
 
 public class JelixShell {

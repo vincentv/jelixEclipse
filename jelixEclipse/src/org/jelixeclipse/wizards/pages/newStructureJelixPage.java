@@ -1,4 +1,4 @@
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards.pages;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -59,8 +59,8 @@ public class newStructureJelixPage extends WizardPage {
 	 */
 	public newStructureJelixPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("Création d'un projet JELIX");
-		setDescription("Cet assistant vous permet de créer un projet JELIX");
+		setTitle("Crï¿½ation d'un projet JELIX");
+		setDescription("Cet assistant vous permet de crï¿½er un projet JELIX");
 		this.selection = selection;
 	}
 
@@ -143,7 +143,7 @@ public class newStructureJelixPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		container2.setLayoutData(gd);
 		
-		/* Téléchargement */
+		/* Tï¿½lï¿½chargement */
 		jelixImportSrcDownload = new Button(container2, SWT.RADIO);
 		jelixImportSrcDownload.setSelection(true);
 		jelixImportSrcDownload.addSelectionListener(new SelectionAdapter() {
@@ -153,7 +153,7 @@ public class newStructureJelixPage extends WizardPage {
 		});
 
 		label = new Label(container2, SWT.NULL);
-		label.setText("&Télechargement : ");
+		label.setText("&Tï¿½lechargement : ");
 		
 		label = new Label(container2, SWT.NULL);
 		label.setText("");
@@ -165,11 +165,11 @@ public class newStructureJelixPage extends WizardPage {
 		jelixPanneauDownload.setLayout(lg);
 		lg.numColumns = 2;
 		lg.verticalSpacing = 9;
-		jelixPanneauDownload.setText(" Serveurs de téléchargement ");
+		jelixPanneauDownload.setText(" Serveurs de tï¿½lï¿½chargement ");
 		//gd = new GridData(GridData.FILL_HORIZONTAL);
 		//jelixPanneauDownload.setLayoutData(gd);
 		
-		/* Sources de téléchargement */
+		/* Sources de tï¿½lï¿½chargement */
 
 		label = new Label(jelixPanneauDownload, SWT.NULL);
 		label.setText("&Berlios 1 ");
@@ -267,7 +267,7 @@ public class newStructureJelixPage extends WizardPage {
 	}
 	
 	public void importSrcMoyen(){
-		// moyen de récupération des sources
+		// moyen de rï¿½cupï¿½ration des sources
 		if (jelixImportSrcDownload.getSelection()){
 			// on rend non accessible le panneau "local"
 			jelixPanneauLocal.setEnabled(false);

@@ -1,4 +1,4 @@
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -15,11 +15,15 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.ui.*;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.OutilsZip;
+import org.jelixeclipse.wizards.pages.newStructureJelixPage;
+
 import java.net.URL;
 import java.net.URLConnection;
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
-import jelixeclipse.utils.OutilsZip;
+
+//import jelixeclipse.newStructureJelix;
 
 
 /**

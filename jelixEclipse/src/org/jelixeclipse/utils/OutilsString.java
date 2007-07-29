@@ -1,4 +1,4 @@
-package jelixeclipse.utils;
+package org.jelixeclipse.utils;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;

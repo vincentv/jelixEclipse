@@ -1,7 +1,7 @@
 /**
  * 
  */
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
-import jelixeclipse.utils.OutilsZip;
-import jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
+//import jelixeclipse.newStructureJelix;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -33,6 +30,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.OutilsZip;
+import org.jelixeclipse.wizards.pages.wizardNewJelixProjectPage;
 
 /**
  * @author vincent
@@ -326,10 +327,11 @@ public class newJelixProjectWizard extends Wizard implements INewWizard {
 		addPage(page1);
 	}
 
-	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }

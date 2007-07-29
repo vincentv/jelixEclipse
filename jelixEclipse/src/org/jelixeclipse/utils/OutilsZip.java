@@ -1,4 +1,4 @@
-package jelixeclipse.utils;
+package org.jelixeclipse.utils;
 
 import java.io.*;
 import java.util.zip.*;

@@ -1,4 +1,4 @@
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 import org.eclipse.core.resources.*;
 
@@ -45,7 +45,7 @@ public class myProject {
 		/* Search the current open project and stop when he find */
 		for (IProject project : allProjects)
 			if (project.isOpen()) {
-				// currentProject est déclaré de type IProject
+				// currentProject est dï¿½clarï¿½ de type IProject
 				currentProject = project.getProject();
 				return;
 			}

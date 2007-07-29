@@ -7,7 +7,7 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -28,14 +28,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
-import jelixeclipse.wizards.JelixIni;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.*;
+import org.jelixeclipse.wizards.JelixIni;
+import org.jelixeclipse.wizards.pages.newArchiWizardPage;
+
 import java.io.*;
-import jelixeclipse.utils.*;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -143,7 +145,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		String cmd = " --" + jelixApplication + " createapp ";
 		
 		/* creation et lancement du shell jelix */
-		jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
 		Boolean res = js.play();
 		if (!res){
 			throwCoreException(js.getErreur());
@@ -175,10 +177,10 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
 		
-		/* On teste si le fichier est bien créé */
+		/* On teste si le fichier est bien crï¿½ï¿½ */
 		if (file.exists()){
 		
-		/* Si les paramètres de connexions MySQL sont définis, 
+		/* Si les paramï¿½tres de connexions MySQL sont dï¿½finis, 
 		 * on valorise le fichier dbprofil.ini.php*/
 		
 		//final IFile fileDb = container.getFile(new Path("var/config/dbprofils.ini.php"));
@@ -221,7 +223,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	private void valoriserDbProfil(IFile f){
 		if (this.mysqlConf){
 			// on instancie l'objet template ini
-			jelixeclipse.wizards.JelixIni template = new JelixIni();
+			org.jelixeclipse.wizards.JelixIni template = new JelixIni();
 			try{
 				FileOutputStream fout = new FileOutputStream(f.getLocation().toOSString());
 				

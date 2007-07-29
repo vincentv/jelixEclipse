@@ -7,7 +7,7 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards.pages;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -44,7 +44,7 @@ public class newModuleWizardPage extends WizardPage {
 	public newModuleWizardPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouveau Module");
-		setDescription("Cet assistant va générer le squelette d'un module JELIX.");
+		setDescription("Cet assistant va gï¿½nï¿½rer le squelette d'un module JELIX.");
 		this.selection = selection;
 	}
 

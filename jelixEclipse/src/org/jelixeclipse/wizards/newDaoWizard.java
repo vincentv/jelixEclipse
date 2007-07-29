@@ -7,7 +7,7 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -19,7 +19,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.IPreferenceStore;
-
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,34 +28,25 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 
-import jelixeclipse.Activator;
-import jelixeclipse.preferences.PreferenceConstants;
-import jelixeclipse.utils.JelixShell;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
-import java.io.*;
+import org.jelixeclipse.Activator;
+import org.jelixeclipse.preferences.PreferenceConstants;
+import org.jelixeclipse.utils.JelixShell;
+import org.jelixeclipse.wizards.pages.newDaoWizardPage;
 
-/**
- * This is a sample new wizard. Its role is to create a new file resource in the
- * provided container. If the container resource (a folder or a project) is
- * selected in the workspace when the wizard is opened, it will accept it as the
- * target container. The wizard creates one file with the extension "php". If a
- * sample multi-page editor (also available as a template) is registered for the
- * same extension, it will be able to open it.
- */
-
-public class newModuleWizard extends Wizard implements INewWizard {
-	private newModuleWizardPage page;
+public class newDaoWizard extends Wizard implements INewWizard {
+	private newDaoWizardPage page;
 
 	private ISelection selection;
 	
 	private String erreur = "";
 
 	/**
-	 * Constructor for newModuleWizard.
+	 * Constructor for newDaoWizard.
 	 */
-	public newModuleWizard() {
+	public newDaoWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -64,7 +56,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newModuleWizardPage(selection);
+		page = new newDaoWizardPage(selection);
 		addPage(page);
 	}
 
@@ -73,12 +65,23 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 * will create an operation and run it using wizard as execution context.
 	 */
 	public boolean performFinish() {
-		final String jelixModule = page.getjelixTextModule();
+
+		final String jelixModule = page.getJelixTextModule();
+		final String jelixDao = page.getJelixTextDao();
+		final String jelixTable = page.getJelixTextTable();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
 		
 		/* Verification saisie utilisateur */
 		if (jelixModule.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir un module");
+			MessageDialog.openError(getShell(), "Erreur", "Veuillez sï¿½lectionner un module");
+			return false;
+		}
+		if (jelixDao.equals("")){
+			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir un nom de DAO");
+			return false;
+		}
+		if (jelixTable.equals("")){
+			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir le nom d'une table");
 			return false;
 		}
 		
@@ -86,7 +89,9 @@ public class newModuleWizard extends Wizard implements INewWizard {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
-					doFinish(jelixModule, jelixOpenFile, monitor);
+					/* Lancement de la methode sur le click Finish */
+					doFinish(jelixModule, jelixDao, jelixTable, jelixOpenFile,
+							monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -113,67 +118,95 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 * file.
 	 */
 
-	private void doFinish(String jelixModule, Boolean jelixOpenFile,
-			IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Creation de " + jelixModule, 2);
+	private void doFinish(String jelixModule, String jelixDao,
+			String jelixTable, Boolean jelixOpenFile, IProgressMonitor monitor)
+			throws CoreException {
+		monitor.beginTask("Creation de " + jelixDao, 2);
 
-		/* on récupère l'objet de preference */
+		/* on rï¿½cupï¿½re l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
-		String cmd = " --" + appli + " createmodule " + jelixModule;
+		String cmd = " --" + appli + " createdao " + jelixModule + " "
+				+ jelixDao + " " + jelixTable;
 		
 		/* on lance la generation du script */
-		jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
 		Boolean res = js.play();
 		if (!res){
 			throwCoreException(js.getErreur());
 		}
-		
+
 		monitor.worked(1);
 
+		
+		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
-			/* on essaye d'ouvrir le fichier créé */
-
+			/* on essaye d'ouvrir le fichier crï¿½ï¿½ */
+			
+			/*
+			String dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+					+ "/" + appli + "/modules/" + jelixModule + "/daos";
+			*/
+			
 			String dossier = "";
 			
 			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli + "/modules/" + jelixModule + "/controllers";
+				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+					+ appli + "/modules/" + jelixModule + "/daos";
 			}else{
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + "/" + appli + "/modules/" + jelixModule + "/controllers";
+				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+					+ "/" + appli + "/modules/" + jelixModule + "/daos";
 			}
 			
-			String fichier = "default.classic.php";
+			String fichier = jelixDao + ".dao.xml";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+			// on cherche le projet courant pour le raffraichir
+			/*
+			myProject project = new jelixeclipse.wizards.myProject();
+			if (project.getCurrentProject() != null) {
+				// on recupere le projet courant et on met a jour
+				String projetCourant = project.getCurrentProject().getName()
+						.toString();
+				root.getProject(projetCourant).refreshLocal(
+						IResource.DEPTH_INFINITE, monitor);
+			} else {
+				// on met a jour tout le workspace
+				root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}
+			*/
 			
 			/* on raffraichit le projet courant */			
 			IFolder pp = root.getFolder(new Path(dossier));
 			pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			
 			IResource resource = root.findMember(new Path(dossier));
-
 			if (!resource.exists() || !(resource instanceof IContainer)) {
-				throwCoreException("Echec lors de l'ouverture du fichier ");
+				throwCoreException("Echec lors de l'ouverture du fichier "
+						+ fichier);
 			}
 
+			/* test sur l'existence du fichier crï¿½ï¿½ */
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
-			
-			/* on teste si le fichier est bien créé */
+				
 			if (file.exists()) {
-				monitor.setTaskName("Ouverture du fichier ...");
+
+				monitor.setTaskName("Ouverture du fichier...");
 				getShell().getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						IWorkbenchPage page = PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage();
 						try {
 							IDE.openEditor(page, file, true);
-							
 						} catch (PartInitException e) {
 						}
 					}
 				});
+
 			} else {
-				throwCoreException("Echec lors de l'ouverture du fichier ");
+				throwCoreException("Echec lors de l'ouverture du fichier "
+						+ fichier);
 			}
 		}
 
@@ -194,5 +227,4 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}
-
 }

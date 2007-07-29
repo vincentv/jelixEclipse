@@ -7,11 +7,11 @@
 * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
 */
 
-package jelixeclipse.preferences;
+package org.jelixeclipse.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import jelixeclipse.Activator;
+import org.jelixeclipse.Activator;
 
 
 /**

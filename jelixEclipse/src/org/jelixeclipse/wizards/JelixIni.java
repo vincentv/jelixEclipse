@@ -1,4 +1,4 @@
-package jelixeclipse.wizards;
+package org.jelixeclipse.wizards;
 
 public class JelixIni {
 	private String entete = "";
@@ -15,13 +15,13 @@ public class JelixIni {
 		this.entete += this.cr;
 		
 		// definition
-		this.definition = "; nom de la connexion utilisée par défaut" + this.cr;
+		this.definition = "; nom de la connexion utilisï¿½e par dï¿½faut" + this.cr;
 		this.definition += "default = ";
 		
 		// commentaire
-		this.commentaire = "; chaque section correspond à une connexion" + this.cr;
-		this.commentaire += "; le nom de la section est le nom de la connexion utilisé dans jDb et jDao" + this.cr;
-		this.commentaire += "; la liste des paramètres dépend du driver." + this.cr;
+		this.commentaire = "; chaque section correspond ï¿½ une connexion" + this.cr;
+		this.commentaire += "; le nom de la section est le nom de la connexion utilisï¿½ dans jDb et jDao" + this.cr;
+		this.commentaire += "; la liste des paramï¿½tres dï¿½pend du driver." + this.cr;
 		this.commentaire += this.cr;
 		
 		// pdo
