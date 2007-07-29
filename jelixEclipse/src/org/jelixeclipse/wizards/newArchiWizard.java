@@ -1,11 +1,11 @@
 /**
-* @author      Ginesty Thibault, TOULOUSE (31), FRANCE
-* @package     jelixeclipse.wizards
-* @version     1.0
-* @date        25/06/2007
-* @link        http://www.jelix.org
-* @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
-*/
+ * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
+ * @package     jelixeclipse.wizards
+ * @version     1.0
+ * @date        25/06/2007
+ * @link        http://www.jelix.org
+ * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
+ */
 
 package org.jelixeclipse.wizards;
 
@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
-
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.jelixeclipse.Activator;
@@ -39,14 +38,12 @@ import java.io.*;
 import org.jelixeclipse.utils.JelixOpenPage;
 
 /**
- * This is a sample new wizard. Its role is to create a new file 
- * resource in the provided container. If the container resource
- * (a folder or a project) is selected in the workspace 
- * when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file with the extension
- * "php". If a sample multi-page editor (also available
- * as a template) is registered for the same extension, it will
- * be able to open it.
+ * This is a sample new wizard. Its role is to create a new file resource in the
+ * provided container. If the container resource (a folder or a project) is
+ * selected in the workspace when the wizard is opened, it will accept it as the
+ * target container. The wizard creates one file with the extension "php". If a
+ * sample multi-page editor (also available as a template) is registered for the
+ * same extension, it will be able to open it.
  */
 
 public class newArchiWizard extends Wizard implements INewWizard {
@@ -69,7 +66,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		super();
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	/**
 	 * Adding the page to the wizard.
 	 */
@@ -80,9 +77,8 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	}
 
 	/**
-	 * This method is called when 'Finish' button is pressed in
-	 * the wizard. We will create an operation and run it
-	 * using wizard as execution context.
+	 * This method is called when 'Finish' button is pressed in the wizard. We
+	 * will create an operation and run it using wizard as execution context.
 	 */
 	public boolean performFinish() {
 
@@ -95,15 +91,17 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		this.mysqlUser = page.getJelixMysqlUser();
 		this.mysqlPwd = page.getJelixMysqlPwd();
 		this.mysqlPersistence = page.getJelixMysqlPersistance();
-		
+
 		/* Verification saisie utilisateur */
-		if (jelixApplication.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir le nom d'un projet");
+		if (jelixApplication.equals("")) {
+			MessageDialog.openError(getShell(), "Erreur",
+					"Veuillez saisir le nom d'un projet");
 			return false;
 		}
-		
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
 				try {
 					doFinish(jelixApplication, monitor);
 				} catch (CoreException e) {
@@ -119,130 +117,134 @@ public class newArchiWizard extends Wizard implements INewWizard {
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Erreur", realException.getMessage());
+			MessageDialog.openError(getShell(), "Erreur", realException
+					.getMessage());
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
-	 * The worker method. It will find the container, create the
-	 * file if missing or just replace its contents, and open
-	 * the editor on the newly created file.
+	 * The worker method. It will find the container, create the file if missing
+	 * or just replace its contents, and open the editor on the newly created
+	 * file.
 	 */
 
-	private void doFinish(
-		String jelixApplication,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void doFinish(String jelixApplication, IProgressMonitor monitor)
+			throws CoreException {
 		monitor.beginTask("Creation du projet " + jelixApplication, 2);
-		
+
 		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		
+
 		/* on prepare la commande jelix */
 		String cmd = " --" + jelixApplication + " createapp ";
-		
+
 		/* creation et lancement du shell jelix */
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
 		Boolean res = js.play();
-		if (!res){
+		if (!res) {
 			throwCoreException(js.getErreur());
 		}
-						
+
 		monitor.worked(1);
-				
+
 		/* Preparation a l'ouverture du fichier de propriete */
 		String dossier = "";
 		String separateur = js.getSeparateur();
 		String appli = jelixApplication;
-		String fichier =   "application.init.php";
-		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli + separateur;
-		}else{
-			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + separateur + appli + separateur;
+		String fichier = "application.init.php";
+		if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/")
+				|| store.getString(PreferenceConstants.P_PATH_JELIX).endsWith(
+						"\\")) {
+			dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli
+					+ separateur;
+		} else {
+			dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+					+ separateur + appli + separateur;
 		}
-		
+
 		// on raffraichit le projet courant
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject pp = root.getProject(store.getString(PreferenceConstants.P_PATH_JELIX));
+		IProject pp = root.getProject(store
+				.getString(PreferenceConstants.P_PATH_JELIX));
 		pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		
-		
+
 		IResource resource = root.findMember(new Path(dossier));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
-		
+
 		/* On teste si le fichier est bien cree */
-		if (file.exists()){
-		
-		/* Si les param�tres de connexions MySQL sont d�finis, 
-		 * on valorise le fichier dbprofil.ini.php*/
-		
-		final IFile fileDb = container.getFile(new Path("var" + separateur + "config" + separateur + "dbprofils.ini.php"));
-		if (fileDb.exists()){
-			// on traite le fichier
-			this.valoriserDbProfil(fileDb);
-		}
-		
-		/* on ouvre le fichier cree */
-		monitor.setTaskName("Ouverture du fichier ...");
-		JelixOpenPage.Open(this, file);
-		
-		}else{
+		if (file.exists()) {
+
+			/*
+			 * Si les param�tres de connexions MySQL sont d�finis, on valorise
+			 * le fichier dbprofil.ini.php
+			 */
+			final IFile fileDb = container.getFile(new Path("var" + separateur
+					+ "config" + separateur + "dbprofils.ini.php"));
+			if (fileDb.exists()) {
+				this.valoriserDbProfil(fileDb);
+			}
+
+			/* on ouvre le fichier cree */
+			monitor.setTaskName("Ouverture du fichier ...");
+			JelixOpenPage.Open(this, file);
+
+		} else {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
-		
+
 		// on stocke le nom de l'application
 		store.setValue(PreferenceConstants.P_NAME_APP_JELIX, jelixApplication);
-		
+
 	}
 
 	/**
-	 * We will accept the selection in the workbench to see if
-	 * we can initialize from it.
+	 * We will accept the selection in the workbench to see if we can initialize
+	 * from it.
+	 * 
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}
-	
-	private void valoriserDbProfil(IFile f){
-		if (this.mysqlConf){
+
+	private void valoriserDbProfil(IFile f) {
+		if (this.mysqlConf) {
 			// on instancie l'objet template ini
 			org.jelixeclipse.utils.JelixIni template = new JelixIni();
-			try{
-				FileOutputStream fout = new FileOutputStream(f.getLocation().toOSString());
-				
+			try {
+				FileOutputStream fout = new FileOutputStream(f.getLocation()
+						.toOSString());
+
 				String contenu = "";
 				contenu = template.getEntete(); // entete
 				contenu += template.getCommentaire(); // commentaire
-				contenu += template.getDefinition(this.mysqlNomConn); // definition connexion
+				contenu += template.getDefinition(this.mysqlNomConn); // definition
+																		// connexion
 				contenu += template.getConnexion(this.mysqlNomConn,
-						this.mysqlHost,
-						this.mysqlDb,
-						this.mysqlUser,
-						this.mysqlPwd,
-						this.mysqlPersistence); // connexion
-				contenu += template.getPdo(); //pdo
-				
+						this.mysqlHost, this.mysqlDb, this.mysqlUser,
+						this.mysqlPwd, this.mysqlPersistence); // connexion
+				contenu += template.getPdo(); // pdo
+
 				// ecriture
-				fout.write(contenu.getBytes());				
+				fout.write(contenu.getBytes());
 				f.refreshLocal(IResource.DEPTH_INFINITE, null);
 
-			}catch(Exception e){
+			} catch (Exception e) {
 
 			}
 		}
 	}
-	
+
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK, message, null);
+		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK,
+				message, null);
 		throw new CoreException(status);
 	}
-	
+
 }

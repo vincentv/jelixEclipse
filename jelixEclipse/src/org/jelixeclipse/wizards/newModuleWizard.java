@@ -1,11 +1,11 @@
 /**
-* @author      Ginesty Thibault, TOULOUSE (31), FRANCE
-* @package     jelixeclipse.wizards
-* @version     1.0
-* @date        25/06/2007
-* @link        http://www.jelix.org
-* @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
-*/
+ * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
+ * @package     jelixeclipse.wizards
+ * @version     1.0
+ * @date        25/06/2007
+ * @link        http://www.jelix.org
+ * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
+ */
 
 package org.jelixeclipse.wizards;
 
@@ -26,8 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
-
-
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.jelixeclipse.Activator;
@@ -35,7 +33,6 @@ import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.wizards.pages.newModuleWizardPage;
-
 
 /**
  * This is a sample new wizard. Its role is to create a new file resource in the
@@ -50,7 +47,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	private newModuleWizardPage page;
 
 	private ISelection selection;
-	
+
 	private String erreur = "";
 
 	/**
@@ -77,13 +74,14 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String jelixModule = page.getjelixTextModule();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
-		
+
 		/* Verification saisie utilisateur */
-		if (jelixModule.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir un module");
+		if (jelixModule.equals("")) {
+			MessageDialog.openError(getShell(), "Erreur",
+					"Veuillez saisir un module");
 			return false;
 		}
-		
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
@@ -119,48 +117,52 @@ public class newModuleWizard extends Wizard implements INewWizard {
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creation de " + jelixModule, 2);
 
-		/* on r�cup�re l'objet de preference */
+		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
 		String cmd = " --" + appli + " createmodule " + jelixModule;
-		
+
 		/* on lance la generation du script */
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
 		Boolean res = js.play();
-		if (!res){
+		if (!res) {
 			throwCoreException(js.getErreur());
 		}
-		
+
 		monitor.worked(1);
 
 		if (jelixOpenFile) {
-			/* on essaye d'ouvrir le fichier cr�� */
 
+			/* on essaye d'ouvrir le fichier cree */
 			String dossier = "";
-			
-			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + appli + "/modules/" + jelixModule + "/controllers";
-			}else{
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX) + "/" + appli + "/modules/" + jelixModule + "/controllers";
+
+			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/")
+					|| store.getString(PreferenceConstants.P_PATH_JELIX)
+							.endsWith("\\")) {
+				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+						+ appli + "/modules/" + jelixModule + "/controllers";
+			} else {
+				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
+						+ "/" + appli + "/modules/" + jelixModule
+						+ "/controllers";
 			}
-			
+
 			String fichier = "default.classic.php";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			
-			/* on raffraichit le projet courant */			
+
+			/* on raffraichit le projet courant */
 			IFolder pp = root.getFolder(new Path(dossier));
 			pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			
-			IResource resource = root.findMember(new Path(dossier));
 
+			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
 				throwCoreException("Echec lors de l'ouverture du fichier ");
 			}
 
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
-			
-			/* on teste si le fichier est bien cr�� */
+
+			/* on teste si le fichier est bien cree */
 			if (file.exists()) {
 				monitor.setTaskName("Ouverture du fichier ...");
 				JelixOpenPage.Open(this, file);

@@ -122,7 +122,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 			throws CoreException {
 		monitor.beginTask("Creation de " + jelixDao, 2);
 
-		/* on r�cup�re l'objet de preference */
+		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
 		String cmd = " --" + appli + " createdao " + jelixModule + " "
@@ -137,10 +137,10 @@ public class newDaoWizard extends Wizard implements INewWizard {
 
 		monitor.worked(1);
 
-		
 		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
-			/* on essaye d'ouvrir le fichier cr�� */			
+			
+			/* on essaye d'ouvrir le fichier cree */			
 			String dossier = "";
 			
 			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
@@ -164,12 +164,10 @@ public class newDaoWizard extends Wizard implements INewWizard {
 						+ fichier);
 			}
 
-			/* test sur l'existence du fichier cr�� */
+			/* test sur l'existence du fichier cree */
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
-				
 			if (file.exists()) {
-
 				monitor.setTaskName("Ouverture du fichier...");
 				JelixOpenPage.Open(this, file);
 
