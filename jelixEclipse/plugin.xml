@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="jelixEclipse"
+            name="Jelix"
+            >
+      </category>
+      <wizard
+            category="jelixEclipse"
+            class="jelixeclipse.wizards.newArchiWizard"
+            icon="icons/iconeJelix.ico"
+            id="jelixeclipse.wizards.newArchiWizard"
+            name="Squelette d&apos;application"
+            preferredPerspectives="jelixEclipse.perspective1"/>
+      <wizard
+            category="jelixEclipse"
+            class="jelixeclipse.wizards.newModuleWizard"
+            icon="icons/iconeJelix.ico"
+            id="jelixeclipse.wizards.newModuleWizard"
+            name="Module"
+            preferredPerspectives="jelixEclipse.perspective1"/>
+      <wizard
+            category="jelixEclipse"
+            class="jelixeclipse.wizards.newDaoWizard"
+            icon="icons/iconeJelix.ico"
+            id="jelixeclipse.wizards.newDaoWizard"
+            name="DAO"
+            preferredPerspectives="jelixEclipse.perspective1"/>
+      <wizard
+            category="jelixEclipse"
+            class="jelixeclipse.wizards.newStructureJelix"
+            icon="icons/iconeJelix.ico"
+            id="jelixeclipse.wizards.newStructureJelix"
+            name="Projet JELIX"
+            preferredPerspectives="jelixEclipse.perspective1"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jelixeclipse.preferences.JelixPreferencePage"
+            id="jelixeclipse.preferences.JelixPreferencePage"
+            name="JelixPreferences"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="jelixeclipse.preferences.PreferenceInitializer"/>
+   </extension>
+   <extension
+         id="perspectiveJelixId"
+         name="perspectiveJelixName"
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="jelixeclipse.perspectives.PerspectiveFactory1"
+            icon="icons/iconeJelix.ico"
+            id="jelixEclipse.perspective1"
+            name="JelixPhp"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="jelixEclipse.perspective1">
+         <newWizardShortcut id="jelixeclipse.wizards.newStructureJelix"/>
+         <newWizardShortcut id="jelixeclipse.wizards.newArchiWizard"/>
+         <newWizardShortcut id="jelixeclipse.wizards.newModuleWizard"/>
+         <newWizardShortcut id="jelixeclipse.wizards.newDaoWizard"/>
+         <newWizardShortcut id="org.eclipse.ui.wizards.new.folder"/>
+         <newWizardShortcut id="org.eclipse.ui.wizards.new.file"/>
+ 
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
