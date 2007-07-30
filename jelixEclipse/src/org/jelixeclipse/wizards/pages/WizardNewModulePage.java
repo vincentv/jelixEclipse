@@ -1,11 +1,11 @@
 /**
-* @author      Ginesty Thibault, TOULOUSE (31), FRANCE
-* @package     jelixeclipse.wizards
-* @version     1.0
-* @date        25/06/2007
-* @link        http://www.jelix.org
-* @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
-*/
+ * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
+ * @package     jelixeclipse.wizards
+ * @version     1.0
+ * @date        25/06/2007
+ * @link        http://www.jelix.org
+ * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
+ */
 
 package org.jelixeclipse.wizards.pages;
 
@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jelixeclipse.utils.JelixTools;
@@ -35,7 +36,7 @@ import org.jelixeclipse.utils.JelixToolsSelection;
  */
 
 public class WizardNewModulePage extends WizardPage {
-	
+
 	private Text jelixTextModule;
 	private ISelection selection;
 	private IProject currentProject;
@@ -52,12 +53,15 @@ public class WizardNewModulePage extends WizardPage {
 		setTitle("Nouveau Module");
 		setDescription("Cet assistant va g�n�rer le squelette d'un module JELIX.");
 		this.selection = selection;
-		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.selection);
+		this.currentProject = JelixTools
+				.currentProject((IStructuredSelection) this.selection);
 		this.appliJelix = "";
-		
+
 		/* La selection est une appli ? */
-		if (JelixToolsSelection.isJelixApplication((IStructuredSelection)this.selection)){
-			this.appliJelix = JelixToolsSelection.getJelixApplicationName((IStructuredSelection)this.selection);
+		if (JelixToolsSelection
+				.isJelixApplication((IStructuredSelection) this.selection)) {
+			this.appliJelix = JelixToolsSelection
+					.getJelixApplicationName((IStructuredSelection) this.selection);
 		}
 	}
 
@@ -65,81 +69,99 @@ public class WizardNewModulePage extends WizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.verticalSpacing = 9;
+
+		GridLayout layout2 = new GridLayout();
+		layout2.numColumns = 2;
+		layout2.verticalSpacing = 9;
+		
+		Composite container = new Composite(parent, SWT.NULL);
+		container.setLayout(layout);
+
+		Composite jelixAppliGroup = new Composite(container, SWT.NULL);
+		jelixAppliGroup.setLayout(layout2);
+		jelixAppliGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		Label label;
 		
-		/* listage des applis présente ds le projet si l'application
-		 * n'a pas pu être déterminée
+		/*
+		 * listage des applis présente ds le projet si l'application n'a pas pu
+		 * être déterminée
 		 */
-		label = new Label(container, SWT.NULL);
+		
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("&Nom de l'application :");
-		if (this.appliJelix.equals("")){
+		if (this.appliJelix.equals("")) {
 			List ll = new List();
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoire(f);
-			jelixComboAppli = new Combo(container, SWT.READ_ONLY);
-			jelixComboAppli.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			for (int k=0; k<ll.getItemCount(); k++){
+			jelixComboAppli = new Combo(jelixAppliGroup, SWT.READ_ONLY);
+			jelixComboAppli
+					.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			for (int k = 0; k < ll.getItemCount(); k++) {
 				jelixComboAppli.add(ll.getItem(k).toString());
 			}
-		}else{
-			label = new Label(container, SWT.NULL);
+		} else {
+			label = new Label(jelixAppliGroup, SWT.NULL);
 			label.setText(this.appliJelix.toString());
 		}
-		
+
 		/* Nom du module */
-		label = new Label(container, SWT.NULL);
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("&Nom du module :");
-		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
+		jelixTextModule = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		jelixTextModule.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		/* Ouverture du fichier après création */
-		jelixOpenFile = new Button(container, SWT.CHECK);
+		Group jelixOptionGroup = new Group(container, SWT.NONE);
+		jelixOptionGroup.setLayout(new GridLayout());
+		jelixOptionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jelixOptionGroup.setText("Option : ");
+
+		jelixOpenFile = new Button(jelixOptionGroup, SWT.CHECK);
 		jelixOpenFile.setSelection(true);
 		jelixOpenFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		jelixOpenFile.setText("&Ouvrir le fichier Controller");
-		
+
 		setControl(container);
 	}
-
 
 	public String getjelixTextModule() {
 		return jelixTextModule.getText();
 	}
-	
+
 	public Boolean getJelixOpenFile() {
 		return jelixOpenFile.getSelection();
 	}
-	
-	public String getJelixTextAppli(){
-		if (this.appliJelix.equals("")){
+
+	public String getJelixTextAppli() {
+		if (this.appliJelix.equals("")) {
 			return jelixComboAppli.getText();
-		}else{
+		} else {
 			return this.appliJelix;
 		}
 	}
-	
+
 	/*
 	 * Liste les répertoires du chemin passé en paramètre
 	 */
 	public List listerRepertoire(File repertoire) {
 		File[] listefichiers;
 		List listeAppli = new List();
-		
+
 		int i;
 		listefichiers = repertoire.listFiles();
-		for (i = 0; i < listefichiers.length; i++) {	
+		for (i = 0; i < listefichiers.length; i++) {
 			if (listefichiers[i].isDirectory() == true) {
-				if (!listefichiers[i].getName().equals("lib") && !listefichiers[i].getName().equals("temp")){
+				if (!listefichiers[i].getName().equals("lib")
+						&& !listefichiers[i].getName().equals("temp")) {
 					listeAppli.add(listefichiers[i].getName());
 				}
 			}
 		}
 		return listeAppli;
 	}
-	
+
 }
