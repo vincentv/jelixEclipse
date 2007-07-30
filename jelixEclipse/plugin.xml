@@ -32,7 +32,7 @@
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="org.jelixeclipse.wizards.newJelixProjectWizard"
+            class="org.jelixeclipse.wizards.WizardNewJelixProject"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newStructureJelix"
             name="Projet JELIX"
