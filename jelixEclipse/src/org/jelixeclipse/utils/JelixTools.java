@@ -12,18 +12,11 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.IFolder;
-import java.util.*;
 
 /**
  * @author vincent
@@ -90,18 +83,6 @@ public class JelixTools {
 		IAdaptable adaptable = (IAdaptable) element;
 		Object adapter = adaptable.getAdapter(IResource.class);
 		return ((IResource) adapter).getProject();
-		
-/*		if (!(selection instanceof IStructuredSelection))
-			return null;
-		IStructuredSelection ss = (IStructuredSelection) selection;
-		Object element = ss.getFirstElement();
-		if (element instanceof IResource)
-			return ((IResource) element).getProject();
-		if (!(element instanceof IAdaptable))
-			return null;
-		IAdaptable adaptable = (IAdaptable) element;
-		Object adapter = adaptable.getAdapter(IResource.class);
-		return ((IResource) adapter).getProject();*/
 	}
 
 	public static boolean unzip(File archive, IPath destination) {
@@ -109,7 +90,7 @@ public class JelixTools {
 
 		try {
 			ZipFile zf = new ZipFile(archive);
-			Enumeration zipEnum = zf.entries();
+			Enumeration<? extends ZipEntry> zipEnum = zf.entries();
 			String dir = dirpath(destination);
 			
 
