@@ -1,11 +1,11 @@
 /**
-* @author      Ginesty Thibault, TOULOUSE (31), FRANCE
-* @package     jelixeclipse.wizards
-* @version     1.0
-* @date        25/06/2007
-* @link        http://www.jelix.org
-* @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
-*/
+ * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
+ * @package     org.jelixeclipse.wizards
+ * @version     0.0.3
+ * @date        25/06/2007
+ * @link        http://www.jelix.org
+ * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
+ */
 
 package org.jelixeclipse.wizards.pages;
 
@@ -30,21 +30,15 @@ import org.eclipse.swt.widgets.Text;
 import org.jelixeclipse.utils.JelixTools;
 import org.jelixeclipse.utils.JelixToolsSelection;
 
-/**
- * The "New" wizard page allows setting the container for the new file as well
- * as the file name. The page will only accept file name without the extension
- * OR with the extension that matches the expected one (php).
- */
-
 public class WizardNewDaoPage extends WizardPage {
 
-	private Text jelixTextDao;
-	private Text jelixTextTable;
-	private Combo jelixComboModule;
-	private Button jelixOpenFile;
+	private IProject currentProject;
 	private ISelection selection;
 	private Combo jelixComboAppli;
-	private IProject currentProject;
+	private Combo jelixComboModule;
+	private Button jelixOpenFile;
+	private Text jelixTextDao;
+	private Text jelixTextTable;
 	private String appliJelix;
 	private String moduleJelix;
 
@@ -56,20 +50,26 @@ public class WizardNewDaoPage extends WizardPage {
 	public WizardNewDaoPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouveau DAO");
-		setDescription("Cet assistant va g�n�rer un DAO");
+		setDescription("Cet assistant va generer un DAO");
 		this.selection = selection;
-		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.selection);
+		this.currentProject = JelixTools
+				.currentProject((IStructuredSelection) this.selection);
 		this.appliJelix = "";
 		this.moduleJelix = "";
-		
+
 		/* La selection est un module ? */
-		if (JelixToolsSelection.isJelixModule((IStructuredSelection)this.selection)){
-			this.moduleJelix = JelixToolsSelection.getJelixModuleName((IStructuredSelection)this.selection);
-			this.appliJelix = JelixToolsSelection.getJelixApplicationByModule((IStructuredSelection)this.selection);
-		}else{		
+		if (JelixToolsSelection
+				.isJelixModule((IStructuredSelection) this.selection)) {
+			this.moduleJelix = JelixToolsSelection
+					.getJelixModuleName((IStructuredSelection) this.selection);
+			this.appliJelix = JelixToolsSelection
+					.getJelixApplicationByModule((IStructuredSelection) this.selection);
+		} else {
 			/* La selection est une appli ? */
-			if (JelixToolsSelection.isJelixApplication((IStructuredSelection)this.selection)){
-				this.appliJelix = JelixToolsSelection.getJelixApplicationName((IStructuredSelection)this.selection);
+			if (JelixToolsSelection
+					.isJelixApplication((IStructuredSelection) this.selection)) {
+				this.appliJelix = JelixToolsSelection
+						.getJelixApplicationName((IStructuredSelection) this.selection);
 			}
 		}
 	}
@@ -85,20 +85,21 @@ public class WizardNewDaoPage extends WizardPage {
 		layout.verticalSpacing = 9;
 		Label label;
 		GridData gd;
-		
-		/* listage des applis présente ds le projet
-		 * si l'appli n'a pas pu être détectée  à partir de la selection
+
+		/*
+		 * listage des applis présente ds le projet si l'appli n'a pas pu être
+		 * détectée à partir de la selection
 		 */
 		label = new Label(container, SWT.NULL);
 		label.setText("&Nom de l'application :");
-		if (this.appliJelix.equals("")){
+		if (this.appliJelix.equals("")) {
 			List ll = new List();
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoireAppli(f);
 			jelixComboAppli = new Combo(container, SWT.READ_ONLY);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixComboAppli.setLayoutData(gd);
-			for (int k=0; k<ll.getItemCount(); k++){
+			for (int k = 0; k < ll.getItemCount(); k++) {
 				jelixComboAppli.add(ll.getItem(k).toString());
 			}
 			jelixComboAppli.addSelectionListener(new SelectionAdapter() {
@@ -106,44 +107,46 @@ public class WizardNewDaoPage extends WizardPage {
 					remplirListeModule(jelixComboAppli.getText());
 				}
 			});
-		}else{
+		} else {
 			label = new Label(container, SWT.NULL);
 			label.setText(this.appliJelix.toString());
 		}
-		
+
 		/*
-		 * Affichage du combo de module si le module n'a pas 
-		 * pu être détecté à partir de la selection
+		 * Affichage du combo de module si le module n'a pas pu être détecté à
+		 * partir de la selection
 		 */
 		label = new Label(container, SWT.NULL);
 		label.setText("&Nom du module :");
-		if (this.moduleJelix.equals("")){
+		if (this.moduleJelix.equals("")) {
 			jelixComboModule = new Combo(container, SWT.READ_ONLY);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixComboModule.setLayoutData(gd);
-			
+
 			// si l'appli est déterminé, on rempli les modules dispos
-			if (!this.appliJelix.equals("")){
+			if (!this.appliJelix.equals("")) {
 				remplirListeModule(this.appliJelix);
 			}
-		}else{
+		} else {
 			label = new Label(container, SWT.NULL);
 			label.setText(this.moduleJelix.toString());
 		}
 
-		
+		/* Nom du DAO */
 		label = new Label(container, SWT.NULL);
 		label.setText("Nom du &Dao :");
 		jelixTextDao = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextDao.setLayoutData(gd);
 
+		/* Nom de la table */
 		label = new Label(container, SWT.NULL);
 		label.setText("Nom de la &Table:");
 		jelixTextTable = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextTable.setLayoutData(gd);
-		
+
+		/* Ouverture du DAO ? */
 		label = new Label(container, SWT.NULL);
 		label.setText("&Ouvrir le fichier Dao :");
 		jelixOpenFile = new Button(container, SWT.CHECK);
@@ -154,19 +157,18 @@ public class WizardNewDaoPage extends WizardPage {
 		setControl(container);
 	}
 
-
-	public String getJelixTextAppli(){
-		if (this.appliJelix.equals("")){
+	public String getJelixTextAppli() {
+		if (this.appliJelix.equals("")) {
 			return jelixComboAppli.getText();
-		}else{
+		} else {
 			return this.appliJelix.toString();
 		}
 	}
-	
+
 	public String getJelixTextModule() {
-		if (this.moduleJelix.equals("")){
+		if (this.moduleJelix.equals("")) {
 			return jelixComboModule.getText();
-		}else{
+		} else {
 			return this.moduleJelix.toString();
 		}
 	}
@@ -178,7 +180,7 @@ public class WizardNewDaoPage extends WizardPage {
 	public String getJelixTextTable() {
 		return jelixTextTable.getText();
 	}
-	
+
 	public Boolean getJelixOpenFile() {
 		return jelixOpenFile.getSelection();
 	}
@@ -189,7 +191,7 @@ public class WizardNewDaoPage extends WizardPage {
 	public List listerRepertoireModule(File repertoire) {
 		File[] listefichiers;
 		List listeModule = new List();
-		
+
 		int i;
 		listefichiers = repertoire.listFiles();
 		for (i = 0; i < listefichiers.length; i++) {
@@ -197,39 +199,41 @@ public class WizardNewDaoPage extends WizardPage {
 				listeModule.add(listefichiers[i].getName());
 			}
 		}
-		
+
 		return listeModule;
 	}
-	
+
 	/*
 	 * Liste les applications du projet
 	 */
 	public List listerRepertoireAppli(File repertoire) {
 		File[] listefichiers;
 		List listeAppli = new List();
-		
+
 		int i;
 		listefichiers = repertoire.listFiles();
-		for (i = 0; i < listefichiers.length; i++) {	
+		for (i = 0; i < listefichiers.length; i++) {
 			if (listefichiers[i].isDirectory() == true) {
-				if (!listefichiers[i].getName().equals("lib") && !listefichiers[i].getName().equals("temp")){
+				if (!listefichiers[i].getName().equals("lib")
+						&& !listefichiers[i].getName().equals("temp")) {
 					listeAppli.add(listefichiers[i].getName());
 				}
 			}
 		}
 		return listeAppli;
 	}
-	
+
 	/*
 	 * Rempli la combo des modules en fonction de l'appli
 	 */
-	private void remplirListeModule(String appli){
+	private void remplirListeModule(String appli) {
 		List lll = new List();
-		File ff = new File(this.currentProject.getLocation().toOSString() + File.separator + appli + File.separator + "/modules");
-		
+		File ff = new File(this.currentProject.getLocation().toOSString()
+				+ File.separator + appli + File.separator + "/modules");
+
 		lll = this.listerRepertoireModule(ff);
 		jelixComboModule.removeAll();
-		for (int k=0; k<lll.getItemCount(); k++){
+		for (int k = 0; k < lll.getItemCount(); k++) {
 			jelixComboModule.add(lll.getItem(k).toString());
 		}
 	}

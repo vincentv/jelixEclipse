@@ -1,7 +1,7 @@
 /**
  * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
- * @package     jelixeclipse.wizards
- * @version     1.0
+ * @package     org.jelixeclipse.wizards
+ * @version     0.0.3
  * @date        25/06/2007
  * @link        http://www.jelix.org
  * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
@@ -54,16 +54,11 @@ public class WizardNewDao extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-
 	public void addPages() {
 		page = new WizardNewDaoPage(mSelection);
 		addPage(page);
 	}
 
-	/**
-	 * This method is called when 'Finish' button is pressed in the wizard. We
-	 * will create an operation and run it using wizard as execution context.
-	 */
 	public boolean performFinish() {
 
 		final String jelixModule = page.getJelixTextModule();
@@ -118,53 +113,39 @@ public class WizardNewDao extends Wizard implements INewWizard {
 		return true;
 	}
 
-	/**
-	 * The worker method. It will find the container, create the file if missing
-	 * or just replace its contents, and open the editor on the newly created
-	 * file.
-	 */
-
 	private void doFinish(String jelixAppli, String jelixModule,
 			String jelixDao, String jelixTable, Boolean jelixOpenFile,
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creation de " + jelixDao, 2);
 
-		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " "
-				+ jelixDao + " " + jelixTable;
 
 		/* on lance la generation du script */
+		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " "
+				+ jelixDao + " " + jelixTable;
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
 		}
-
 		monitor.worked(1);
 
 		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
-
 			String separateur = File.separator;
 			String dossier = separateur + this.currentProject.getName()
 					+ separateur + jelixAppli + separateur + "modules"
 					+ separateur + jelixModule + separateur + "daos";
 			;
-
 			String fichier = jelixDao + ".dao.xml";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-			/* on raffraichit le projet courant */
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
 				throwCoreException("Echec lors de l'ouverture du fichier "
 						+ fichier);
 			}
-
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
 
@@ -177,7 +158,7 @@ public class WizardNewDao extends Wizard implements INewWizard {
 						+ fichier);
 			}
 		}
-
+		monitor.worked(2);
 	}
 
 	private void throwCoreException(String message) throws CoreException {
