@@ -86,7 +86,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("", 2);
+				monitor.beginTask("", 5);
 				IPreferenceStore store = Activator.getDefault()
 						.getPreferenceStore();
 				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")) {
@@ -149,7 +149,8 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			success = false;
 			e.printStackTrace();
 		}
-
+		
+		monitor.worked(1);
 		return success;
 	}
 
@@ -163,7 +164,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	private boolean importJelixLib(IProgressMonitor monitor) {
 		boolean success = true;
 		if (page1.getJelixImportationButton()) {
-			monitor.setTaskName("Importation des librairies Jelix ...");
+			//monitor.setTaskName("Importation des librairies Jelix ...");
 			if (page1.getJelixDownloadButton()) {
 				success = getRemoteJelix(jelixVersion, monitor);
 			} else {
@@ -202,12 +203,15 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		JelixTools.download(source, destination);
 		String JelixArchive = JelixTools.dirpath(destination) + jelixVersion
 				+ ".zip";
-
+		monitor.worked(2);
+		
 		monitor.setTaskName("Décompression des librairies Jelix ...");
 		success = JelixTools.unzip(new File(JelixArchive), destination);
+		monitor.worked(3);
 
 		monitor.setTaskName("Déplacement des librairies Jelix ...");
 		success = this.copyJelixLib(jelixVersion, monitor);
+		monitor.worked(4);
 
 		monitor.setTaskName("Néttoyage ...");
 		File tmpArchiveJelix = new File(JelixTools.dirpath(newProject
@@ -222,7 +226,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		monitor.worked(5);
 		return success;
 	}
 
@@ -240,13 +244,16 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		// File sourceFile = source.toFile();
 		// IFile destFile = newProject.getFile(sourceFile.getName());
 		boolean success = true;
-
+		monitor.worked(2);
+		
 		monitor.setTaskName("Décompression des librairies Jelix ...");
 		success = JelixTools.unzip(source.toFile(), newProject.getLocation());
-
+		monitor.worked(3);
+		
 		monitor.setTaskName("Déplacement des librairies Jelix ...");
 		success = this.copyJelixLib(jelixVersion, monitor);
-
+		monitor.worked(4);
+		
 		monitor.setTaskName("Néttoyage ...");
 		IFolder tmpJelix = newProject.getFolder(jelixVersion);
 		try {
@@ -255,7 +262,8 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		monitor.worked(5);
+		
 		return success;
 	}
 
