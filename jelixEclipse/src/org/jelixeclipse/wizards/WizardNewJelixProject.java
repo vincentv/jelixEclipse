@@ -274,18 +274,12 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			for (File file : listeFichiers) {
 				if (file.isDirectory()) {
 					IFolder tmpFolder = newProject.getFolder(file.getName());
-					// tmpFolder.refreshLocal(IResource.DEPTH_INFINITE,
-					// monitor);
 					IFolder rep = jelixTemp.getFolder(file.getName());
-					// rep.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					rep.copy(tmpFolder.getFullPath(), true, monitor);
 				} else {
 					IFile tmpFile = newProject.getFile(file.getName());
-					// tmpFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					IFile tmpf = jelixTemp.getFile(file.getName());
-					// tmpf.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					tmpf.copy(tmpFile.getFullPath(), true, monitor);
-
 				}
 			}
 
