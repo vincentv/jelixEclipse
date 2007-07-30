@@ -82,8 +82,7 @@ public class WizardNewModulePage extends WizardPage {
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoire(f);
 			jelixComboAppli = new Combo(container, SWT.READ_ONLY);
-			GridData gdd = new GridData(GridData.FILL_HORIZONTAL);
-			jelixComboAppli.setLayoutData(gdd);
+			jelixComboAppli.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			for (int k=0; k<ll.getItemCount(); k++){
 				jelixComboAppli.add(ll.getItem(k).toString());
 			}
@@ -96,16 +95,13 @@ public class WizardNewModulePage extends WizardPage {
 		label = new Label(container, SWT.NULL);
 		label.setText("&Nom du module :");
 		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		jelixTextModule.setLayoutData(gd);
+		jelixTextModule.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		/* Ouverture du fichier après création */
-		label = new Label(container, SWT.NULL);
-		label.setText("&Ouvrir le fichier Controller :");
 		jelixOpenFile = new Button(container, SWT.CHECK);
 		jelixOpenFile.setSelection(true);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		jelixOpenFile.setLayoutData(gd);
+		jelixOpenFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jelixOpenFile.setText("&Ouvrir le fichier Controller");
 		
 		setControl(container);
 	}
