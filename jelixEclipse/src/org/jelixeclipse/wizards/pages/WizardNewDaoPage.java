@@ -163,8 +163,6 @@ public class WizardNewDaoPage extends WizardPage {
 		jelixOptionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		jelixOptionGroup.setText("Option : ");
 		
-		//label = new Label(container, SWT.NULL);
-		//label.setText("&Ouvrir le fichier Dao :");
 		jelixOpenFile = new Button(jelixOptionGroup, SWT.CHECK);
 		jelixOpenFile.setSelection(true);
 		jelixOpenFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
