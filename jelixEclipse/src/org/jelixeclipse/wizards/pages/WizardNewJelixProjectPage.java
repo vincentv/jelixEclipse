@@ -21,7 +21,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 
 	private Button jelixImportationButton;
-	private Group jelixImportGroup;
+	private Composite jelixImportGroup;
 
 	private Button jelixDownloadButton;
 	private Group jelixDownloadGroup;
@@ -66,9 +66,13 @@ public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 				importSrc();
 			}
 		});
-		jelixImportGroup = new Group(parent, SWT.NULL);
-		jelixImportGroup.setLayout(new GridLayout());
-		jelixImportGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		jelixImportGroup = new Composite(parent, SWT.NULL);
+		 GridLayout layout2 = new GridLayout();
+		 jelixImportGroup.setLayout(layout2);
+		 layout2.numColumns = 1;
+		 layout2.verticalSpacing = 9;    
+		 jelixImportGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Telechargement de Jelix
 		jelixDownloadButton = new Button(jelixImportGroup, SWT.RADIO);
