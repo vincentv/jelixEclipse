@@ -44,9 +44,8 @@ public class WizardNewModulePage extends WizardPage {
 	private String appliJelix;
 
 	/**
-	 * Constructor for SampleNewWizardPage.
+	 * Constructeur.
 	 * 
-	 * @param pageName
 	 */
 	public WizardNewModulePage(ISelection selection) {
 		super("wizardPage");
@@ -93,12 +92,14 @@ public class WizardNewModulePage extends WizardPage {
 			label.setText(this.appliJelix.toString());
 		}
 		
+		/* Nom du module */
 		label = new Label(container, SWT.NULL);
 		label.setText("&Nom du module :");
 		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextModule.setLayoutData(gd);
 		
+		/* Ouverture du fichier après création */
 		label = new Label(container, SWT.NULL);
 		label.setText("&Ouvrir le fichier Controller :");
 		jelixOpenFile = new Button(container, SWT.CHECK);
@@ -110,8 +111,6 @@ public class WizardNewModulePage extends WizardPage {
 	}
 
 
-
-	
 	public String getjelixTextModule() {
 		return jelixTextModule.getText();
 	}
@@ -128,6 +127,9 @@ public class WizardNewModulePage extends WizardPage {
 		}
 	}
 	
+	/*
+	 * Liste les répertoires du chemin passé en paramètre
+	 */
 	public List listerRepertoire(File repertoire) {
 		File[] listefichiers;
 		List listeAppli = new List();

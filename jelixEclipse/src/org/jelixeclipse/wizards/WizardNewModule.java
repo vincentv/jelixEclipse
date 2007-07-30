@@ -123,22 +123,20 @@ public class WizardNewModule extends Wizard implements INewWizard {
 			throws CoreException {
 		monitor.beginTask("Creation de " + jelixModule, 2);
 
-		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		String cmd = " --" + jelixAppli + " createmodule " + jelixModule;
 
 		/* on lance la generation du script */
+		String cmd = " --" + jelixAppli + " createmodule " + jelixModule;
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
 		}
-
 		monitor.worked(1);
 
+		/* Ouverture du fichier si demandé */
 		if (jelixOpenFile) {
-
 			String separateur = File.separator;
 			String dossier = separateur + this.currentProject.getName()
 					+ separateur + jelixAppli + separateur + "modules"
@@ -147,7 +145,6 @@ public class WizardNewModule extends Wizard implements INewWizard {
 			String fichier = "default.classic.php";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
 				throwCoreException("Echec lors de l'ouverture du fichier ");
@@ -162,7 +159,7 @@ public class WizardNewModule extends Wizard implements INewWizard {
 				throwCoreException("Echec lors de l'ouverture du fichier ");
 			}
 		}
-
+		monitor.worked(2);
 	}
 
 	private void throwCoreException(String message) throws CoreException {
