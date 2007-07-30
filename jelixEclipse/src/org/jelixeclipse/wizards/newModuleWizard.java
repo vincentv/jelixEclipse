@@ -123,7 +123,6 @@ public class newModuleWizard extends Wizard implements INewWizard {
 
 		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		//String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
 		String cmd = " --" + jelixAppli + " createmodule " + jelixModule;
 
 		/* on lance la generation du script */
