@@ -42,7 +42,6 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 
 	private WizardNewJelixProjectPage page1;
 	private IProject newProject;
-	private IFolder jTemp;
 	private String jelixVersion = "jelix-1.0b2.1-dev";
 	private IWorkbench fWorkbench;
 	private IConfigurationElement fConfigElement;
@@ -98,102 +97,96 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 					jelixVersion = PreferenceConstants.P_NAME_JELIX_ZIP;
 				}
 
-				// On crée la description du projet
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				newProject = page1.getProjectHandle();
-				IProjectDescription description = workspace
-						.newProjectDescription(newProject.getName());
+				// Création d'un nouveau projet Jelix
+				createNewProject(monitor);
+				// Importation des librairie Jelix
+				importJelixLib(monitor);
 
-				// On defini le chemin du projet
-				IPath oldPath = Platform.getLocation();
-				IPath newPath = page1.getLocationPath();
-				if (!oldPath.equals(newPath)) {
-					oldPath = newPath;
-					description.setLocation(newPath);
-				}
-
-				// On ajoute la nature Jelix et PHP au projet
-				String[] natureIds = { "jelix",
-						"org.eclipse.php.core.PHPNature" };
-				description.setNatureIds(natureIds);
-
-				// Create and open the project
-				try {
-					if (!newProject.exists()) {
-						newProject.create(description, new SubProgressMonitor(
-								monitor, 10));
-					}
-
-					if (!newProject.isOpen()) {
-						newProject.open(new SubProgressMonitor(monitor, 10));
-					}
-
-					// On récupère le repertoire de Jelix si demandé
-					if (page1.getJelixImportationButton()) {
-						jTemp = newProject.getFolder("jTemp");
-						jTemp.create(true, true, monitor);
-						getJelixLib(monitor);
-						jTemp.delete(true, monitor);
-					}
-
-					monitor.worked(1);
-
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
+				monitor.done();
 
 			}
 		};
 	}
 
 	/**
-	 * Récupere l'archive Jelix et la rajoute au projet
+	 * Création d'un nouveau projet dans le workspace et affection de la
+	 * description du projet
 	 * 
-	 * @param jelixVersion
-	 *            version de Jelix à récuperer
 	 * @param monitor
-	 * 
 	 * @return
 	 */
-	private boolean getJelixLib(IProgressMonitor monitor) {
+	private boolean createNewProject(IProgressMonitor monitor) {
+		boolean success = true;
+		// On crée la description du projet
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		newProject = page1.getProjectHandle();
+		IProjectDescription description = workspace
+				.newProjectDescription(newProject.getName());
 
-		IPath destination;
-		boolean success = false;
-
-		// On télécharge le répertoire si demandé
-		monitor.setTaskName("Telechargement des librairies Jelix ...");
-		if (this.page1.getJelixDownloadButton()) {
-			destination = this.downloadJelix(jelixVersion, monitor);
-		} else {
-			destination = this.localJelix(jelixVersion, monitor);
+		// On defini le chemin du projet
+		IPath oldPath = Platform.getLocation();
+		IPath newPath = page1.getLocationPath();
+		if (!oldPath.equals(newPath)) {
+			oldPath = newPath;
+			description.setLocation(newPath);
 		}
 
-		monitor.setTaskName("decompression des librairies Jelix ...");
-		success = JelixTools.unzip(new File(JelixTools.dirpath(destination)
-				+ jelixVersion + ".zip"), destination);
-		// OutilsZip.unzipToDir(destination + jelixVersion + ".zip",
-		// destination);
+		// On ajoute la nature Jelix et PHP au projet
+		String[] natureIds = { "jelix", "org.eclipse.php.core.PHPNature" };
+		description.setNatureIds(natureIds);
 
-		success = this.copyJelixLib(jelixVersion, monitor);
+		try {
+			if (!newProject.exists()) {
+				newProject.create(description, new SubProgressMonitor(monitor,
+						10));
+			}
+			if (!newProject.isOpen()) {
+				newProject.open(new SubProgressMonitor(monitor, 10));
+			}
+		} catch (CoreException e) {
+			success = false;
+			e.printStackTrace();
+		}
 
 		return success;
 	}
 
 	/**
-	 * Télécharge l'archive Jelix sur les serveur distant
+	 * Importation des librairies Jelix, à partir d'une archive local ou
+	 * distante.
+	 * 
+	 * @param monitor
+	 * @return la reussite de l'importation
+	 */
+	private boolean importJelixLib(IProgressMonitor monitor) {
+		boolean success = true;
+		if (page1.getJelixImportationButton()) {
+			if (page1.getJelixDownloadButton()) {
+				success = getRemoteJelix(jelixVersion, monitor);
+			} else {
+				success = getlocalJelix(jelixVersion, monitor);
+			}
+		}
+		return success;
+
+	}
+
+	/**
+	 * Importe les librairies Jelix à partir d'une archive distante sur les
+	 * serveur de Berlios
 	 * 
 	 * @param jelixVersion
 	 *            version de Jelix a téléchargé
 	 * @param monitor
-	 * @return la destination de l'archive Jelix
+	 * @return La reussite de l'importation des librairies
 	 */
-	private IPath downloadJelix(String jelixVersion, IProgressMonitor monitor) {
+	private boolean getRemoteJelix(String jelixVersion, IProgressMonitor monitor) {
 
 		String source;
+		boolean success = true;
 		IPath destination;
 
+		monitor.setTaskName("Telechargement des librairies Jelix ...");
 		if (this.page1.getJelixImportSrcDownloadBerlios1()) {
 			source = "http://download.berlios.de/jelix/" + jelixVersion
 					+ ".zip";
@@ -201,50 +194,81 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			source = "http://download2.berlios.de/jelix/" + jelixVersion
 					+ ".zip";
 		}
-
-		destination = jTemp.getLocation();
+		destination = newProject.getLocation();
+		// destination = jTemp.getLocation();
 		JelixTools.download(source, destination);
+		String JelixArchive = JelixTools.dirpath(destination) + jelixVersion
+				+ ".zip";
 
-		return destination;
-	}
+		monitor.setTaskName("Décompression des librairies Jelix ...");
+		success = JelixTools.unzip(new File(JelixArchive), destination);
 
-	/**
-	 * Récupère une archive Jelix en local
-	 * 
-	 * @param jelixVersion
-	 *            version de Jelix à copier
-	 * @param monitor
-	 * @return la destination de l'archive Jelix
-	 */
-	private IPath localJelix(String jelixVersion, IProgressMonitor monitor) {
-		Path source = new Path(this.page1.getJelixLibrairiesLocal());
+		monitor.setTaskName("Déplacement des librairies Jelix ...");
+		success = this.copyJelixLib(jelixVersion, monitor);
 
-		File sourceFile = source.toFile();
-		IFile destFile = newProject.getFile(sourceFile.getName());
+		monitor.setTaskName("Néttoyage ...");
+		File tmpArchiveJelix = new File(JelixTools.dirpath(newProject
+				.getLocation())
+				+ jelixVersion + ".zip");
+		tmpArchiveJelix.delete();
 
+		IFolder tmpJelix = newProject.getFolder(jelixVersion);
 		try {
-			((IFile) source.toFile()).copy(destFile.getLocation(), true,
-					monitor);
+			tmpJelix.delete(true, monitor);
 		} catch (CoreException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return destFile.getLocation();
+		return success;
 	}
 
 	/**
-	 * Copie Jelix a son emplacement final
+	 * Importe les librairies Jelix à partir d'une archive locale
 	 * 
 	 * @param jelixVersion
-	 *            version de Jelix à copier
+	 *            version de Jelix a téléchargé
 	 * @param monitor
-	 * @return true si la copie c'est bien passé
+	 * @return La reussite de l'importation des librairies
+	 */
+	private boolean getlocalJelix(String jelixVersion, IProgressMonitor monitor) {
+		Path source = new Path(this.page1.getJelixLibrairiesLocal());
+
+		// File sourceFile = source.toFile();
+		// IFile destFile = newProject.getFile(sourceFile.getName());
+		boolean success = true;
+
+		monitor.setTaskName("Décompression des librairies Jelix ...");
+		success = JelixTools.unzip(source.toFile(), newProject.getLocation());
+
+		monitor.setTaskName("Déplacement des librairies Jelix ...");
+		success = this.copyJelixLib(jelixVersion, monitor);
+
+		monitor.setTaskName("Néttoyage ...");
+		IFolder tmpJelix = newProject.getFolder(jelixVersion);
+		try {
+			tmpJelix.delete(true, monitor);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return success;
+	}
+
+	/**
+	 * Copie les librairie Jelix à leur emplacement définitif
+	 * 
+	 * @param jelixVersion
+	 *            version des librairie Jelix a copier
+	 * @param monitor
+	 * @return La réussite de la copie des librairie Jelix
 	 */
 	private boolean copyJelixLib(String jelixVersion, IProgressMonitor monitor) {
 		// on copie les repertoires et fichiers JELIX
 
 		try {
-			IFolder jelixTemp = jTemp.getFolder(jelixVersion);
+			IFolder jelixTemp = newProject.getFolder(jelixVersion);
 			jelixTemp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
 			File f = new File(jelixTemp.getLocation().toOSString());
