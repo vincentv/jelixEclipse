@@ -24,6 +24,11 @@ public class JelixToolsSelection {
 		Object element = selection.getFirstElement();
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
+			
+			/* si declenché sur le repertoire "modules" */
+			if (r.getName().equals("modules")){
+				r = r.getParent();
+			}
 			IContainer container = (IContainer) r;			
 			Vector<String> v = new Vector<String>();
 			v = getContenuJelixApplication();
@@ -45,6 +50,11 @@ public class JelixToolsSelection {
 		Object element = selection.getFirstElement();
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
+			
+			/* si declenché sur le repertoire "daos" */
+			if (r.getName().equals("daos")){
+				r = r.getParent();
+			}
 			IContainer container = (IContainer) r;			
 			Vector<String> v = new Vector<String>();
 			v = getContenuJelixModule();
@@ -66,6 +76,11 @@ public class JelixToolsSelection {
 		Object element = selection.getFirstElement();
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
+			
+			/* si declenché sur le repertoire "modules" */
+			if (r.getName().equals("modules")){
+				r = r.getParent();
+			}
 			return r.getName();
 		}else{
 			return "";
@@ -79,6 +94,11 @@ public class JelixToolsSelection {
 		Object element = selection.getFirstElement();
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
+			
+			/* si declenché sur le repertoire "daos" */
+			if (r.getName().equals("daos")){
+				r = r.getParent();
+			}
 			return r.getName();
 		}else{
 			return "";
@@ -92,6 +112,11 @@ public class JelixToolsSelection {
 		Object element = selection.getFirstElement();
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
+			
+			/* si declenché sur le repertoire "daos" */
+			if (r.getName().equals("daos")){
+				r = r.getParent();
+			}
 			return r.getParent().getParent().getName();
 		}else{
 			return "";
