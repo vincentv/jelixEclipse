@@ -117,6 +117,8 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	 */
 	private boolean createNewProject(IProgressMonitor monitor) {
 		boolean success = true;
+		
+		monitor.setTaskName("Création du projet ...");
 		// On crée la description du projet
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		newProject = page1.getProjectHandle();
@@ -161,6 +163,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	private boolean importJelixLib(IProgressMonitor monitor) {
 		boolean success = true;
 		if (page1.getJelixImportationButton()) {
+			monitor.setTaskName("Importation des librairies Jelix ...");
 			if (page1.getJelixDownloadButton()) {
 				success = getRemoteJelix(jelixVersion, monitor);
 			} else {
