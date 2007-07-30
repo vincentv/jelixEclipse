@@ -12,11 +12,18 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.resources.IFolder;
+import java.util.*;
 
 /**
  * @author vincent
@@ -144,5 +151,53 @@ public class JelixTools {
 			path = path + File.separator;
 		}
 		return path;
+	}
+	
+	/*
+	 * Définit si la selection est une application
+	 */
+	public static boolean isJelixApplication(IStructuredSelection selection){
+		Object element = selection.getFirstElement();
+		if (element instanceof IResource){
+			IResource r = (IResource)element;
+			IContainer container = (IContainer) r;			
+			Vector v = new Vector();
+			v = getContenuJelixApplication();
+			for (int i=0; i<v.size(); i++){
+				if (!container.getFolder(new Path(v.elementAt(i).toString())).exists()){
+					return false;
+				}
+			}
+		}else{
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * Renvoi le nom de l'application relatif à la sélection
+	 */
+	public static String getJelixApplicationName(IStructuredSelection selection){
+		Object element = selection.getFirstElement();
+		if (element instanceof IResource){
+			IResource r = (IResource)element;
+			return r.getName();
+		}else{
+			return "";
+		}
+	}
+	
+	/*
+	 * Retourne le nom des repertoires que doit contenir
+	 * une application Jelix
+	 */
+	public static Vector getContenuJelixApplication(){
+		Vector v = new Vector(5);
+		v.add("modules");
+		v.add("plugins");
+		v.add("responses");
+		v.add("var");
+		v.add("www");
+		return v;
 	}
 }
