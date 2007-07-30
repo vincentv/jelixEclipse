@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jelixeclipse.utils.JelixTools;
@@ -78,11 +79,21 @@ public class WizardNewDaoPage extends WizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.verticalSpacing = 9;
+		
+		GridLayout layout2 = new GridLayout();
+		layout2.numColumns = 2;
+		layout2.verticalSpacing = 9;
+		
+		Composite container = new Composite(parent, SWT.NULL);
+		container.setLayout(layout);
+		
+		Composite jelixAppliGroup = new Composite(container, SWT.NULL);
+		jelixAppliGroup.setLayout(layout2);
+		jelixAppliGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		Label label;
 		GridData gd;
 
@@ -90,13 +101,13 @@ public class WizardNewDaoPage extends WizardPage {
 		 * listage des applis présente ds le projet si l'appli n'a pas pu être
 		 * détectée à partir de la selection
 		 */
-		label = new Label(container, SWT.NULL);
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("&Nom de l'application :");
 		if (this.appliJelix.equals("")) {
 			List ll = new List();
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoireAppli(f);
-			jelixComboAppli = new Combo(container, SWT.READ_ONLY);
+			jelixComboAppli = new Combo(jelixAppliGroup, SWT.READ_ONLY);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixComboAppli.setLayoutData(gd);
 			for (int k = 0; k < ll.getItemCount(); k++) {
@@ -108,7 +119,7 @@ public class WizardNewDaoPage extends WizardPage {
 				}
 			});
 		} else {
-			label = new Label(container, SWT.NULL);
+			label = new Label(jelixAppliGroup, SWT.NULL);
 			label.setText(this.appliJelix.toString());
 		}
 
@@ -116,10 +127,10 @@ public class WizardNewDaoPage extends WizardPage {
 		 * Affichage du combo de module si le module n'a pas pu être détecté à
 		 * partir de la selection
 		 */
-		label = new Label(container, SWT.NULL);
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("&Nom du module :");
 		if (this.moduleJelix.equals("")) {
-			jelixComboModule = new Combo(container, SWT.READ_ONLY);
+			jelixComboModule = new Combo(jelixAppliGroup, SWT.READ_ONLY);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixComboModule.setLayoutData(gd);
 
@@ -128,31 +139,36 @@ public class WizardNewDaoPage extends WizardPage {
 				remplirListeModule(this.appliJelix);
 			}
 		} else {
-			label = new Label(container, SWT.NULL);
+			label = new Label(jelixAppliGroup, SWT.NULL);
 			label.setText(this.moduleJelix.toString());
 		}
 
 		/* Nom du DAO */
-		label = new Label(container, SWT.NULL);
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("Nom du &Dao :");
-		jelixTextDao = new Text(container, SWT.BORDER | SWT.SINGLE);
+		jelixTextDao = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextDao.setLayoutData(gd);
 
 		/* Nom de la table */
-		label = new Label(container, SWT.NULL);
+		label = new Label(jelixAppliGroup, SWT.NULL);
 		label.setText("Nom de la &Table:");
-		jelixTextTable = new Text(container, SWT.BORDER | SWT.SINGLE);
+		jelixTextTable = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextTable.setLayoutData(gd);
 
 		/* Ouverture du DAO ? */
-		label = new Label(container, SWT.NULL);
-		label.setText("&Ouvrir le fichier Dao :");
-		jelixOpenFile = new Button(container, SWT.CHECK);
+		Group jelixOptionGroup = new Group(container, SWT.NONE);
+		jelixOptionGroup.setLayout(new GridLayout());
+		jelixOptionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jelixOptionGroup.setText("Option : ");
+		
+		//label = new Label(container, SWT.NULL);
+		//label.setText("&Ouvrir le fichier Dao :");
+		jelixOpenFile = new Button(jelixOptionGroup, SWT.CHECK);
 		jelixOpenFile.setSelection(true);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		jelixOpenFile.setLayoutData(gd);
+		jelixOpenFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jelixOpenFile.setText("&Ouvrir le fichier Dao");
 
 		setControl(container);
 	}
