@@ -67,11 +67,6 @@ public class JelixPreferencePage
 
 		addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_PHP, "* Ex�cutable &PHP :", composite));
 	    addField(new FileFieldEditor(PreferenceConstants.P_PATH_JELIX_MYSQL, "* Ex�cutable &MySQL :", composite)); 
-
-	    addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH_JELIX_SCRIPT, "&R�pertoire JELIX :", composite));
-	    addField (new StringFieldEditor(PreferenceConstants.P_PATH_JELIX, "&Projet JELIX :", composite)); 		
-	    addField (new StringFieldEditor(PreferenceConstants.P_NAME_APP_JELIX, "&Application JELIX :", composite));
-
 	    addField (new StringFieldEditor(PreferenceConstants.P_NAME_JELIX_ZIP, "&Version JELIX :", composite));
 
 

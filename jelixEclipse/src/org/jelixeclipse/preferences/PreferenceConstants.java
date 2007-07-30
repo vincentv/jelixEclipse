@@ -14,11 +14,8 @@ package org.jelixeclipse.preferences;
  */
 public class PreferenceConstants {
 	
-    public static final String P_PATH_JELIX_SCRIPT = "pathPreference";
     public static final String P_PATH_JELIX_PHP = "pathPreferencePhp";
     public static final String P_PATH_JELIX_MYSQL = "pathPreferenceMySQL";
-    public static final String P_PATH_JELIX = "pathJelix";
-    public static final String P_NAME_APP_JELIX = "JelixAppName";
     public static final String P_NAME_JELIX_ZIP = "jelix-1.0b2.1-dev";
     public static final String P_JELIX_BLANC = " ";
     

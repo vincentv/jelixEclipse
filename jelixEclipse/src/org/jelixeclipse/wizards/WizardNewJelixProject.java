@@ -136,26 +136,6 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 						jTemp.delete(true, monitor);
 					}
 
-					/* on stocke les preferences */
-					monitor.setTaskName("Enregistrement des preferences ...");
-					String separateur = File.separator;
-					store.setValue(PreferenceConstants.P_PATH_JELIX, separateur
-							+ newProject.getName());
-
-					// on enregistre le chemin du projet JELIX dans les
-					// preferences
-					String cheminProjet = newProject.getLocation().toOSString()
-							+ separateur;
-					store.setValue(PreferenceConstants.P_PATH_JELIX_SCRIPT,
-							cheminProjet);
-
-					// on vide le chemin vers l'appli
-					store.setValue(PreferenceConstants.P_NAME_APP_JELIX, "");
-
-					// on renseigne la valeur de la version jelix
-					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP,
-							jelixVersion);
-
 					monitor.worked(1);
 
 				} catch (CoreException e) {

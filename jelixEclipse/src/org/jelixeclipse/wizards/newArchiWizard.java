@@ -183,8 +183,6 @@ public class newArchiWizard extends Wizard implements INewWizard {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
 
-		// on stocke le nom de l'application
-		store.setValue(PreferenceConstants.P_NAME_APP_JELIX, jelixApplication);
 		monitor.worked(1);
 	}
 
