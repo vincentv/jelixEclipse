@@ -91,7 +91,7 @@ public class WizardNewAppPage extends WizardPage {
 		jelixPanneauMysql.setLayout(lg);
 		lg.numColumns = 2;
 		lg.verticalSpacing = 9;
-		jelixPanneauMysql.setText(" Param�tres MySQL ");
+		jelixPanneauMysql.setText(" Parametres MySQL ");
 
 		// nom de la connexion
 		label = new Label(jelixPanneauMysql, SWT.NONE);
@@ -104,7 +104,7 @@ public class WizardNewAppPage extends WizardPage {
 
 		// hote
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("H�te :");
+		label.setText("Hote :");
 		jelixTextMysqlHost = new Text(jelixPanneauMysql, SWT.BORDER
 				| SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
@@ -122,7 +122,7 @@ public class WizardNewAppPage extends WizardPage {
 
 		// nom de la base
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Base de donn�es :");
+		label.setText("Base de donnees :");
 		jelixTextMysqlBd = new Text(jelixPanneauMysql, SWT.BORDER | SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlBd.setLayoutData(ggd);

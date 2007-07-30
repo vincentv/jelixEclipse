@@ -145,14 +145,14 @@ public class WizardNewDaoPage extends WizardPage {
 
 		/* Nom du DAO */
 		label = new Label(jelixAppliGroup, SWT.NULL);
-		label.setText("Nom du &Dao :");
+		label.setText("Nom du &DAO :");
 		jelixTextDao = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextDao.setLayoutData(gd);
 
 		/* Nom de la table */
 		label = new Label(jelixAppliGroup, SWT.NULL);
-		label.setText("Nom de la &Table:");
+		label.setText("Nom de la &table:");
 		jelixTextTable = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextTable.setLayoutData(gd);
