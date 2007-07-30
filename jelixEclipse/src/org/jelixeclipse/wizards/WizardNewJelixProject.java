@@ -86,7 +86,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-
+				monitor.beginTask("", 2);
 				IPreferenceStore store = Activator.getDefault()
 						.getPreferenceStore();
 				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")) {
