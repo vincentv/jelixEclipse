@@ -41,7 +41,6 @@ import org.jelixeclipse.wizards.pages.WizardNewDaoPage;
 public class WizardNewDao extends Wizard implements INewWizard {
 	private WizardNewDaoPage page;
 	private ISelection mSelection;
-	private IWorkbench fWorkbench;
 	private IProject currentProject;
 
 	/**
@@ -195,6 +194,5 @@ public class WizardNewDao extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.mSelection = selection;
-		this.fWorkbench = workbench;
 	}
 }

@@ -50,7 +50,6 @@ import org.jelixeclipse.wizards.pages.WizardNewModulePage;
 public class WizardNewModule extends Wizard implements INewWizard {
 	private WizardNewModulePage page;
 	private ISelection mSelection;
-	private IWorkbench fWorkbench;
 	private IProject currentProject;
 
 	/**
@@ -180,7 +179,6 @@ public class WizardNewModule extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.mSelection = selection;
-		this.fWorkbench = workbench;
 	}
 
 }

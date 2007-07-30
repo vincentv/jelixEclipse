@@ -52,12 +52,9 @@ import org.jelixeclipse.wizards.pages.WizardNewAppPage;
 public class WizardNewApp extends Wizard implements INewWizard {
 	private WizardNewAppPage page;
 	private ISelection mSelection;
-	private IWorkbench fWorkbench;
-	private String erreur = "";
 	private Boolean mysqlConf = false;
 	private String mysqlNomConn = "";
 	private String mysqlHost = "";
-	private String mysqlPort = "";
 	private String mysqlDb = "";
 	private String mysqlUser = "";
 	private String mysqlPwd = "";
@@ -91,7 +88,6 @@ public class WizardNewApp extends Wizard implements INewWizard {
 		this.mysqlConf = page.getJelixMysqlConf();
 		this.mysqlNomConn = page.getJelixMysqlNomConn();
 		this.mysqlHost = page.getJelixMysqlHost();
-		this.mysqlPort = page.getJelixMysqlPort();
 		this.mysqlDb = page.getJelixMysqlDb();
 		this.mysqlUser = page.getJelixMysqlUser();
 		this.mysqlPwd = page.getJelixMysqlPwd();
@@ -200,7 +196,6 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.mSelection = selection;
-		this.fWorkbench = workbench;
 	}
 
 	private void valoriserDbProfil(IFile f) {

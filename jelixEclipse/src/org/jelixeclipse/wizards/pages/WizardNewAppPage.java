@@ -9,22 +9,20 @@
 
 package org.jelixeclipse.wizards.pages;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.graphics.Rectangle;
 
 
 /**
@@ -36,8 +34,6 @@ import org.eclipse.swt.graphics.Rectangle;
 public class WizardNewAppPage extends WizardPage {
 	
 	private Text jelixTextApplication;
-
-	private ISelection selection;
 	
 	private Button jelixOpenConfigMysql;	
 	private Group jelixPanneauMysql;
@@ -59,7 +55,6 @@ public class WizardNewAppPage extends WizardPage {
 		super("wizardPage");
 		setTitle("Nouvelle Application");
 		setDescription("Cet assistant va g�n�rer pour vous le squelette d'une application JELIX");
-		this.selection = selection;
 	}
 
 	/**
@@ -164,34 +159,13 @@ public class WizardNewAppPage extends WizardPage {
 			ggd = new GridData(GridData.FILL_HORIZONTAL);
 			jelixPanneauMysql.setLayoutData(ggd);
 			
-		initialize();
 		configMysql();
 		setControl(container);
 	}
 
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
-
-	private void initialize() {
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object obj = ssel.getFirstElement();
-			if (obj instanceof IResource) {
-				IContainer container;
-				if (obj instanceof IContainer)
-					container = (IContainer) obj;
-				else
-					container = ((IResource) obj).getParent();
-			}
-		}
-	}
 	
 	/*
-	 * 
+	 * Affiche ou cache le panneau MySQL
 	 */
 	private void configMysql(){
 		if (jelixOpenConfigMysql.getSelection() == true){
