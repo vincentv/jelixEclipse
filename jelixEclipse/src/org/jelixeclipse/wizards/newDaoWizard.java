@@ -35,14 +35,14 @@ import org.jelixeclipse.Activator;
 import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
+import org.jelixeclipse.utils.JelixTools;
 import org.jelixeclipse.wizards.pages.newDaoWizardPage;
 
 public class newDaoWizard extends Wizard implements INewWizard {
 	private newDaoWizardPage page;
-
-	private ISelection selection;
-	
-	private String erreur = "";
+	private ISelection mSelection;
+	private IWorkbench fWorkbench;
+	private IProject currentProject;
 
 	/**
 	 * Constructor for newDaoWizard.
@@ -57,7 +57,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newDaoWizardPage(selection);
+		page = new newDaoWizardPage(mSelection);
 		addPage(page);
 	}
 
@@ -71,6 +71,8 @@ public class newDaoWizard extends Wizard implements INewWizard {
 		final String jelixDao = page.getJelixTextDao();
 		final String jelixTable = page.getJelixTextTable();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
+		this.currentProject = JelixTools.currentProject(this.mSelection);
+		final String jelixAppli = page.getJelixTextAppli();
 		
 		/* Verification saisie utilisateur */
 		if (jelixModule.equals("")){
@@ -91,7 +93,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 					throws InvocationTargetException {
 				try {
 					/* Lancement de la methode sur le click Finish */
-					doFinish(jelixModule, jelixDao, jelixTable, jelixOpenFile,
+					doFinish(jelixAppli,jelixModule, jelixDao, jelixTable, jelixOpenFile,
 							monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -119,19 +121,18 @@ public class newDaoWizard extends Wizard implements INewWizard {
 	 * file.
 	 */
 
-	private void doFinish(String jelixModule, String jelixDao,
+	private void doFinish(String jelixAppli, String jelixModule, String jelixDao,
 			String jelixTable, Boolean jelixOpenFile, IProgressMonitor monitor)
 			throws CoreException {
 		monitor.beginTask("Creation de " + jelixDao, 2);
 
 		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		String appli = store.getString(PreferenceConstants.P_NAME_APP_JELIX);
-		String cmd = " --" + appli + " createdao " + jelixModule + " "
+		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " "
 				+ jelixDao + " " + jelixTable;
 		
 		/* on lance la generation du script */
-		org.jelixeclipse.utils.JelixShell js = new JelixShell(cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res){
 			throwCoreException(js.getErreur());
@@ -145,20 +146,24 @@ public class newDaoWizard extends Wizard implements INewWizard {
 			/* on essaye d'ouvrir le fichier cree */			
 			String dossier = "";
 			String separateur = File.separator;
-			if (store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("/") || store.getString(PreferenceConstants.P_PATH_JELIX).endsWith("\\")){
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-					+ appli + separateur + "modules" + separateur + jelixModule + separateur + "daos";
-			}else{
-				dossier = store.getString(PreferenceConstants.P_PATH_JELIX)
-					+ separateur + appli + separateur + "modules" + separateur + jelixModule + separateur + "daos";
+			if (this.currentProject.getName().endsWith("/")
+					|| this.currentProject.getName().endsWith("\\")) {
+				dossier = separateur + this.currentProject.getName()
+						+ jelixAppli + separateur + "modules" + separateur
+						+ jelixModule + separateur + "daos";
+				;
+			} else {
+				dossier = separateur + this.currentProject.getName()
+						+ separateur + jelixAppli + separateur + "modules"
+						+ separateur + jelixModule + separateur + "daos";
+				;
 			}
 			
 			String fichier = jelixDao + ".dao.xml";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			
 			/* on raffraichit le projet courant */			
-			IFolder pp = root.getFolder(new Path(dossier));
-			pp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
@@ -166,9 +171,9 @@ public class newDaoWizard extends Wizard implements INewWizard {
 						+ fichier);
 			}
 
-			/* test sur l'existence du fichier cree */
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
+			
 			if (file.exists()) {
 				monitor.setTaskName("Ouverture du fichier...");
 				JelixOpenPage.Open(this, file);
@@ -194,6 +199,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
+		this.mSelection = selection;
+		this.fWorkbench = workbench;
 	}
 }
