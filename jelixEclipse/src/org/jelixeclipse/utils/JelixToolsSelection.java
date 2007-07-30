@@ -25,7 +25,7 @@ public class JelixToolsSelection {
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
 			IContainer container = (IContainer) r;			
-			Vector v = new Vector();
+			Vector<String> v = new Vector<String>();
 			v = getContenuJelixApplication();
 			for (int i=0; i<v.size(); i++){
 				if (!container.getFolder(new Path(v.elementAt(i).toString())).exists()){
@@ -46,7 +46,7 @@ public class JelixToolsSelection {
 		if (element instanceof IResource){
 			IResource r = (IResource)element;
 			IContainer container = (IContainer) r;			
-			Vector v = new Vector();
+			Vector<String> v = new Vector<String>();
 			v = getContenuJelixModule();
 			for (int i=0; i<v.size(); i++){
 				if (!container.getFolder(new Path(v.elementAt(i).toString())).exists()){
@@ -102,8 +102,8 @@ public class JelixToolsSelection {
 	 * Retourne le nom des repertoires que doit contenir
 	 * une application Jelix
 	 */
-	public static Vector getContenuJelixApplication(){
-		Vector v = new Vector(5);
+	public static Vector<String> getContenuJelixApplication(){
+		Vector<String> v = new Vector<String>(5);
 		v.add("modules");
 		v.add("plugins");
 		v.add("responses");
@@ -116,8 +116,8 @@ public class JelixToolsSelection {
 	 * Retourne le nom des repertoires que doit contenir
 	 * un module Jelix
 	 */
-	public static Vector getContenuJelixModule(){
-		Vector v = new Vector(5);
+	public static Vector<String> getContenuJelixModule(){
+		Vector<String> v = new Vector<String>(5);
 		v.add("classes");
 		v.add("controllers");
 		v.add("daos");
