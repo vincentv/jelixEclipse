@@ -14,7 +14,7 @@
             class="org.jelixeclipse.wizards.WizardNewApp"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newArchiWizard"
-            name="Squelette d&apos;application"
+            name="Application"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"

@@ -117,7 +117,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	 */
 	private boolean createNewProject(IProgressMonitor monitor) {
 		boolean success = true;
-		
+
 		monitor.setTaskName("Création du projet ...");
 		// On crée la description du projet
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -149,7 +149,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			success = false;
 			e.printStackTrace();
 		}
-		
+
 		monitor.worked(1);
 		return success;
 	}
@@ -164,7 +164,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	private boolean importJelixLib(IProgressMonitor monitor) {
 		boolean success = true;
 		if (page1.getJelixImportationButton()) {
-			//monitor.setTaskName("Importation des librairies Jelix ...");
+			// monitor.setTaskName("Importation des librairies Jelix ...");
 			if (page1.getJelixDownloadButton()) {
 				success = getRemoteJelix(jelixVersion, monitor);
 			} else {
@@ -204,7 +204,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		String JelixArchive = JelixTools.dirpath(destination) + jelixVersion
 				+ ".zip";
 		monitor.worked(2);
-		
+
 		monitor.setTaskName("Décompression des librairies Jelix ...");
 		success = JelixTools.unzip(new File(JelixArchive), destination);
 		monitor.worked(3);
@@ -244,26 +244,27 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		// File sourceFile = source.toFile();
 		// IFile destFile = newProject.getFile(sourceFile.getName());
 		boolean success = true;
-		monitor.worked(2);
-		
+
 		monitor.setTaskName("Décompression des librairies Jelix ...");
 		success = JelixTools.unzip(source.toFile(), newProject.getLocation());
-		monitor.worked(3);
-		
-		monitor.setTaskName("Déplacement des librairies Jelix ...");
-		success = this.copyJelixLib(jelixVersion, monitor);
-		monitor.worked(4);
-		
-		monitor.setTaskName("Néttoyage ...");
-		IFolder tmpJelix = newProject.getFolder(jelixVersion);
+
 		try {
+			newProject.refreshLocal(2, monitor);
+			IResource[] tmp = newProject.members(IResource.FOLDER);
+			jelixVersion = tmp[tmp.length - 1].getName();
+
+			monitor.setTaskName("Déplacement des librairies Jelix ...");
+			success = this.copyJelixLib(jelixVersion, monitor);
+
+			monitor.setTaskName("Néttoyage ...");
+			IFolder tmpJelix = newProject.getFolder(jelixVersion);
 			tmpJelix.delete(true, monitor);
+			
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
+			success = false;
 			e.printStackTrace();
 		}
-		monitor.worked(5);
-		
+
 		return success;
 	}
 

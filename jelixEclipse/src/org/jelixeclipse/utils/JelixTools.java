@@ -85,6 +85,13 @@ public class JelixTools {
 		return ((IResource) adapter).getProject();
 	}
 
+	/**
+	 * Décompresse une archive à l'emplacement passé en paramètre
+	 * 
+	 * @param archive le fichier d'archive a décompressé
+	 * @param destination le chemin du Répertoire de destination
+	 * @return la reussite de l'opération
+	 */
 	public static boolean unzip(File archive, IPath destination) {
 		boolean success = true;
 
