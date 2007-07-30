@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.jelixeclipse.utils.JelixTools;
+import org.jelixeclipse.utils.JelixToolsSelection;
 import org.eclipse.core.resources.*;
 
 /**
@@ -59,8 +60,8 @@ public class newModuleWizardPage extends WizardPage {
 		this.appliJelix = "";
 		
 		/* La selection est une appli ? */
-		if (JelixTools.isJelixApplication((IStructuredSelection)this.selection)){
-			this.appliJelix = JelixTools.getJelixApplicationName((IStructuredSelection)this.selection);
+		if (JelixToolsSelection.isJelixApplication((IStructuredSelection)this.selection)){
+			this.appliJelix = JelixToolsSelection.getJelixApplicationName((IStructuredSelection)this.selection);
 		}
 	}
 
@@ -73,14 +74,14 @@ public class newModuleWizardPage extends WizardPage {
 		container.setLayout(layout);
 		layout.numColumns = 2;
 		layout.verticalSpacing = 9;
-		
+		Label label;
 		
 		/* listage des applis présente ds le projet si l'application
 		 * n'a pas pu être déterminée
 		 */
+		label = new Label(container, SWT.NULL);
+		label.setText("&Nom de l'application :");
 		if (this.appliJelix.equals("")){
-			Label lab = new Label(container, SWT.NULL);
-			lab.setText("&Nom de l'application :");
 			List ll = new List();
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoire(f);
@@ -90,9 +91,12 @@ public class newModuleWizardPage extends WizardPage {
 			for (int k=0; k<ll.getItemCount(); k++){
 				jelixComboAppli.add(ll.getItem(k).toString());
 			}
+		}else{
+			label = new Label(container, SWT.NULL);
+			label.setText(this.appliJelix.toString());
 		}
 		
-		Label label = new Label(container, SWT.NULL);
+		label = new Label(container, SWT.NULL);
 		label.setText("&Nom du module :");
 		jelixTextModule = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
