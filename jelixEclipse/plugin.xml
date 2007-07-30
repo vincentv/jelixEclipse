@@ -11,21 +11,21 @@
       </category>
       <wizard
             category="jelixEclipse"
-            class="org.jelixeclipse.wizards.newArchiWizard"
+            class="org.jelixeclipse.wizards.WizardNewApp"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newArchiWizard"
             name="Squelette d&apos;application"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="org.jelixeclipse.wizards.newModuleWizard"
+            class="org.jelixeclipse.wizards.WizardNewModule"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newModuleWizard"
             name="Module"
             preferredPerspectives="jelixEclipse.perspective1"/>
       <wizard
             category="jelixEclipse"
-            class="org.jelixeclipse.wizards.newDaoWizard"
+            class="org.jelixeclipse.wizards.WizardNewDao"
             icon="icons/iconeJelix.ico"
             id="jelixeclipse.wizards.newDaoWizard"
             name="DAO"

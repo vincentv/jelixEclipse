@@ -37,7 +37,7 @@ import org.eclipse.core.resources.*;
  * OR with the extension that matches the expected one (php).
  */
 
-public class newModuleWizardPage extends WizardPage {
+public class WizardNewModulePage extends WizardPage {
 	
 	private Text jelixTextModule;
 	private ISelection selection;
@@ -51,7 +51,7 @@ public class newModuleWizardPage extends WizardPage {
 	 * 
 	 * @param pageName
 	 */
-	public newModuleWizardPage(ISelection selection) {
+	public WizardNewModulePage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouveau Module");
 		setDescription("Cet assistant va g�n�rer le squelette d'un module JELIX.");

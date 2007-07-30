@@ -33,7 +33,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * OR with the extension that matches the expected one (php).
  */
 
-public class newArchiWizardPage extends WizardPage {
+public class WizardNewAppPage extends WizardPage {
 	
 	private Text jelixTextApplication;
 
@@ -55,7 +55,7 @@ public class newArchiWizardPage extends WizardPage {
 	 * 
 	 * @param pageName
 	 */
-	public newArchiWizardPage(ISelection selection) {
+	public WizardNewAppPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouvelle Application");
 		setDescription("Cet assistant va g�n�rer pour vous le squelette d'une application JELIX");

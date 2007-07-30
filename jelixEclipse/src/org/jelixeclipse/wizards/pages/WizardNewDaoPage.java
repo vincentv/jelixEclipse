@@ -45,7 +45,7 @@ import org.eclipse.swt.events.SelectionEvent;
  * OR with the extension that matches the expected one (php).
  */
 
-public class newDaoWizardPage extends WizardPage {
+public class WizardNewDaoPage extends WizardPage {
 
 	private Text jelixTextDao;
 	private Text jelixTextTable;
@@ -62,7 +62,7 @@ public class newDaoWizardPage extends WizardPage {
 	 * 
 	 * @param pageName
 	 */
-	public newDaoWizardPage(ISelection selection) {
+	public WizardNewDaoPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Nouveau DAO");
 		setDescription("Cet assistant va g�n�rer un DAO");

@@ -9,33 +9,36 @@
 
 package org.jelixeclipse.wizards;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ui.*;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.jelixeclipse.Activator;
-import org.jelixeclipse.preferences.PreferenceConstants;
-import org.jelixeclipse.utils.*;
-import org.jelixeclipse.wizards.pages.newArchiWizardPage;
-
-import java.io.*;
-
+import org.jelixeclipse.utils.JelixIni;
 import org.jelixeclipse.utils.JelixOpenPage;
+import org.jelixeclipse.utils.JelixShell;
+import org.jelixeclipse.utils.JelixTools;
+import org.jelixeclipse.wizards.pages.WizardNewAppPage;
 
 /**
  * This is a sample new wizard. Its role is to create a new file resource in the
@@ -46,8 +49,8 @@ import org.jelixeclipse.utils.JelixOpenPage;
  * same extension, it will be able to open it.
  */
 
-public class newArchiWizard extends Wizard implements INewWizard {
-	private newArchiWizardPage page;
+public class WizardNewApp extends Wizard implements INewWizard {
+	private WizardNewAppPage page;
 	private ISelection mSelection;
 	private IWorkbench fWorkbench;
 	private String erreur = "";
@@ -62,9 +65,9 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	private IProject currentProject;
 
 	/**
-	 * Constructor for newArchiWizard.
+	 * Constructor for WizardNewApp.
 	 */
-	public newArchiWizard() {
+	public WizardNewApp() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -74,7 +77,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newArchiWizardPage(mSelection);
+		page = new WizardNewAppPage(mSelection);
 		addPage(page);
 	}
 
@@ -93,7 +96,8 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		this.mysqlUser = page.getJelixMysqlUser();
 		this.mysqlPwd = page.getJelixMysqlPwd();
 		this.mysqlPersistence = page.getJelixMysqlPersistance();
-		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
+		this.currentProject = JelixTools
+				.currentProject((IStructuredSelection) this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixApplication.equals("")) {
@@ -144,7 +148,8 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		String cmd = " --" + jelixApplication + " createapp ";
 
 		/* creation et lancement du shell jelix */
-		org.jelixeclipse.utils.JelixShell js = new JelixShell(this.currentProject, cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(
+				this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
@@ -154,20 +159,21 @@ public class newArchiWizard extends Wizard implements INewWizard {
 
 		String separateur = File.separator;
 		String fichier = "application.init.php";
-		String dossier = separateur + this.currentProject.getName() + separateur + jelixApplication + separateur;
+		String dossier = separateur + this.currentProject.getName()
+				+ separateur + jelixApplication + separateur;
 
 		// on raffraichit le projet courant
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();		
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		
+
 		IResource resource = root.findMember(new Path(dossier));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
-		
+
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
-		
+
 		if (file.exists()) {
 			/* on valorise le fichier bdd */
 			final IFile fileDb = container.getFile(new Path("var" + separateur
@@ -209,7 +215,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 				contenu = template.getEntete(); // entete
 				contenu += template.getCommentaire(); // commentaire
 				contenu += template.getDefinition(this.mysqlNomConn); // definition
-																		// connexion
+				// connexion
 				contenu += template.getConnexion(this.mysqlNomConn,
 						this.mysqlHost, this.mysqlDb, this.mysqlUser,
 						this.mysqlPwd, this.mysqlPersistence); // connexion

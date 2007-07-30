@@ -1,53 +1,53 @@
 /**
-* @author      Ginesty Thibault, TOULOUSE (31), FRANCE
-* @package     jelixeclipse.wizards
-* @version     1.0
-* @date        25/06/2007
-* @link        http://www.jelix.org
-* @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
-*/
+ * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
+ * @package     jelixeclipse.wizards
+ * @version     1.0
+ * @date        25/06/2007
+ * @link        http://www.jelix.org
+ * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
+ */
 
 package org.jelixeclipse.wizards;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-
-
-
-import org.eclipse.ui.*;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.jelixeclipse.Activator;
-import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.utils.JelixTools;
-import org.jelixeclipse.wizards.pages.newDaoWizardPage;
+import org.jelixeclipse.wizards.pages.WizardNewDaoPage;
 
-public class newDaoWizard extends Wizard implements INewWizard {
-	private newDaoWizardPage page;
+public class WizardNewDao extends Wizard implements INewWizard {
+	private WizardNewDaoPage page;
 	private ISelection mSelection;
 	private IWorkbench fWorkbench;
 	private IProject currentProject;
 
 	/**
-	 * Constructor for newDaoWizard.
+	 * Constructor for WizardNewDao.
 	 */
-	public newDaoWizard() {
+	public WizardNewDao() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -57,7 +57,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newDaoWizardPage(mSelection);
+		page = new WizardNewDaoPage(mSelection);
 		addPage(page);
 	}
 
@@ -71,30 +71,34 @@ public class newDaoWizard extends Wizard implements INewWizard {
 		final String jelixDao = page.getJelixTextDao();
 		final String jelixTable = page.getJelixTextTable();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
-		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
+		this.currentProject = JelixTools
+				.currentProject((IStructuredSelection) this.mSelection);
 		final String jelixAppli = page.getJelixTextAppli();
-		
+
 		/* Verification saisie utilisateur */
-		if (jelixModule.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez s�lectionner un module");
+		if (jelixModule.equals("")) {
+			MessageDialog.openError(getShell(), "Erreur",
+					"Veuillez s�lectionner un module");
 			return false;
 		}
-		if (jelixDao.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir un nom de DAO");
+		if (jelixDao.equals("")) {
+			MessageDialog.openError(getShell(), "Erreur",
+					"Veuillez saisir un nom de DAO");
 			return false;
 		}
-		if (jelixTable.equals("")){
-			MessageDialog.openError(getShell(), "Erreur", "Veuillez saisir le nom d'une table");
+		if (jelixTable.equals("")) {
+			MessageDialog.openError(getShell(), "Erreur",
+					"Veuillez saisir le nom d'une table");
 			return false;
 		}
-		
+
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
 					/* Lancement de la methode sur le click Finish */
-					doFinish(jelixAppli,jelixModule, jelixDao, jelixTable, jelixOpenFile,
-							monitor);
+					doFinish(jelixAppli, jelixModule, jelixDao, jelixTable,
+							jelixOpenFile, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -121,20 +125,21 @@ public class newDaoWizard extends Wizard implements INewWizard {
 	 * file.
 	 */
 
-	private void doFinish(String jelixAppli, String jelixModule, String jelixDao,
-			String jelixTable, Boolean jelixOpenFile, IProgressMonitor monitor)
-			throws CoreException {
+	private void doFinish(String jelixAppli, String jelixModule,
+			String jelixDao, String jelixTable, Boolean jelixOpenFile,
+			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creation de " + jelixDao, 2);
 
 		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " "
 				+ jelixDao + " " + jelixTable;
-		
+
 		/* on lance la generation du script */
-		org.jelixeclipse.utils.JelixShell js = new JelixShell(this.currentProject, cmd, store);
+		org.jelixeclipse.utils.JelixShell js = new JelixShell(
+				this.currentProject, cmd, store);
 		Boolean res = js.play();
-		if (!res){
+		if (!res) {
 			throwCoreException(js.getErreur());
 		}
 
@@ -142,19 +147,19 @@ public class newDaoWizard extends Wizard implements INewWizard {
 
 		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
-						
+
 			String separateur = File.separator;
 			String dossier = separateur + this.currentProject.getName()
 					+ separateur + jelixAppli + separateur + "modules"
 					+ separateur + jelixModule + separateur + "daos";
 			;
-			
+
 			String fichier = jelixDao + ".dao.xml";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			
-			/* on raffraichit le projet courant */			
+
+			/* on raffraichit le projet courant */
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			
+
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
 				throwCoreException("Echec lors de l'ouverture du fichier "
@@ -163,7 +168,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
-			
+
 			if (file.exists()) {
 				monitor.setTaskName("Ouverture du fichier...");
 				JelixOpenPage.Open(this, file);

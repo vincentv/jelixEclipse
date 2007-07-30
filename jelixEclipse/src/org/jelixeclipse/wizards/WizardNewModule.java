@@ -9,32 +9,34 @@
 
 package org.jelixeclipse.wizards;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ui.*;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.jelixeclipse.Activator;
-import org.jelixeclipse.preferences.PreferenceConstants;
 import org.jelixeclipse.utils.JelixOpenPage;
 import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.utils.JelixTools;
-import org.jelixeclipse.wizards.pages.newModuleWizardPage;
+import org.jelixeclipse.wizards.pages.WizardNewModulePage;
 
 /**
  * This is a sample new wizard. Its role is to create a new file resource in the
@@ -45,16 +47,16 @@ import org.jelixeclipse.wizards.pages.newModuleWizardPage;
  * same extension, it will be able to open it.
  */
 
-public class newModuleWizard extends Wizard implements INewWizard {
-	private newModuleWizardPage page;
+public class WizardNewModule extends Wizard implements INewWizard {
+	private WizardNewModulePage page;
 	private ISelection mSelection;
 	private IWorkbench fWorkbench;
 	private IProject currentProject;
 
 	/**
-	 * Constructor for newModuleWizard.
+	 * Constructor for WizardNewModule.
 	 */
-	public newModuleWizard() {
+	public WizardNewModule() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -64,7 +66,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 	 */
 
 	public void addPages() {
-		page = new newModuleWizardPage(mSelection);
+		page = new WizardNewModulePage(mSelection);
 		addPage(page);
 	}
 
@@ -76,7 +78,8 @@ public class newModuleWizard extends Wizard implements INewWizard {
 		final String jelixModule = page.getjelixTextModule();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
 		final String jelixAppli = page.getJelixTextAppli();
-		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
+		this.currentProject = JelixTools
+				.currentProject((IStructuredSelection) this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixModule.equals("")) {
