@@ -142,22 +142,12 @@ public class newDaoWizard extends Wizard implements INewWizard {
 
 		/* on ouvre le fichier si l'utilisateur a cocher la case */
 		if (jelixOpenFile) {
-			
-			/* on essaye d'ouvrir le fichier cree */			
-			String dossier = "";
+						
 			String separateur = File.separator;
-			if (this.currentProject.getName().endsWith("/")
-					|| this.currentProject.getName().endsWith("\\")) {
-				dossier = separateur + this.currentProject.getName()
-						+ jelixAppli + separateur + "modules" + separateur
-						+ jelixModule + separateur + "daos";
-				;
-			} else {
-				dossier = separateur + this.currentProject.getName()
-						+ separateur + jelixAppli + separateur + "modules"
-						+ separateur + jelixModule + separateur + "daos";
-				;
-			}
+			String dossier = separateur + this.currentProject.getName()
+					+ separateur + jelixAppli + separateur + "modules"
+					+ separateur + jelixModule + separateur + "daos";
+			;
 			
 			String fichier = jelixDao + ".dao.xml";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

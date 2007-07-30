@@ -138,23 +138,11 @@ public class newModuleWizard extends Wizard implements INewWizard {
 
 		if (jelixOpenFile) {
 
-			/* on essaye d'ouvrir le fichier cree */
-			String dossier = "";
 			String separateur = File.separator;
-
-			if (this.currentProject.getName().endsWith("/")
-					|| this.currentProject.getName().endsWith("\\")) {
-				dossier = separateur + this.currentProject.getName()
-						+ jelixAppli + separateur + "modules" + separateur
-						+ jelixModule + separateur + "controllers";
-				;
-			} else {
-				dossier = separateur + this.currentProject.getName()
-						+ separateur + jelixAppli + separateur + "modules"
-						+ separateur + jelixModule + separateur + "controllers";
-				;
-			}
-
+			String dossier = separateur + this.currentProject.getName()
+					+ separateur + jelixAppli + separateur + "modules"
+					+ separateur + jelixModule + separateur + "controllers";
+			;
 			String fichier = "default.classic.php";
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);

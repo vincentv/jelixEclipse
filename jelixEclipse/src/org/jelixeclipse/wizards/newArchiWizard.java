@@ -154,13 +154,8 @@ public class newArchiWizard extends Wizard implements INewWizard {
 
 		String separateur = File.separator;
 		String fichier = "application.init.php";
-		String dossier = "";
-		if (this.currentProject.getName().endsWith("/") || this.currentProject.getName().endsWith("\\")) {
-			 dossier = separateur + this.currentProject.getName() + jelixApplication + separateur;
-		} else {
-			 dossier = separateur + this.currentProject.getName() + separateur + jelixApplication + separateur;
-		}
-			
+		String dossier = separateur + this.currentProject.getName() + separateur + jelixApplication + separateur;
+
 		// on raffraichit le projet courant
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();		
 		this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
