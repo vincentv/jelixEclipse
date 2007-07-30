@@ -39,7 +39,7 @@ public class JelixToolsSelection {
 	}
 	
 	/*
-	 * Définit si la selection est une application
+	 * Définit si la selection est un module
 	 */
 	public static boolean isJelixModule(IStructuredSelection selection){
 		Object element = selection.getFirstElement();
