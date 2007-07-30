@@ -54,7 +54,7 @@ public class newModuleWizardPage extends WizardPage {
 		setTitle("Nouveau Module");
 		setDescription("Cet assistant va g�n�rer le squelette d'un module JELIX.");
 		this.selection = selection;
-		this.currentProject = JelixTools.currentProject(this.selection);
+		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.selection);
 	}
 
 	/**

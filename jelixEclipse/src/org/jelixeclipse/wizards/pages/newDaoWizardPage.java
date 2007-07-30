@@ -64,7 +64,7 @@ public class newDaoWizardPage extends WizardPage {
 		setTitle("Nouveau DAO");
 		setDescription("Cet assistant va g�n�rer un DAO");
 		this.selection = selection;
-		this.currentProject = JelixTools.currentProject(this.selection);
+		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.selection);
 	}
 
 	/**

@@ -71,7 +71,7 @@ public class newDaoWizard extends Wizard implements INewWizard {
 		final String jelixDao = page.getJelixTextDao();
 		final String jelixTable = page.getJelixTextTable();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
-		this.currentProject = JelixTools.currentProject(this.mSelection);
+		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
 		final String jelixAppli = page.getJelixTextAppli();
 		
 		/* Verification saisie utilisateur */

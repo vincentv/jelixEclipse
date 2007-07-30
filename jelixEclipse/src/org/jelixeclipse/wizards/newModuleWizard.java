@@ -76,7 +76,7 @@ public class newModuleWizard extends Wizard implements INewWizard {
 		final String jelixModule = page.getjelixTextModule();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
 		final String jelixAppli = page.getJelixTextAppli();
-		this.currentProject = JelixTools.currentProject(this.mSelection);
+		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixModule.equals("")) {

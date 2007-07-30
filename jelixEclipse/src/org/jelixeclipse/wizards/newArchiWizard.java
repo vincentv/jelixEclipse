@@ -93,7 +93,7 @@ public class newArchiWizard extends Wizard implements INewWizard {
 		this.mysqlUser = page.getJelixMysqlUser();
 		this.mysqlPwd = page.getJelixMysqlPwd();
 		this.mysqlPersistence = page.getJelixMysqlPersistance();
-		this.currentProject = JelixTools.currentProject(this.mSelection);
+		this.currentProject = JelixTools.currentProject((IStructuredSelection)this.mSelection);
 
 		/* Verification saisie utilisateur */
 		if (jelixApplication.equals("")) {
