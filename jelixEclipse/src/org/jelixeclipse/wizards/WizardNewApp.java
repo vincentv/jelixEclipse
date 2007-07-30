@@ -1,7 +1,7 @@
 /**
  * @author      Ginesty Thibault, TOULOUSE (31), FRANCE
- * @package     jelixeclipse.wizards
- * @version     1.0
+ * @package     org.jelixeclipse.wizards
+ * @version     0.0.3
  * @date        25/06/2007
  * @link        http://www.jelix.org
  * @licence     GNU General Public Licence see LICENCE file or http://www.gnu.org/licenses/gpl.html
@@ -40,15 +40,6 @@ import org.jelixeclipse.utils.JelixShell;
 import org.jelixeclipse.utils.JelixTools;
 import org.jelixeclipse.wizards.pages.WizardNewAppPage;
 
-/**
- * This is a sample new wizard. Its role is to create a new file resource in the
- * provided container. If the container resource (a folder or a project) is
- * selected in the workspace when the wizard is opened, it will accept it as the
- * target container. The wizard creates one file with the extension "php". If a
- * sample multi-page editor (also available as a template) is registered for the
- * same extension, it will be able to open it.
- */
-
 public class WizardNewApp extends Wizard implements INewWizard {
 	private WizardNewAppPage page;
 	private ISelection mSelection;
@@ -72,7 +63,6 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-
 	public void addPages() {
 		page = new WizardNewAppPage(mSelection);
 		addPage(page);
@@ -127,38 +117,27 @@ public class WizardNewApp extends Wizard implements INewWizard {
 		return true;
 	}
 
-	/**
-	 * The worker method. It will find the container, create the file if missing
-	 * or just replace its contents, and open the editor on the newly created
-	 * file.
-	 */
-
 	private void doFinish(String jelixApplication, IProgressMonitor monitor)
 			throws CoreException {
 		monitor.beginTask("Creation du projet " + jelixApplication, 2);
 
-		/* on recupere l'objet de preference */
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-		/* on prepare la commande jelix */
-		String cmd = " --" + jelixApplication + " createapp ";
-
 		/* creation et lancement du shell jelix */
+		String cmd = " --" + jelixApplication + " createapp ";
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
 		if (!res) {
 			throwCoreException(js.getErreur());
 		}
+		monitor.worked(1);
 
 		/* Preparation a l'ouverture du fichier de propriete */
-
 		String separateur = File.separator;
 		String fichier = "application.init.php";
 		String dossier = separateur + this.currentProject.getName()
 				+ separateur + jelixApplication + separateur;
-
-		// on raffraichit le projet courant
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -166,7 +145,6 @@ public class WizardNewApp extends Wizard implements INewWizard {
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
-
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
 
@@ -180,12 +158,11 @@ public class WizardNewApp extends Wizard implements INewWizard {
 
 			monitor.setTaskName("Ouverture du fichier ...");
 			JelixOpenPage.Open(this, file);
-
 		} else {
 			throwCoreException("Echec lors de l'ouverture du fichier ");
 		}
 
-		monitor.worked(1);
+		monitor.worked(2);
 	}
 
 	/**
@@ -198,6 +175,9 @@ public class WizardNewApp extends Wizard implements INewWizard {
 		this.mSelection = selection;
 	}
 
+	/*
+	 * Modifie le fichier de propriété bdd
+	 */
 	private void valoriserDbProfil(IFile f) {
 		if (this.mysqlConf) {
 			// on instancie l'objet template ini
