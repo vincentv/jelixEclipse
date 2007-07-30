@@ -153,51 +153,5 @@ public class JelixTools {
 		return path;
 	}
 	
-	/*
-	 * Définit si la selection est une application
-	 */
-	public static boolean isJelixApplication(IStructuredSelection selection){
-		Object element = selection.getFirstElement();
-		if (element instanceof IResource){
-			IResource r = (IResource)element;
-			IContainer container = (IContainer) r;			
-			Vector v = new Vector();
-			v = getContenuJelixApplication();
-			for (int i=0; i<v.size(); i++){
-				if (!container.getFolder(new Path(v.elementAt(i).toString())).exists()){
-					return false;
-				}
-			}
-		}else{
-			return false;
-		}
-		return true;
-	}
 	
-	/*
-	 * Renvoi le nom de l'application relatif à la sélection
-	 */
-	public static String getJelixApplicationName(IStructuredSelection selection){
-		Object element = selection.getFirstElement();
-		if (element instanceof IResource){
-			IResource r = (IResource)element;
-			return r.getName();
-		}else{
-			return "";
-		}
-	}
-	
-	/*
-	 * Retourne le nom des repertoires que doit contenir
-	 * une application Jelix
-	 */
-	public static Vector getContenuJelixApplication(){
-		Vector v = new Vector(5);
-		v.add("modules");
-		v.add("plugins");
-		v.add("responses");
-		v.add("var");
-		v.add("www");
-		return v;
-	}
 }
