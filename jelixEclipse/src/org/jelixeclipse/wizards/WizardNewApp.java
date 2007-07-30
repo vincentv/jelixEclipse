@@ -181,7 +181,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	private void valoriserDbProfil(IFile f) {
 		if (this.mysqlConf) {
 			// on instancie l'objet template ini
-			org.jelixeclipse.utils.JelixIni template = new JelixIni();
+			JelixIni template = new JelixIni();
 			try {
 				FileOutputStream fout = new FileOutputStream(f.getLocation()
 						.toOSString());
