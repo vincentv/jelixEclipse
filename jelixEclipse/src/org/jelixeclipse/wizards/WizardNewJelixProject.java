@@ -321,7 +321,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		setNeedsProgressMonitor(true);
 		page1 = new WizardNewJelixProjectPage("new.jelix.project1");
 		page1.setTitle("Nouveau Projet Jelix");
-		page1.setDescription("Création d'un nouveau projet Jelix");
+		page1.setDescription("Creation d'un nouveau projet Jelix");
 		addPage(page1);
 	}
 
