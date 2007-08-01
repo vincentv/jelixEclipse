@@ -9,5 +9,25 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.ide,
  org.eclipse.ui.console,
- org.eclipse.jdt.core
+ org.eclipse.php.debug.core,
+ org.eclipse.php.ui
 Eclipse-LazyStart: true
+Export-Package: org.jelixeclipse;uses:="org.eclipse.jface.resource,org.eclipse.ui.plugin,org.osgi.framework",
+ org.jelixeclipse.perspectives;uses:="org.eclipse.ui",
+ org.jelixeclipse.preferences;uses:="org.eclipse.jface.preference,org.eclipse.ui,org.eclipse.core.runtime.preferences",
+ org.jelixeclipse.utils;
+  uses:="org.eclipse.jface.wizard,
+   org.eclipse.core.runtime,
+   org.eclipse.jface.preference,
+   org.eclipse.core.resources,
+   org.eclipse.jface.viewers",
+ org.jelixeclipse.wizards;
+  uses:="org.eclipse.jface.wizard,
+   org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.jface.viewers",
+ org.jelixeclipse.wizards.pages;
+  uses:="org.eclipse.jface.wizard,
+   org.eclipse.jface.viewers,
+   org.eclipse.ui.dialogs,
+   org.eclipse.swt.widgets"
