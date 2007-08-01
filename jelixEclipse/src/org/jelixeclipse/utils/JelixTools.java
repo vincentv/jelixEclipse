@@ -17,6 +17,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
+import org.eclipse.php.internal.debug.core.preferences.PHPexeItem;
+import org.eclipse.php.internal.debug.core.preferences.PHPexes;
 
 /**
  * @author vincent
@@ -36,8 +39,9 @@ public class JelixTools {
 		java.io.FileOutputStream destinationFile = null;
 		try {
 			URL url = new URL(urlDocument);
-			
-			File destination = new File(dirpath(path) + new java.io.File(urlDocument).getName());
+
+			File destination = new File(dirpath(path)
+					+ new java.io.File(urlDocument).getName());
 
 			destination.createNewFile();
 
@@ -65,7 +69,6 @@ public class JelixTools {
 		}
 	}
 
-	
 	/**
 	 * Retourne le projet en cours d'utilisation
 	 * 
@@ -74,10 +77,10 @@ public class JelixTools {
 	 */
 	public static IProject currentProject(IStructuredSelection selection) {
 		Object element = selection.getFirstElement();
-		
+
 		if (element instanceof IResource)
 			return ((IResource) element).getProject();
-		
+
 		if (!(element instanceof IAdaptable))
 			return null;
 		IAdaptable adaptable = (IAdaptable) element;
@@ -88,8 +91,10 @@ public class JelixTools {
 	/**
 	 * Décompresse une archive à l'emplacement passé en paramètre
 	 * 
-	 * @param archive le fichier d'archive a décompressé
-	 * @param destination le chemin du Répertoire de destination
+	 * @param archive
+	 *            le fichier d'archive a décompressé
+	 * @param destination
+	 *            le chemin du Répertoire de destination
 	 * @return la reussite de l'opération
 	 */
 	public static boolean unzip(File archive, IPath destination) {
@@ -99,7 +104,6 @@ public class JelixTools {
 			ZipFile zf = new ZipFile(archive);
 			Enumeration<? extends ZipEntry> zipEnum = zf.entries();
 			String dir = dirpath(destination);
-			
 
 			while (zipEnum.hasMoreElements()) {
 				ZipEntry item = (ZipEntry) zipEnum.nextElement();
@@ -132,14 +136,29 @@ public class JelixTools {
 		}
 		return success;
 	}
-	
-	public static String dirpath(IPath dir){
+
+	/**
+	 * Récupere le chemin de l'executable PHP configuré dans les préference de PDT
+	 * @return retourne le chemin de l'éxécutable php ou null
+	 */
+	public static String getDefaultPhpExe() {
+		PHPexes phps = new PHPexes();
+		phps.load(PHPProjectPreferences.getModelPreferences());
+		PHPexeItem phpExe = phps.getDefaultItem();
+
+		if (null == phpExe) {
+			return null;
+		} else {
+			return phpExe.getPhpEXE().getAbsolutePath();
+		}
+	}
+
+	public static String dirpath(IPath dir) {
 		String path = dir.toOSString();
 		if (!path.endsWith(File.separator)) {
 			path = path + File.separator;
 		}
 		return path;
 	}
-	
-	
+
 }
