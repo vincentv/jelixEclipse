@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+	<!--  php templates -->
+
+<template
+	name="pr"
+	description="%description.php.print"
+	id="org.eclipse.php.ui.editor.templates.php.print"
+	context="php"
+	enabled="true">print ${};
+${cursor}</template>
+
+<template
+	name="forek"
+	description="%description.php.foreachkey"
+	id="org.eclipse.php.ui.editor.templates.php.foreachkey"
+	context="php"
+	enabled="true">foreach (${dollar}${array_variable} as ${dollar}${number_variable} => ${dollar}${variable}) {
+	${cursor};
+}
+</template>
+
+<template
+	name="swi"
+	description="%description.php.switch"
+	id="org.eclipse.php.ui.editor.templates.php.switch"
+	context="php"
+	enabled="true">switch (${dollar}${variable}) {
+	case ${value}:
+	${cursor};
+	break;
+	
+	default:
+		;
+	break;
+}
+</template>
+
+<template
+	name="cls"
+	description="%description.php.class"
+	id="org.eclipse.php.ui.editor.templates.php.class"
+	context="php"
+	enabled="true">class ${class_name} {
+	function ${function_name}() {
+		${cursor};
+	}
+}
+</template>
+
+<template
+	name="while"
+	description="%description.php.while"
+	id="org.eclipse.php.ui.editor.templates.php.while"
+	context="php"
+	enabled="true">while (${condition}) {
+	${cursor};
+}
+</template>
+
+<!-- new PHP templates -->
+<template
+	name="New simple PHP file"
+	description="%description.newphp.simple"
+	id="org.eclipse.php.ui.editor.templates.newPhp.author"
+	context="newPhp"
+	enabled="true">&lt;?php
+
+?&gt;</template>
+
+<template
+	name="New PHP file - HTML frameset"
+	description="%description.newphp.html.frameset"
+	id="org.eclipse.php.ui.editor.templates.newPhp.html.frameset"
+	context="newPhp"
+	enabled="true">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=${encoding}"&gt;
+&lt;title&gt;Insert title here&lt;/title&gt;
+&lt;/head&gt;
+&lt;frameset&gt;
+    &lt;frame&gt;
+    &lt;frame&gt;
+    &lt;noframes&gt;
+    &lt;body&gt;
+    &lt;p&gt;This page uses frames. The current browser you are using does not support frames.&lt;/p&gt;
+    &lt;?php
+
+	?&gt;
+    &lt;/body&gt;
+    &lt;/noframes&gt;
+&lt;/frameset&gt;
+&lt;/html&gt;</template>
+
+</templates>
+
