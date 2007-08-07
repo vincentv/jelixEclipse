@@ -58,7 +58,7 @@ public class JelixTools {
 				destinationFile.write(buffer, 0, reads);
 			}
 		} catch (java.io.IOException ioe) {
-			System.out.println("I/O Error on Navigation.download()");
+			System.out.println(Messages.JelixTools_DownloadingErrorMsg);
 		} catch (Exception e) {
 		} finally {
 			try {
@@ -106,7 +106,7 @@ public class JelixTools {
 			String dir = dirpath(destination);
 
 			while (zipEnum.hasMoreElements()) {
-				ZipEntry item = (ZipEntry) zipEnum.nextElement();
+				ZipEntry item = zipEnum.nextElement();
 
 				if (item.isDirectory()) // Directory
 				{
@@ -138,7 +138,9 @@ public class JelixTools {
 	}
 
 	/**
-	 * Récupere le chemin de l'executable PHP configuré dans les préference de PDT
+	 * Récupere le chemin de l'executable PHP configuré dans les préference de
+	 * PDT
+	 * 
 	 * @return retourne le chemin de l'éxécutable php ou null
 	 */
 	public static String getDefaultPhpExe() {

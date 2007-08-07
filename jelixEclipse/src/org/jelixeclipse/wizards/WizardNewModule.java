@@ -64,6 +64,7 @@ public class WizardNewModule extends Wizard implements INewWizard {
 	 * Adding the page to the wizard.
 	 */
 
+	@Override
 	public void addPages() {
 		page = new WizardNewModulePage(mSelection);
 		addPage(page);
@@ -73,6 +74,7 @@ public class WizardNewModule extends Wizard implements INewWizard {
 	 * This method is called when 'Finish' button is pressed in the wizard. We
 	 * will create an operation and run it using wizard as execution context.
 	 */
+	@Override
 	public boolean performFinish() {
 		final String jelixModule = page.getjelixTextModule();
 		final Boolean jelixOpenFile = page.getJelixOpenFile();
@@ -81,9 +83,9 @@ public class WizardNewModule extends Wizard implements INewWizard {
 				.currentProject((IStructuredSelection) this.mSelection);
 
 		/* Verification saisie utilisateur */
-		if (jelixModule.equals("")) {
-			MessageDialog.openError(getShell(), "Erreur",
-					"Veuillez saisir un module");
+		if (jelixModule.equals("")) { //$NON-NLS-1$
+			MessageDialog.openError(getShell(), Messages.WizardNewModule_Error,
+					Messages.WizardNewModule_ModuleNameErrorMsg);
 			return false;
 		}
 
@@ -105,8 +107,8 @@ public class WizardNewModule extends Wizard implements INewWizard {
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Erreur", realException
-					.getMessage());
+			MessageDialog.openError(getShell(), Messages.WizardNewModule_Error,
+					realException.getMessage());
 			return false;
 		}
 		return true;
@@ -121,12 +123,12 @@ public class WizardNewModule extends Wizard implements INewWizard {
 	private void doFinish(String jelixAppli, String jelixModule,
 			Boolean jelixOpenFile, IProgressMonitor monitor)
 			throws CoreException {
-		monitor.beginTask("Creation de " + jelixModule, 2);
+		monitor.beginTask(Messages.WizardNewModule_CreationOf + jelixModule, 2);
 
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 		/* on lance la generation du script */
-		String cmd = " --" + jelixAppli + " createmodule " + jelixModule;
+		String cmd = " --" + jelixAppli + " createmodule " + jelixModule; //$NON-NLS-1$ //$NON-NLS-2$
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
@@ -139,31 +141,31 @@ public class WizardNewModule extends Wizard implements INewWizard {
 		if (jelixOpenFile) {
 			String separateur = File.separator;
 			String dossier = separateur + this.currentProject.getName()
-					+ separateur + jelixAppli + separateur + "modules"
-					+ separateur + jelixModule + separateur + "controllers";
+					+ separateur + jelixAppli + separateur + "modules" //$NON-NLS-1$
+					+ separateur + jelixModule + separateur + "controllers"; //$NON-NLS-1$
 			;
-			String fichier = "default.classic.php";
+			String fichier = "default.classic.php"; //$NON-NLS-1$
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
-				throwCoreException("Echec lors de l'ouverture du fichier ");
+				throwCoreException(Messages.WizardNewModule_OpeningFileThrowMsg);
 			}
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
 
 			if (file.exists()) {
-				monitor.setTaskName("Ouverture du fichier ...");
+				monitor.setTaskName(Messages.WizardNewModule_OpeningFile);
 				JelixOpenPage.Open(this, file);
 			} else {
-				throwCoreException("Echec lors de l'ouverture du fichier ");
+				throwCoreException(Messages.WizardNewModule_OpeningFileThrowMsg);
 			}
 		}
 		monitor.worked(2);
 	}
 
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK,
+		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK, //$NON-NLS-1$
 				message, null);
 		throw new CoreException(status);
 	}

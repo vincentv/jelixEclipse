@@ -43,9 +43,9 @@ public class WizardNewAppPage extends WizardPage {
 	 * @param pageName
 	 */
 	public WizardNewAppPage(ISelection selection) {
-		super("wizardPage");
-		setTitle("Nouvelle Application");
-		setDescription("Cet assistant va generer pour vous le squelette d'une application JELIX");
+		super("wizardPage"); //$NON-NLS-1$
+		setTitle(Messages.WizardNewAppPage_Title);
+		setDescription(Messages.WizardNewAppPage_Description);
 	}
 
 	/**
@@ -60,17 +60,18 @@ public class WizardNewAppPage extends WizardPage {
 
 		/* Nom de l'application */
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Nom de l'application :");
+		label.setText(Messages.WizardNewAppPage_AppNameLabel);
 		jelixTextApplication = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextApplication.setLayoutData(gd);
 
 		// checkbox panneau mysql
 		label = new Label(container, SWT.NULL);
-		label.setText("&Connexion MySQL :");
+		label.setText(Messages.WizardNewAppPage_MySQLConnectionLabel);
 		jelixOpenConfigMysql = new Button(container, SWT.CHECK);
 		jelixOpenConfigMysql.setSelection(false);
 		jelixOpenConfigMysql.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				configMysql();
 			}
@@ -78,59 +79,61 @@ public class WizardNewAppPage extends WizardPage {
 
 		// espace
 		label = new Label(container, SWT.NULL);
-		label.setText("");
+		label.setText(""); //$NON-NLS-1$
 		label = new Label(container, SWT.NULL);
-		label.setText("");
+		label.setText(""); //$NON-NLS-1$
 
 		// groupe mysql
 		label = new Label(container, SWT.NULL);
-		label.setText("");
+		label.setText(""); //$NON-NLS-1$
 		jelixPanneauMysql = new Group(container, SWT.NONE);
 		jelixPanneauMysql.setBounds(new Rectangle(8, 10, 1000, 42));
 		GridLayout lg = new GridLayout();
 		jelixPanneauMysql.setLayout(lg);
 		lg.numColumns = 2;
 		lg.verticalSpacing = 9;
-		jelixPanneauMysql.setText(" Parametres MySQL ");
+		jelixPanneauMysql
+				.setText(Messages.WizardNewAppPage_MySQLParametersLavel);
 
 		// nom de la connexion
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Nom de la connexion :");
+		label.setText(Messages.WizardNewAppPage_ConnectionNameLabel);
 		jelixTextMysqlNomConn = new Text(jelixPanneauMysql, SWT.BORDER
 				| SWT.SINGLE);
 		GridData ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlNomConn.setLayoutData(ggd);
-		jelixTextMysqlNomConn.setText("myappli");
+		jelixTextMysqlNomConn
+				.setText(Messages.WizardNewAppPage_DefaultConnectionName);
 
 		// hote
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Hote :");
+		label.setText(Messages.WizardNewAppPage_HostLabel);
 		jelixTextMysqlHost = new Text(jelixPanneauMysql, SWT.BORDER
 				| SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlHost.setLayoutData(ggd);
-		jelixTextMysqlHost.setText("localhost");
+		jelixTextMysqlHost.setText(Messages.WizardNewAppPage_DefaultMySQLHost);
 
 		// port
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Port :");
+		label.setText(Messages.WizardNewAppPage_PortLabel);
 		jelixTextMysqlPort = new Text(jelixPanneauMysql, SWT.BORDER
 				| SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlPort.setLayoutData(ggd);
-		jelixTextMysqlPort.setText("3306");
+		jelixTextMysqlPort.setText(Messages.WizardNewAppPage_DefaultMySQLPort);
 
 		// nom de la base
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Base de donnees :");
+		label.setText(Messages.WizardNewAppPage_DatabaseNameLabel);
 		jelixTextMysqlBd = new Text(jelixPanneauMysql, SWT.BORDER | SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlBd.setLayoutData(ggd);
-		jelixTextMysqlBd.setText("jelix");
+		jelixTextMysqlBd.setText(Messages.WizardNewAppPage_DefaultDBName);
 
 		// user
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Utilisateur :");
+		label.setText(Messages.WizardNewAppPage_UsernameLabel);
 		jelixTextMysqlUser = new Text(jelixPanneauMysql, SWT.BORDER
 				| SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
@@ -138,14 +141,14 @@ public class WizardNewAppPage extends WizardPage {
 
 		// password
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Mot de passe :");
+		label.setText(Messages.WizardNewAppPage_PasswordLabel);
 		jelixTextMysqlPwd = new Text(jelixPanneauMysql, SWT.BORDER | SWT.SINGLE);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);
 		jelixTextMysqlPwd.setLayoutData(ggd);
 
 		// persistence
 		label = new Label(jelixPanneauMysql, SWT.NONE);
-		label.setText("Connexion persistante :");
+		label.setText(Messages.WizardNewAppPage_PersistantConnectionLabel);
 		jelixCheckMysqlPersistant = new Button(jelixPanneauMysql, SWT.CHECK);
 		jelixCheckMysqlPersistant.setSelection(true);
 		ggd = new GridData(GridData.FILL_HORIZONTAL);

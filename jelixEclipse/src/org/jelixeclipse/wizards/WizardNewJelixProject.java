@@ -42,9 +42,17 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 
 	private WizardNewJelixProjectPage page1;
 	private IProject newProject;
-	private String jelixVersion = "jelix-1.0b2.1-dev";
+	private String jelixVersion = "jelix-1.0b2.1-dev"; //$NON-NLS-1$
 	private IWorkbench fWorkbench;
 	private IConfigurationElement fConfigElement;
+
+	/**
+	 * 
+	 */
+	public WizardNewJelixProject() {
+		super();
+		setNeedsProgressMonitor(true);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -86,10 +94,10 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("", 5);
+				monitor.beginTask("", 5); //$NON-NLS-1$
 				IPreferenceStore store = Activator.getDefault()
 						.getPreferenceStore();
-				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")) {
+				if (PreferenceConstants.P_NAME_JELIX_ZIP.equals("")) { //$NON-NLS-1$
 					// on affecte par default la valeur actuelle
 					store.setValue(PreferenceConstants.P_NAME_JELIX_ZIP,
 							jelixVersion);
@@ -118,7 +126,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	private boolean createNewProject(IProgressMonitor monitor) {
 		boolean success = true;
 
-		monitor.setTaskName("Création du projet ...");
+		monitor.setTaskName(Messages.WizardNewJelixProject_ProjectCreation);
 		// On crée la description du projet
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		newProject = page1.getProjectHandle();
@@ -134,7 +142,7 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		}
 
 		// On ajoute la nature Jelix et PHP au projet
-		String[] natureIds = { "jelix", "org.eclipse.php.core.PHPNature" };
+		String[] natureIds = { "jelix", "org.eclipse.php.core.PHPNature" }; //$NON-NLS-1$ //$NON-NLS-2$
 		description.setNatureIds(natureIds);
 
 		try {
@@ -190,33 +198,36 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		boolean success = true;
 		IPath destination;
 
-		monitor.setTaskName("Telechargement des librairies Jelix ...");
+		monitor
+				.setTaskName(Messages.WizardNewJelixProject_DownloadingLibraryTaskMsg);
 		if (this.page1.getJelixImportSrcDownloadBerlios1()) {
-			source = "http://download.berlios.de/jelix/" + jelixVersion
-					+ ".zip";
+			source = "http://download.berlios.de/jelix/" + jelixVersion //$NON-NLS-1$
+					+ ".zip"; //$NON-NLS-1$
 		} else {
-			source = "http://download2.berlios.de/jelix/" + jelixVersion
-					+ ".zip";
+			source = "http://download2.berlios.de/jelix/" + jelixVersion //$NON-NLS-1$
+					+ ".zip"; //$NON-NLS-1$
 		}
 		destination = newProject.getLocation();
 		// destination = jTemp.getLocation();
 		JelixTools.download(source, destination);
 		String JelixArchive = JelixTools.dirpath(destination) + jelixVersion
-				+ ".zip";
+				+ ".zip"; //$NON-NLS-1$
 		monitor.worked(2);
 
-		monitor.setTaskName("Décompression des librairies Jelix ...");
+		monitor
+				.setTaskName(Messages.WizardNewJelixProject_LibraryDecompressionTaskMsg);
 		success = JelixTools.unzip(new File(JelixArchive), destination);
 		monitor.worked(3);
 
-		monitor.setTaskName("Déplacement des librairies Jelix ...");
+		monitor
+				.setTaskName(Messages.WizardNewJelixProject_MovingOfLibraryTaskMsg);
 		success = this.copyJelixLib(jelixVersion, monitor);
 		monitor.worked(4);
 
-		monitor.setTaskName("Néttoyage ...");
+		monitor.setTaskName(Messages.WizardNewJelixProject_CleanTaskMsg);
 		File tmpArchiveJelix = new File(JelixTools.dirpath(newProject
 				.getLocation())
-				+ jelixVersion + ".zip");
+				+ jelixVersion + ".zip"); //$NON-NLS-1$
 		tmpArchiveJelix.delete();
 
 		IFolder tmpJelix = newProject.getFolder(jelixVersion);
@@ -245,7 +256,8 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 		// IFile destFile = newProject.getFile(sourceFile.getName());
 		boolean success = true;
 
-		monitor.setTaskName("Décompression des librairies Jelix ...");
+		monitor
+				.setTaskName(Messages.WizardNewJelixProject_LibraryDecompressionTaskMsg);
 		success = JelixTools.unzip(source.toFile(), newProject.getLocation());
 
 		try {
@@ -253,13 +265,14 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 			IResource[] tmp = newProject.members(IResource.FOLDER);
 			jelixVersion = tmp[tmp.length - 1].getName();
 
-			monitor.setTaskName("Déplacement des librairies Jelix ...");
+			monitor
+					.setTaskName(Messages.WizardNewJelixProject_MovingOfLibraryTaskMsg);
 			success = this.copyJelixLib(jelixVersion, monitor);
 
-			monitor.setTaskName("Néttoyage ...");
+			monitor.setTaskName(Messages.WizardNewJelixProject_CleanTaskMsg);
 			IFolder tmpJelix = newProject.getFolder(jelixVersion);
 			tmpJelix.delete(true, monitor);
-			
+
 		} catch (CoreException e) {
 			success = false;
 			e.printStackTrace();
@@ -315,13 +328,10 @@ public class WizardNewJelixProject extends Wizard implements INewWizard {
 	/**
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		super.addPages();
-
-		setNeedsProgressMonitor(true);
-		page1 = new WizardNewJelixProjectPage("new.jelix.project1");
-		page1.setTitle("Nouveau Projet Jelix");
-		page1.setDescription("Creation d'un nouveau projet Jelix");
+		page1 = new WizardNewJelixProjectPage("new.jelix.project1"); //$NON-NLS-1$
 		addPage(page1);
 	}
 

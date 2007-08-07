@@ -54,11 +54,13 @@ public class WizardNewDao extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
+	@Override
 	public void addPages() {
 		page = new WizardNewDaoPage(mSelection);
 		addPage(page);
 	}
 
+	@Override
 	public boolean performFinish() {
 
 		final String jelixModule = page.getJelixTextModule();
@@ -70,19 +72,19 @@ public class WizardNewDao extends Wizard implements INewWizard {
 		final String jelixAppli = page.getJelixTextAppli();
 
 		/* Verification saisie utilisateur */
-		if (jelixModule.equals("")) {
-			MessageDialog.openError(getShell(), "Erreur",
-					"Veuillez s�lectionner un module");
+		if (jelixModule.equals("")) { //$NON-NLS-1$
+			MessageDialog.openError(getShell(), Messages.WizardNewDao_Error,
+					Messages.WizardNewDao_ModuleSelectionErrorMsg);
 			return false;
 		}
-		if (jelixDao.equals("")) {
-			MessageDialog.openError(getShell(), "Erreur",
-					"Veuillez saisir un nom de DAO");
+		if (jelixDao.equals("")) { //$NON-NLS-1$
+			MessageDialog.openError(getShell(), Messages.WizardNewDao_Error,
+					Messages.WizardNewDao_DAONameErrorMsg);
 			return false;
 		}
-		if (jelixTable.equals("")) {
-			MessageDialog.openError(getShell(), "Erreur",
-					"Veuillez saisir le nom d'une table");
+		if (jelixTable.equals("")) { //$NON-NLS-1$
+			MessageDialog.openError(getShell(), Messages.WizardNewDao_Error,
+					Messages.WizardNewDao_TableNameErrorMsg);
 			return false;
 		}
 
@@ -106,8 +108,8 @@ public class WizardNewDao extends Wizard implements INewWizard {
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Erreur", realException
-					.getMessage());
+			MessageDialog.openError(getShell(), Messages.WizardNewDao_Error,
+					realException.getMessage());
 			return false;
 		}
 		return true;
@@ -116,13 +118,13 @@ public class WizardNewDao extends Wizard implements INewWizard {
 	private void doFinish(String jelixAppli, String jelixModule,
 			String jelixDao, String jelixTable, Boolean jelixOpenFile,
 			IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Creation de " + jelixDao, 2);
+		monitor.beginTask(Messages.WizardNewDao_CreationOfMsg + jelixDao, 2);
 
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 		/* on lance la generation du script */
-		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " "
-				+ jelixDao + " " + jelixTable;
+		String cmd = " --" + jelixAppli + " createdao " + jelixModule + " " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ jelixDao + " " + jelixTable; //$NON-NLS-1$
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
@@ -135,26 +137,26 @@ public class WizardNewDao extends Wizard implements INewWizard {
 		if (jelixOpenFile) {
 			String separateur = File.separator;
 			String dossier = separateur + this.currentProject.getName()
-					+ separateur + jelixAppli + separateur + "modules"
-					+ separateur + jelixModule + separateur + "daos";
+					+ separateur + jelixAppli + separateur + "modules" //$NON-NLS-1$
+					+ separateur + jelixModule + separateur + "daos"; //$NON-NLS-1$
 			;
-			String fichier = jelixDao + ".dao.xml";
+			String fichier = jelixDao + ".dao.xml"; //$NON-NLS-1$
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			this.currentProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			IResource resource = root.findMember(new Path(dossier));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
-				throwCoreException("Echec lors de l'ouverture du fichier "
+				throwCoreException(Messages.WizardNewDao_OpeningFileThrowMsg
 						+ fichier);
 			}
 			IContainer container = (IContainer) resource;
 			final IFile file = container.getFile(new Path(fichier));
 
 			if (file.exists()) {
-				monitor.setTaskName("Ouverture du fichier...");
+				monitor.setTaskName(Messages.WizardNewDao_OpeningFile);
 				JelixOpenPage.Open(this, file);
 
 			} else {
-				throwCoreException("Echec lors de l'ouverture du fichier "
+				throwCoreException(Messages.WizardNewDao_OpeningFileThrowMsg
 						+ fichier);
 			}
 		}
@@ -162,7 +164,7 @@ public class WizardNewDao extends Wizard implements INewWizard {
 	}
 
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK,
+		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK, //$NON-NLS-1$
 				message, null);
 		throw new CoreException(status);
 	}

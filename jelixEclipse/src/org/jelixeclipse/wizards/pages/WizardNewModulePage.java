@@ -49,13 +49,13 @@ public class WizardNewModulePage extends WizardPage {
 	 * 
 	 */
 	public WizardNewModulePage(ISelection selection) {
-		super("wizardPage");
-		setTitle("Nouveau Module");
-		setDescription("Cet assistant va generer le squelette d'un module JELIX.");
+		super("wizardPage"); //$NON-NLS-1$
+		setTitle(Messages.WizardNewModulePage_Title);
+		setDescription(Messages.WizardNewModulePage_Description);
 		this.selection = selection;
 		this.currentProject = JelixTools
 				.currentProject((IStructuredSelection) this.selection);
-		this.appliJelix = "";
+		this.appliJelix = ""; //$NON-NLS-1$
 
 		/* La selection est une appli ? */
 		if (JelixToolsSelection
@@ -76,24 +76,24 @@ public class WizardNewModulePage extends WizardPage {
 		GridLayout layout2 = new GridLayout();
 		layout2.numColumns = 2;
 		layout2.verticalSpacing = 9;
-		
+
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(layout);
 
 		Composite jelixAppliGroup = new Composite(container, SWT.NULL);
 		jelixAppliGroup.setLayout(layout2);
 		jelixAppliGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Label label;
-		
+
 		/*
 		 * listage des applis présente ds le projet si l'application n'a pas pu
 		 * être déterminée
 		 */
-		
+
 		label = new Label(jelixAppliGroup, SWT.NULL);
-		label.setText("&Nom de l'application :");
-		if (this.appliJelix.equals("")) {
+		label.setText(Messages.WizardNewModulePage_AppNameLabel);
+		if (this.appliJelix.equals("")) { //$NON-NLS-1$
 			List ll = new List();
 			File f = new File(this.currentProject.getLocation().toOSString());
 			ll = this.listerRepertoire(f);
@@ -110,7 +110,7 @@ public class WizardNewModulePage extends WizardPage {
 
 		/* Nom du module */
 		label = new Label(jelixAppliGroup, SWT.NULL);
-		label.setText("&Nom du module :");
+		label.setText(Messages.WizardNewModulePage_ModuleNameLabel);
 		jelixTextModule = new Text(jelixAppliGroup, SWT.BORDER | SWT.SINGLE);
 		jelixTextModule.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -118,12 +118,13 @@ public class WizardNewModulePage extends WizardPage {
 		Group jelixOptionGroup = new Group(container, SWT.NONE);
 		jelixOptionGroup.setLayout(new GridLayout());
 		jelixOptionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		jelixOptionGroup.setText("Option : ");
+		jelixOptionGroup.setText(Messages.WizardNewModulePage_OptionLabel);
 
 		jelixOpenFile = new Button(jelixOptionGroup, SWT.CHECK);
 		jelixOpenFile.setSelection(true);
 		jelixOpenFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		jelixOpenFile.setText("&Ouvrir le fichier Controller");
+		jelixOpenFile
+				.setText(Messages.WizardNewModulePage_OpeningControllerFileLabel);
 
 		setControl(container);
 	}
@@ -137,7 +138,7 @@ public class WizardNewModulePage extends WizardPage {
 	}
 
 	public String getJelixTextAppli() {
-		if (this.appliJelix.equals("")) {
+		if (this.appliJelix.equals("")) { //$NON-NLS-1$
 			return jelixComboAppli.getText();
 		} else {
 			return this.appliJelix;
@@ -155,8 +156,8 @@ public class WizardNewModulePage extends WizardPage {
 		listefichiers = repertoire.listFiles();
 		for (i = 0; i < listefichiers.length; i++) {
 			if (listefichiers[i].isDirectory() == true) {
-				if (!listefichiers[i].getName().equals("lib")
-						&& !listefichiers[i].getName().equals("temp")) {
+				if (!listefichiers[i].getName().equals("lib") //$NON-NLS-1$
+						&& !listefichiers[i].getName().equals("temp")) { //$NON-NLS-1$
 					listeAppli.add(listefichiers[i].getName());
 				}
 			}

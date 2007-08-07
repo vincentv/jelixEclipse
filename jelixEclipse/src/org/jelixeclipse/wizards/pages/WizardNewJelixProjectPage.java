@@ -34,11 +34,14 @@ public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 
 	public WizardNewJelixProjectPage(String pageName) {
 		super(pageName);
+		setTitle(Messages.WizardNewJelixProjectPage_Title);
+		setDescription(Messages.WizardNewJelixProjectPage_Description);
 	}
 
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
@@ -59,26 +62,30 @@ public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 
 		// Importation librairie jelix
 		jelixImportationButton = new Button(parent, SWT.CHECK);
-		jelixImportationButton.setText("&Librairies JELIX : ");
+		jelixImportationButton
+				.setText(Messages.WizardNewJelixProjectPage_JelixLibraryCheckText);
 		jelixImportationButton.setSelection(true);
 		jelixImportationButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importSrc();
 			}
 		});
-		
+
 		jelixImportGroup = new Composite(parent, SWT.NULL);
-		 GridLayout layout2 = new GridLayout();
-		 jelixImportGroup.setLayout(layout2);
-		 layout2.numColumns = 1;
-		 layout2.verticalSpacing = 9;    
-		 jelixImportGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout2 = new GridLayout();
+		jelixImportGroup.setLayout(layout2);
+		layout2.numColumns = 1;
+		layout2.verticalSpacing = 9;
+		jelixImportGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Telechargement de Jelix
 		jelixDownloadButton = new Button(jelixImportGroup, SWT.RADIO);
-		jelixDownloadButton.setText("&Télechargement :");
+		jelixDownloadButton
+				.setText(Messages.WizardNewJelixProjectPage_DownloadingRadioText);
 		jelixDownloadButton.setSelection(true);
 		jelixDownloadButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importSrcMoyen();
 			}
@@ -86,22 +93,27 @@ public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 
 		jelixDownloadGroup = new Group(jelixImportGroup, SWT.NONE);
 		jelixDownloadGroup.setLayout(new GridLayout());
-		jelixDownloadGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jelixDownloadGroup
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Création des check box pour le téléchargement
 		jelixDownloadSrcBerlios1 = new Button(jelixDownloadGroup, SWT.RADIO);
-		jelixDownloadSrcBerlios1.setText("&Berlios 1");
+		jelixDownloadSrcBerlios1
+				.setText(Messages.WizardNewJelixProjectPage_Berlios1RadioText);
 		jelixDownloadSrcBerlios1.setSelection(true);
 		jelixDownloadSrcBerlios1.setSelection(false);
 
 		jelixDownloadSrcBerlios2 = new Button(jelixDownloadGroup, SWT.RADIO);
-		jelixDownloadSrcBerlios2.setText("&Berlios 2");
+		jelixDownloadSrcBerlios2
+				.setText(Messages.WizardNewJelixProjectPage_Berlios2RadioText);
 
 		// Récupération sur le disque local
 		// Telechargement de Jelix
 		jelixLocalButton = new Button(jelixImportGroup, SWT.RADIO);
-		jelixLocalButton.setText("&Disque Local :");
+		jelixLocalButton
+				.setText(Messages.WizardNewJelixProjectPage_LocalDiskRadioText);
 		jelixLocalButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importSrcMoyen();
 			}
@@ -112,7 +124,8 @@ public class WizardNewJelixProjectPage extends WizardNewProjectCreationPage {
 		jelixLocalGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Emplacement sur le disque local
-		jelixLibrairiesLocal = new FileFieldEditor("cheminJelixSrc", "",
+		jelixLibrairiesLocal = new FileFieldEditor(
+				Messages.WizardNewJelixProjectPage_JelixPathExample, "",
 				jelixLocalGroup);
 
 		importSrc();

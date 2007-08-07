@@ -44,11 +44,11 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	private WizardNewAppPage page;
 	private ISelection mSelection;
 	private Boolean mysqlConf = false;
-	private String mysqlNomConn = "";
-	private String mysqlHost = "";
-	private String mysqlDb = "";
-	private String mysqlUser = "";
-	private String mysqlPwd = "";
+	private String mysqlNomConn = ""; //$NON-NLS-1$
+	private String mysqlHost = ""; //$NON-NLS-1$
+	private String mysqlDb = ""; //$NON-NLS-1$
+	private String mysqlUser = ""; //$NON-NLS-1$
+	private String mysqlPwd = ""; //$NON-NLS-1$
 	private Boolean mysqlPersistence = false;
 	private IProject currentProject;
 
@@ -63,6 +63,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
+	@Override
 	public void addPages() {
 		page = new WizardNewAppPage(mSelection);
 		addPage(page);
@@ -72,6 +73,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	 * This method is called when 'Finish' button is pressed in the wizard. We
 	 * will create an operation and run it using wizard as execution context.
 	 */
+	@Override
 	public boolean performFinish() {
 
 		final String jelixApplication = page.getJelixTextApplication();
@@ -86,9 +88,9 @@ public class WizardNewApp extends Wizard implements INewWizard {
 				.currentProject((IStructuredSelection) this.mSelection);
 
 		/* Verification saisie utilisateur */
-		if (jelixApplication.equals("")) {
-			MessageDialog.openError(getShell(), "Erreur",
-					"Veuillez saisir le nom d'un projet");
+		if (jelixApplication.equals("")) { //$NON-NLS-1$
+			MessageDialog.openError(getShell(), Messages.WizardNewApp_Error,
+					Messages.WizardNewApp_ProjectNameErrorMsg);
 			return false;
 		}
 
@@ -110,8 +112,8 @@ public class WizardNewApp extends Wizard implements INewWizard {
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Erreur", realException
-					.getMessage());
+			MessageDialog.openError(getShell(), Messages.WizardNewApp_Error,
+					realException.getMessage());
 			return false;
 		}
 		return true;
@@ -119,12 +121,13 @@ public class WizardNewApp extends Wizard implements INewWizard {
 
 	private void doFinish(String jelixApplication, IProgressMonitor monitor)
 			throws CoreException {
-		monitor.beginTask("Creation du projet " + jelixApplication, 2);
+		monitor.beginTask(Messages.WizardNewApp_ProjectCreationTaskMsg
+				+ jelixApplication, 2);
 
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
 		/* creation et lancement du shell jelix */
-		String cmd = " --" + jelixApplication + " createapp ";
+		String cmd = " --" + jelixApplication + " createapp "; //$NON-NLS-1$ //$NON-NLS-2$
 		org.jelixeclipse.utils.JelixShell js = new JelixShell(
 				this.currentProject, cmd, store);
 		Boolean res = js.play();
@@ -135,7 +138,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 
 		/* Preparation a l'ouverture du fichier de propriete */
 		String separateur = File.separator;
-		String fichier = "application.init.php";
+		String fichier = "application.init.php"; //$NON-NLS-1$
 		String dossier = separateur + this.currentProject.getName()
 				+ separateur + jelixApplication + separateur;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -143,23 +146,23 @@ public class WizardNewApp extends Wizard implements INewWizard {
 
 		IResource resource = root.findMember(new Path(dossier));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Echec lors de l'ouverture du fichier ");
+			throwCoreException(Messages.WizardNewApp_OpeningFileThrowMsg);
 		}
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fichier));
 
 		if (file.exists()) {
 			/* on valorise le fichier bdd */
-			final IFile fileDb = container.getFile(new Path("var" + separateur
-					+ "config" + separateur + "dbprofils.ini.php"));
+			final IFile fileDb = container.getFile(new Path("var" + separateur //$NON-NLS-1$
+					+ "config" + separateur + "dbprofils.ini.php")); //$NON-NLS-1$ //$NON-NLS-2$
 			if (fileDb.exists()) {
 				this.valoriserDbProfil(fileDb);
 			}
 
-			monitor.setTaskName("Ouverture du fichier ...");
+			monitor.setTaskName(Messages.WizardNewApp_OpeningFileTaskMsg);
 			JelixOpenPage.Open(this, file);
 		} else {
-			throwCoreException("Echec lors de l'ouverture du fichier ");
+			throwCoreException(Messages.WizardNewApp_OpeningFileThrowMsg);
 		}
 
 		monitor.worked(2);
@@ -186,7 +189,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 				FileOutputStream fout = new FileOutputStream(f.getLocation()
 						.toOSString());
 
-				String contenu = "";
+				String contenu = ""; //$NON-NLS-1$
 				contenu = template.getEntete(); // entete
 				contenu += template.getCommentaire(); // commentaire
 				contenu += template.getDefinition(this.mysqlNomConn); // definition
@@ -207,7 +210,7 @@ public class WizardNewApp extends Wizard implements INewWizard {
 	}
 
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK,
+		IStatus status = new Status(IStatus.ERROR, "jelixEclipse", IStatus.OK, //$NON-NLS-1$
 				message, null);
 		throw new CoreException(status);
 	}
