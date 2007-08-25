@@ -1,6 +1,6 @@
 JbManuel necessite : 
 - ruby : http://www.ruby-lang.org/fr/
-	installateur pur windows : http://rubyforge.org/frs/download.php/12751/ruby185-21.exe
+	installateur pour windows : http://rubyforge.org/projects/rubyinstaller/
 	
 - mechanize : http://mechanize.rubyforge.org/mechanize/
 	pour l'installer avec gem : gem install -ry mechanize
