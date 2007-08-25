@@ -75,8 +75,7 @@ public class JelixShell {
 	 */
 	public boolean play() {
 		/* on recupere le chemin de php */
-		String cheminPhp = this.store
-				.getString(PreferenceConstants.P_PATH_JELIX_PHP);
+		String cheminPhp = JelixTools.getDefaultPhpExe();
 		cheminPhp = this.verifFormatChemin(cheminPhp);
 
 		/* on recupere le chemin du fichier jelix.php */
