@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Documentation Fragment
+Bundle-SymbolicName: org.jelix.jelipse.documentation;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: Jelipse project
+Fragment-Host: jelixEclipse;bundle-version="0.0.4"
+Require-Bundle: org.eclipse.help

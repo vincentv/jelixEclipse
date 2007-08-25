@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:datetime - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Classe jDateTime</h1>
+<div class="level1">
+
+<p>
+ jDateTime est une classe encapsulant une date, permettant de la convertir dans divers formats, mais aussi de faire des calculs de dates.
+</p>
+
+<p>
+Pour créer un objet jDateTime, on peut 
+</p>
+<ul>
+<li class="level1"><div class="li"> soit passer les valeurs de la date par le constructeur : l&rsquo;année, le mois, le jour, l&rsquo;heure, les minutes et les secondes. Toutes ces valeurs sont facultatives et doivent être des entiers.</div>
+</li>
+<li class="level1"><div class="li"> soit l&rsquo;instancier sans paramètre et utiliser la méthode setFromString pour l&rsquo;initialiser à partir d&rsquo;une chaîne contenant une date et/ou une heure.</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Convertion à partir d'une chaîne</h2>
+<div class="level2">
+
+<p>
+ La méthode setFromString prend en argument la chaîne en question et un indicateur de format. Ces indicateurs sont des valeurs numériques qui sont récupérables via des constantes de classe.
+</p>
+
+<p>
+jDateTime reconnait les formats suivants : 
+</p>
+<table class="inline">
+	<tr>
+		<th class="leftalign"> constantes de classe   </th><th> format </th>
+	</tr>
+	<tr>
+		<td> jDateTime::LANG_DFORMAT </td><td> date au format dans la langue actuelle de l&rsquo;application (en fr, ce sera jj/mm/aaaa) </td>
+	</tr>
+	<tr>
+		<td> jDateTime::LANG_DTFORMAT </td><td> date et heure au format dans la langue actuelle de l&rsquo;application </td>
+	</tr>
+	<tr>
+		<td> jDateTime::LANG_TFORMAT </td><td> heure au format dans la langue actuelle de l&rsquo;application </td>
+	</tr>
+	<tr>
+		<td> jDateTime::BD_DFORMAT </td><td> date au format base de données classique : &ldquo;AAAA-MM-JJ&rdquo;</td>
+	</tr>
+	<tr>
+		<td> jDateTime::BD_DTFORMAT </td><td> date et heure au format base de données classique : &ldquo;AAAA-MM-JJ HH:mm:SS&rdquo;</td>
+	</tr>
+	<tr>
+		<td> jDateTime::BD_TFORMAT </td><td> heure au format base de données classique : &ldquo;HH:mm:SS&rdquo;</td>
+	</tr>
+	<tr>
+		<td> jDateTime::ISO8601_FORMAT </td><td> format ISO8601 </td>
+	</tr>
+	<tr>
+		<td> jDateTime::TIMESTAMP_FORMAT </td><td> simple entier, indiquant le nombre de secondes depuis le 1/1/1970 </td>
+	</tr>
+</table>
+<br />
+
+<p>
+ Pour les formats LANG_*, jDateTime se base sur ce qui est indiqué dans le fichier de locales &ldquo;format&rdquo; situé dans le module jelix, et correspondant à la langue courante configurée dans Jelix.
+</p>
+
+<p>
+Exemple :
+</p>
+<pre class="code php">  <span class="re0">$dt</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$dt</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-10"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw3">echo</span> <span class="st0">"la date est "</span>, <span class="re0">$dt</span>-&gt;<span class="me1">year</span>, <span class="st0">","</span>, <span class="re0">$dt</span>-&gt;<span class="me1">month</span>, <span class="st0">","</span>, <span class="re0">$dt</span>-&gt;<span class="me1">day</span>, <span class="st0">","</span>, <span class="re0">$dt</span>-&gt;<span class="me1">hour</span>, <span class="st0">","</span>, <span class="re0">$dt</span>-&gt;<span class="me1">minute</span>, <span class="st0">","</span>, <span class="re0">$dt</span>-&gt;<span class="me1">second</span>;
+&nbsp;</pre>
+<p>
+Vous aurez remarqué les propriétés qui permettent de connaître chaque élément de la date.
+</p>
+
+<p>
+On peut aussi, plutôt que spécifier à chaque fois le format, définir un format par défaut via la propriété defaultFormat.
+</p>
+<pre class="code php">  <span class="re0">$dt</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">defaultFormat</span> = jDateTime::<span class="me2">BD_DFORMAT</span>;
+&nbsp;
+  <span class="re0">$dt</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-10"</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>Convertion vers une chaîne</h2>
+<div class="level2">
+
+<p>
+ Pour convertir une date en chaîne, il y a la méthode toString qui accepte en paramètre facultatif l&rsquo;identifiant de format dans lequel on veut l&rsquo;avoir.
+</p>
+<pre class="code php">  <span class="re0">$dt</span>-&gt;<span class="me1">toString</span><span class="br0">&#40;</span>jDateTime::<span class="me2">LANG_DFORMAT</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>Calcul de dates</h2>
+<div class="level2">
+
+<p>
+ Avec les méthodes sub() et  add(), il est possible d&rsquo;ajouter ou d&rsquo;enlever des durées à une date. Ces durées sont à indiquer via un objet jDateTime.
+</p>
+<pre class="code php">  <span class="re0">$dt</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-10"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="co1">// on veut retirer deux jours</span>
+  <span class="re0">$date2</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">2</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">sub</span><span class="br0">&#40;</span><span class="re0">$date2</span><span class="br0">&#41;</span>;
+  <span class="kw3">echo</span> <span class="re0">$dt</span>-&gt;<span class="me1">toString</span><span class="br0">&#40;</span>jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>; <span class="co1">// affiche 2006-04-08</span>
+&nbsp;
+  <span class="co1">// on veut ajouter 27h15 heures</span>
+  <span class="re0">$date2</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">27</span>,<span class="nu0">15</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">add</span><span class="br0">&#40;</span><span class="re0">$date2</span><span class="br0">&#41;</span>;
+  <span class="kw3">echo</span> <span class="re0">$dt</span>-&gt;<span class="me1">toString</span><span class="br0">&#40;</span>jDateTime::<span class="me2">BD_DTFORMAT</span><span class="br0">&#41;</span>; <span class="co1">// affiche 2006-04-09 03:15:00</span>
+&nbsp;</pre>
+<p>
+Si on veut savoir la durée entre deux dates, on utilise alors la méthode durationTo(), qui renvoi cette durée dans un objet jDateTime :
+</p>
+<pre class="code php">  <span class="re0">$dt</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-10"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$dt2</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt2</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-12"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="co1">// calcul la durée entre $dt jusqu'à $dt2</span>
+  <span class="re0">$dt3</span> = <span class="re0">$dt</span>-&gt;<span class="me1">durationTo</span><span class="br0">&#40;</span><span class="re0">$dt2</span><span class="br0">&#41;</span>;
+  <span class="kw3">echo</span> <span class="re0">$dt3</span>-&gt;<span class="me1">toString</span><span class="br0">&#40;</span>jDateTime::<span class="me2">BD_DTFORMAT</span><span class="br0">&#41;</span>; <span class="co1">//affiche 0000-00-02 00:00:00</span></pre>
+<p>
+Attention, les dates doivent être supérieur au 01/01/1970.
+</p>
+
+</div>
+
+<h2>Comparaison de dates</h2>
+<div class="level2">
+
+<p>
+ Pour comparer deux dates, il y a la méthode compareTo()
+</p>
+<pre class="code php">  <span class="re0">$dt</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-10"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$dt2</span> = <span class="kw2">new</span> jDateTime<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+  <span class="re0">$dt2</span>-&gt;<span class="me1">setFromString</span><span class="br0">&#40;</span><span class="st0">"2006-04-12"</span>,jDateTime::<span class="me2">BD_DFORMAT</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$result</span> = <span class="re0">$dt</span>-&gt;<span class="me1">compareTo</span><span class="br0">&#40;</span><span class="re0">$dt2</span><span class="br0">&#41;</span>;</pre>
+<p>
+compareTo renvoit : 
+</p>
+<ul>
+<li class="level1"><div class="li"> -1 si $dt2 &gt; $dt</div>
+</li>
+<li class="level1"><div class="li"> 0 si les deux dates sont égales</div>
+</li>
+<li class="level1"><div class="li"> 1 si $dt &lt; $dt2</div>
+</li>
+</ul>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

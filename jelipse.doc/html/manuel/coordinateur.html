@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:coordinateur - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Le coordinateur</h1>
+<div class="level1">
+
+<p>
+ Le coordinateur est le coeur du Framework. C&rsquo;est en quelque sorte le chef d&rsquo;orchestre de l&rsquo;exécution d&rsquo;une action.
+</p>
+
+<p>
+À partir des paramètres donnés par un objet jRequest, le coordinateur en déduit les informations suivantes : 
+</p>
+<ul>
+<li class="level1"><div class="li"> le nom du module et le nom de l&rsquo;action à exécuter</div>
+</li>
+<li class="level1"><div class="li"> les données en entrée</div>
+</li>
+<li class="level1"><div class="li"> la liste des types de réponses possibles et le type de la réponse par défaut</div>
+</li>
+</ul>
+
+<p>
+ Des plugins peuvent modifier éventuellement ces informations (ex: plugin qui vérifie l&rsquo;authentification, et redirige alors vers une autre action...).
+</p>
+
+<p>
+Avec ces informations, il va donc récupérer le contrôleur correspondant, et exécuter la méthode qui implémente le traitement correspondant à l&rsquo;action.
+</p>
+
+<p>
+Il récupérera l&rsquo;objet jResponse fourni par le traitement de l&rsquo;action pour alors renvoyer au navigateur le contenu généré par jResponse.
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

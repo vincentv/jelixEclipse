@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:urls - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Manipulation des urls dans Jelix</h1>
+<div class="level1">
+
+<p>
+ Jelix comporte un mécanisme qui permet de ne pas avoir à mettre les urls conçernant les actions en dur dans les templates (ou ailleurs). Pour faire simple, donnez le module, l&rsquo;action, le type de requête et éventuellement d&rsquo;autres paramètres et jUrl se charge de générer l&rsquo;url correspondante. À l&rsquo;inverse, lors d&rsquo;une requête, jUrl analyse l&rsquo;url pour en déduire le module, l&rsquo;action et les paramètres, et ceci, indépendament du type de requête. Il n&rsquo;est pas utile alors d&rsquo;utiliser le mod_rewrite d&rsquo;apache.
+</p>
+
+<p>
+Pour cette tâche, jUrl se repose sur un moteur d&rsquo;url. Il y en a deux fournis dans Jelix :
+</p>
+<ul>
+<li class="level1"><div class="li"> un moteur d&rsquo;url simple (utilisé par défaut)</div>
+</li>
+<li class="level1"><div class="li"> un moteur d&rsquo;url significatifs</div>
+</li>
+</ul>
+
+<p>
+ Sachez que vous pouvez <a href="plugins_urls_engine.html" class="wikilink1" title="manuel:plugins:urls_engine"  >créer votre propre moteur d'urls</a> pour des besoins plus spécifiques
+</p>
+
+</div>
+
+<h2>Petit rappel sur les urls</h2>
+<div class="level2">
+
+<p>
+ Une url est composée de différentes parties : 
+</p>
+<pre class="code">http://monsite.com/un/chemin/pointentree.php/path/info?param1=value1</pre>
+<ul>
+<li class="level1"><div class="li"> un/chemin/pointentree correspond au chemin du point d&rsquo;entrée : /index par exemple</div>
+</li>
+<li class="level1"><div class="li"> .php    l&rsquo;extension du point d&rsquo;entrée. Elle est facultative si le multiview est activé dans apache</div>
+</li>
+<li class="level1"><div class="li"> /path/info  le pathinfo, partie complémentaire du chemin, ne correspondant pas à un chemin physique sur le disque.</div>
+</li>
+<li class="level1"><div class="li"> ?param1=value1 : les paramètres.</div>
+</li>
+</ul>
+
+<p>
+ Les moteurs d&rsquo;urls analysent le pathinfo et les paramètres pour déterminer le module/action
+</p>
+
+<p>
+ Note : il peut y avoir certaines options à activer dans apache. Voir la page <a href="installation.html" class="wikilink1" title="manuel:installation"  >installation</a>
+</p>
+
+</div>
+
+<h2>Configuration</h2>
+<div class="level2">
+
+<p>
+ La configuration de jUrl se fait dans la section <code>urlengine</code> du fichier de configuration dont voici les paramètres :
+</p>
+
+</div>
+
+<h4>''engine''</h4>
+<div class="level4">
+
+<p>
+ Indique le type de moteur à utiliser. Les deux valeurs disponibles sont <code>simple</code> et <code>significant</code>.
+</p>
+
+</div>
+
+<h4>''enableParser''</h4>
+<div class="level4">
+
+<p>
+ Active l&rsquo;analyse d&rsquo;url par le moteur d&rsquo;url. Si vous préférez l&rsquo;utilisation du module mod_rewrite d&rsquo;apache, vous pouvez alors mettre off.
+</p>
+
+</div>
+
+<h4>''multiview''</h4>
+<div class="level4">
+
+<p>
+ Indique si le multiview est activé ou non dans apache. Cela indique alors au moteur d&rsquo;url de ne pas générer l&rsquo;extension des points d&rsquo;entrées (.php) lors de la création des urls. On a ainsi des urls un peu plus &ldquo;propres&rdquo;.
+</p>
+
+</div>
+
+<h4>''basePath''</h4>
+<div class="level4">
+
+<p>
+ Chemin jusqu&rsquo;au répertoire www, ou plutôt, la partie commune des chemins de tous les points d&rsquo;entrée.
+</p>
+
+<p>
+Ainsi, si vous accédez à index.php avec l&rsquo;url <a href="http://localhost/jelix/myapp/www/index.php" class="urlextern" title="http://localhost/jelix/myapp/www/index.php"   rel="nofollow">http://localhost/jelix/myapp/www/index.php</a>, alors vous indiquez  
+</p>
+<pre class="code">basePath= /jelix/myapp/www/</pre>
+
+<p>
+ Si par contre vous avez spécifié le documentRoot dans apache, pointant sur jelix/myapp/www, alors vous indiquerez 
+</p>
+<pre class="code">basePath= /</pre>
+
+<p>
+ Attention, la valeur de basePath doit toujours commencer par un /
+</p>
+
+</div>
+
+<h4>''defaultEntrypoint''</h4>
+<div class="level4">
+
+<p>
+ Point d&rsquo;entrée par défaut de l&rsquo;application. <code>index</code> par défaut. Vous ne devez pas indiquer le suffixe (.php).
+</p>
+
+</div>
+
+<h4>''entrypointExtension''</h4>
+<div class="level4">
+
+<p>
+ Extensions des points d&rsquo;entrées. Par défaut, c&rsquo;est .php, mais peut-être que pour les fichier <acronym title="Hypertext Preprocessor">PHP</acronym> 5, c&rsquo;est .php5 par exemple. Auxquel cas vous indiquerez .php5.
+</p>
+
+</div>
+
+<h4>''notfoundAct''</h4>
+<div class="level4">
+
+<p>
+ L&rsquo;action à effectuer quand une url ne correspond à rien. Indiquez là sous forme de sélecteur : &ldquo;module~action&rdquo;
+</p>
+
+</div>
+
+<h3>Moteur d'urls simples</h3>
+<div class="level3">
+
+<p>
+ Ce moteur est celui activé par défaut. Toutes les urls ressembleront à pointentree.php?module=..&amp;action=...&amp;... . C&rsquo;est un moteur donc trés simple et rapide.
+</p>
+
+<p>
+Si vous utilisez les points d&rsquo;entrées fournis en standard, vous n&rsquo;avez rien à configurer. Par contre, si vous en rajoutez, il faut les indiquer dans la section <strong>simple_urlengine_entrypoints</strong> pour les déclarer, et dire quels modules et quels types de requêtes ils concernent. Les paramètres de cette section ont la forme : 
+</p>
+<pre class="code"> nom_du_script_sans_suffix = &quot;liste de sélecteur séparé par un espace&quot;</pre>
+
+<p>
+ Les sélecteurs peuvent être de l&rsquo;une de ces formes : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <code>mod~act@req</code> :  le point d&rsquo;entrée concerne l&rsquo;action <code>act</code> du module <code>mod</code> pour  le type de requête <code>req</code></div>
+</li>
+<li class="level1"><div class="li"> <code>mod~*@req</code> :    le point d&rsquo;entrée concerne toutes les actions du module <code>mod</code> pour  le type de requête <code>req</code></div>
+</li>
+<li class="level1"><div class="li"> <code>@req</code> :  le point d&rsquo;entrée concerne toutes les actions de tous les modules pour le type de requête <code>req</code></div>
+</li>
+</ul>
+
+<p>
+ Vous indiquez ainsi quelles actions passent par quel point d&rsquo;entrée.
+</p>
+
+<p>
+Exemple :
+</p>
+<pre class="code ini">   <span class="re0"><span class="br0">&#91;</span>simple_urlengine_entrypoints<span class="br0">&#93;</span></span>
+   <span class="re1">index </span>=<span class="re2"> &quot;@classic&quot;</span>
+   <span class="re1">xmlrpc </span>=<span class="re2"> &quot;@xmlrpc&quot;</span>
+   <span class="re1">jsonrpc </span>=<span class="re2"> &quot;@jsonrpc&quot;</span>
+   <span class="re1">testnews </span>=<span class="re2"> &quot;unittest~url2@classic unittest~url3@classic&quot;</span>
+   foo/<span class="re1">bar </span>=<span class="re2"> &quot;unittest~url4@classic&quot;</span>
+   <span class="re1">news </span>=<span class="re2"> &quot;news~*@classic&quot;</span></pre><ul>
+<li class="level1"><div class="li"> le point d&rsquo;entrée index.php concerne toutes les actions des requêtes de type classic (sauf celles spécifiées dans d&rsquo;autres points d&rsquo;entrées. C&rsquo;est donc le point d&rsquo;entrée par défaut pour les requêtes de type classic.</div>
+</li>
+<li class="level1"><div class="li"> idem pour le point d&rsquo;entrée xmlrpc.php et jsonrpc.php qui concernent respectivement toutes les actions des requêtes de type xmlrpc et toutes les actions des requêtes de type jsonrpc.</div>
+</li>
+<li class="level1"><div class="li"> le point d&rsquo;entrée testnew.php concerne l&rsquo;action url2 et url3 du module unittest pour le type de requête classic</div>
+</li>
+<li class="level1"><div class="li"> le point d&rsquo;entrée foo/bar.php concerne l&rsquo;action url4 du module unittest pour le type de requête classic</div>
+</li>
+<li class="level1"><div class="li"> le point d&rsquo;entrée news.php concerne tout le module news</div>
+</li>
+</ul>
+
+<p>
+ Pour l&rsquo;action url2, jUrl génèrera donc l&rsquo;url  testnews.php?module=unittest&amp;action=url2&amp;autresparametres..
+</p>
+
+</div>
+
+<h4>url avec https</h4>
+<div class="level4">
+
+<p>
+ Pour indiquer, avec le moteur d&rsquo;url simple, les ulrs des actions qui devront être en https, vous indiquez la liste des actions dans l&rsquo;option <strong>simple_urlengine_https</strong> dans la section urlengine. La syntaxe est la même que dans la section simple_urlengine_entrypoints.
+</p>
+<pre class="code ini"> <span class="re0"><span class="br0">&#91;</span>urlengine<span class="br0">&#93;</span></span>
+  ...
+  <span class="re1">simple_urlengine_https </span>=<span class="re2"> &quot;unittest~url6@classic @xmlrpc&quot;</span>
+&nbsp;
+ <span class="re0"><span class="br0">&#91;</span>simple_urlengine_entrypoints<span class="br0">&#93;</span></span>
+  ...</pre>
+</div>
+
+<h3>Moteur d'urls significatifs</h3>
+<div class="level3">
+
+<p>
+ Le moteur simple est performant mais il ne permet pas d&rsquo;avoir des urls &ldquo;cools&rdquo;, significatives, sans tous les paramètres redondants que sont le module et l&rsquo;action etc... Le moteur significant le permet, bien qu&rsquo;il soit un peu moins performant.
+</p>
+
+<p>
+<a href="urls_significant.html" class="wikilink1" title="manuel:urls:significant"  >Détails</a>
+</p>
+
+</div>
+
+<h2>Utilisation</h2>
+<div class="level2">
+
+<p>
+ Pour quoi que ce soit, vous devez éviter de mettre des urls en dur dans votre code, dans vos modules. Sinon en effet cela crée des dépendances, et la portabilité du module s&rsquo;en trouve diminuée. Il est impossible alors d&rsquo;utiliser le module pour plusieurs applications en même temps car les urls peuvent être différentes en fonction de la configuration des applications. Et si le module est réutilisé ailleurs, il faudrait alors modifier les templates etc...
+</p>
+
+<p>
+Les urls doivent donc être construites par Jelix. Pour cela, vous avez deux outils à votre disposition.
+</p>
+
+</div>
+
+<h3>jUrl::get</h3>
+<div class="level3">
+
+<p>
+ L&rsquo;objet jUrl a une méthode statique, get(), qui, en fonction d&rsquo;une action et d&rsquo;autres paramètres, renvoi l&rsquo;url correspondante pour l&rsquo;application courante :
+</p>
+<pre class="code php">   <span class="re0">$string_url</span> = jUrl::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"news~view@classic"</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">"id_news"</span>=&gt;<span class="st0">"54"</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Le premier paramètre de la fonction est donc un sélecteur d&rsquo;action. Ici, on demande l&rsquo;url qui correspond à l&rsquo;action view du module news, pour le type de requête classic avec un paramètre id_news. Avec le moteur d&rsquo;url simple, l&rsquo;url correspondante sera probablement <code>index.php?module=news&amp;action=view&amp;id_news=54</code>. 
+</p>
+
+<p>
+Si le <a href="urls_significant.html" class="wikilink1" title="manuel:urls:significant"  >moteur d'url significant</a> est utilisé, cela peut être n&rsquo;importe quoi d&rsquo;autre, en fonction de ce qui est configuré dans le fichier urls.xml.
+</p>
+
+</div>
+
+<h3>Plugin de template jurl</h3>
+<div class="level3">
+
+<p>
+ Dans les templates vous pouvez utiliser le plugin jurl. la syntaxe est identique à jUrl::get().Exemple :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;p&gt;</span><span class="sc2"><span class="kw2">&lt;a</span> <span class="kw3">href</span>=<span class="st0">"{jurl 'news~view@classic', array('id_news'=&gt;'54')}&quot;&gt;Détails de la news<span class="sc2">&lt;/a&gt;<span class="sc2">&lt;/p&gt;
+ </span></pre>
+<p>
+Le résultat avec le moteur d&rsquo;url simple sera alors :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;p&gt;</span><span class="sc2"><span class="kw2">&lt;a</span> <span class="kw3">href</span>=<span class="st0">"index.php?module=news&amp;amp;action=view&amp;amp;id_news=54"</span><span class="kw2">&gt;</span>Détails de la news<span class="sc2"><span class="kw2">&lt;/a&gt;</span><span class="sc2"><span class="kw2">&lt;/p&gt;</span></pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

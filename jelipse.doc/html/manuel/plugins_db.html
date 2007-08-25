@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:plugins:db - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer un driver pour jDb</h1>
+<div class="level1">
+
+<p>
+ Un driver pour jDb est constitué de trois classes : 
+</p>
+<ul>
+<li class="level1"><div class="li"> une classe pour la connexion à la base et l&rsquo;exécution des requêtes, héritant de jDbConnection</div>
+</li>
+<li class="level1"><div class="li"> une classe pour récupérer les résultats, héritant de jDbResultSet</div>
+</li>
+<li class="level1"><div class="li"> une classe utilitaire héritant de jDbTools, permettant de récupérer la liste des tables, la liste des champs d&rsquo;une table etc..</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Fichiers et nommages</h2>
+<div class="level2">
+
+<p>
+ Le nommage des classes, des fichiers et l&rsquo;emplacement des fichiers a changé entre la version 1.0beta2 et 1.0beta3. Cependant le fonctionnement est totalement identique et rien n&rsquo;a été modifié dans l&rsquo;<acronym title="Application Programming Interface">API</acronym>.
+</p>
+
+<p>
+Un driver possède un nom identifiant. Prenons le nom &ldquo;exemple&rdquo; pour la suite.
+</p>
+
+</div>
+
+<h4>dans jelix 1.0beta3 et supérieur</h4>
+<div class="level4">
+
+<p>
+ Les fichiers du driver doivent se trouver dans un répertoire <em>db/<strong>exemple</strong></em> dans un <a href="plugins.html" class="wikilink1" title="manuel:plugins"  >dépôt de plugins</a>.
+</p>
+
+<p>
+Les noms des fichiers doivent suivre ce nommage : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>exemple.dbconnection.php</em> pour la classe de connexion</div>
+</li>
+<li class="level1"><div class="li"> <em>exemple.dbresultset.php</em> pour la classe de resultset</div>
+</li>
+<li class="level1"><div class="li"> <em>exemple.dbtools.php</em> pour la classe utilitaire</div>
+</li>
+</ul>
+
+<p>
+ Et dans chacun de ces fichiers, les classes doivent respectivement avoir le nommage suivant : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>exempleDbConnection</em></div>
+</li>
+<li class="level1"><div class="li"> <em>exempleDbResultSet</em></div>
+</li>
+<li class="level1"><div class="li"> <em>exempleDbTools</em></div>
+</li>
+</ul>
+
+</div>
+
+<h4>dans jelix 1.0beta2 et inférieur</h4>
+<div class="level4">
+
+<p>
+Les fichiers du driver doivent se trouver dans le répertoire <em>lib/jelix/db/drivers/<strong>exemple</strong></em>/.
+</p>
+
+<p>
+Les noms des fichiers doivent suivre ce nommage : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>jDbConnection.exemple.class.php</em> pour la classe de connexion</div>
+</li>
+<li class="level1"><div class="li"> <em>jDbResultSet.exemple.class.php</em> pour la classe de resultset</div>
+</li>
+<li class="level1"><div class="li"> <em>jDbTools.exemple.class.php</em> pour la classe utilitaire</div>
+</li>
+</ul>
+
+<p>
+ Et dans chacun de ces fichiers, les classes doivent respectivement avoir le nommage suivant : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>jDbConnectionExemple</em></div>
+</li>
+<li class="level1"><div class="li"> <em>jDbResultSetExemple</em></div>
+</li>
+<li class="level1"><div class="li"> <em>jDbToolsExemple</em></div>
+</li>
+</ul>
+
+</div>
+
+<h2>Classe de connexion</h2>
+<div class="level2">
+
+<p>
+ Elle doit hériter de jDbConnection qui contient quelques méthodes abstraites qu&rsquo;il faut définir.
+</p>
+
+<p>
+Voir <a href="http://www.jelix.org/reference/trunk/jelix/db/jDbConnection.html" class="urlextern" title="http://www.jelix.org/reference/trunk/jelix/db/jDbConnection.html"   rel="nofollow">la référence de jDbConnection</a>.
+</p>
+
+<p>
+À compléter.
+</p>
+
+</div>
+
+<h2>Classe de résultat</h2>
+<div class="level2">
+
+<p>
+Elle doit hériter de jDbResultSet qui contient quelques méthodes abstraites qu&rsquo;il faut définir.
+</p>
+
+<p>
+Voir <a href="http://www.jelix.org/reference/trunk/jelix/db/jDbResultSet.html" class="urlextern" title="http://www.jelix.org/reference/trunk/jelix/db/jDbResultSet.html"   rel="nofollow">la référence de jDbResultSet</a>.
+</p>
+
+<p>
+À compléter.
+</p>
+
+</div>
+
+<h2>Classe utilitaire</h2>
+<div class="level2">
+
+<p>
+ Elle doit hériter de jDbTools.
+</p>
+
+<p>
+Voir <a href="http://www.jelix.org/reference/trunk/jelix/db/jDbTools.html" class="urlextern" title="http://www.jelix.org/reference/trunk/jelix/db/jDbTools.html"   rel="nofollow">la référence de jDbTools</a>.
+</p>
+
+<p>
+À compléter.
+</p>
+
+</div>
+
+<h2>Exemples</h2>
+<div class="level2">
+
+<p>
+ Voir les drivers pour mysql, postgresql etc dans le répertoire lib/jelix/plugins/db/.
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

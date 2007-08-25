@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:authentification - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Authentification</h1>
+<div class="level1">
+
+<p>
+ Le système d&rsquo;authentification de Jelix ne s&rsquo;occupe que d&rsquo;une seule chose : gérer des logins/mots de passe et des utilisateurs. Il repose sur des drivers pour accéder aux données d&rsquo;un utilisateur. C&rsquo;est ainsi qu&rsquo;il peut s&rsquo;appuyer sur une base de données, un annuaire <acronym title="Lightweight Directory Access Protocol">LDAP</acronym> etc. Pour le moment, il existe un driver pour une base de donnée, un driver pour un annuaire géré par un serveur <acronym title="Linbox Directory Server">LDS</acronym>, et un driver pouvant utiliser une classe quelconque.
+</p>
+
+</div>
+
+<h2>Mise en oeuvre</h2>
+<div class="level2">
+
+<p>
+ Le système d&rsquo;authentification repose sur plusieurs choses : 
+</p>
+<ul>
+<li class="level1"><div class="li"> un <a href="plugins_coord.html" class="wikilink1" title="manuel:plugins:coord"  >plugin pour le coordinateur</a>, nommé <em>auth</em> et livré en standard avec jelix, vérifiant si l&rsquo;authentification est effectuée pour les actions où elle est nécessaire</div>
+</li>
+<li class="level1"><div class="li"> une classe <strong>jAuth</strong>, permettant d&rsquo;effectuer les différentes opérations sur l&rsquo;authentification et la gestion des logins. Cette classe repose sur un système de driver.</div>
+</li>
+<li class="level1"><div class="li"> un module, <strong>jauth</strong>, proposant un contrôleur et des templates par défaut. Il n&rsquo;est en principe pas indispensable, vous pouvez tout à fait utiliser votre propre contrôleur, la mise en oeuvre étant relativement simple.</div>
+</li>
+<li class="level1"><div class="li"> un objet stocké en session, contenant les informations sur l&rsquo;utilisateur. Il est fourni par le driver. Cela peut être un objet <acronym title="Datas Access Object">DAO</acronym>, une simple classe etc.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>installer le plugin //auth// pour le coordinateur</h3>
+<div class="level3">
+
+<p>
+ Le rôle du plugin <em>auth</em> : 
+</p>
+<ul>
+<li class="level1"><div class="li"> Vérifier l&rsquo;authentification</div>
+</li>
+<li class="level1"><div class="li"> Gérer un timeout de session</div>
+</li>
+<li class="level1"><div class="li"> Indiquer le driver à utiliser</div>
+</li>
+<li class="level1"><div class="li"> Indiquer les paramètres pour le driver (<acronym title="Datas Access Object">DAO</acronym> pour jAuthDb, cn/sn/uid pour un driver <acronym title="Lightweight Directory Access Protocol">LDAP</acronym> etc...)</div>
+</li>
+<li class="level1"><div class="li"> Indiquer ce qu&rsquo;il faut faire en cas de non authentification</div>
+</li>
+</ul>
+
+<p>
+ Dés lors que l&rsquo;on veut utiliser le système d&rsquo;authentification, il faut activer le plugin et le configurer.
+</p>
+
+<p>
+Dans le fichier de configuration, vous indiquerez alors dans la section plugins :
+</p>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>plugins<span class="br0">&#93;</span></span>
+<span class="re1">auth </span>=<span class="re2"> &quot;auth.plugin.ini.php&quot;</span></pre>
+<p>
+le fichier de configuration <em>auth.plugin.ini.php</em> du plugin est une copie du fichier <em>lib/jelix/plugins/coord/auth/auth.plugin.ini.php.dist</em>, que vous placez dans le repertoire <em>var/config</em>/ de votre application
+</p>
+
+<p>
+Note : pour jelix 1.0beta2 et précédent, le ficher auth.plugin.ini.php.dist se trouve dans un autre répertoire, <em>lib/jelix-plugins/auth/auth.plugin.ini.php.dist</em>. De plus, il faut vérifier que le paramètre pluginsPath dans la configuration contient bien <em>lib:jelix-plugins</em>. (ce n&rsquo;est pas nécessaire dans jelix 1.0 beta3 et suivant, car le plugin se trouve dans lib/jelix/plugins/, qui est déclaré automatiquement).
+</p>
+
+<p>
+Pour en savoir plus sur les plugins : <a href="plugins.html" class="wikilink1" title="manuel:plugins"  >plugins</a>
+</p>
+
+</div>
+
+<h3>configurer le plugin</h3>
+<div class="level3">
+
+<p>
+ vous devez ensuite éditer le fichier <em>auth.plugin.ini.php</em>, pour indiquer la configuration du système d&rsquo;authentification.
+</p>
+
+</div>
+
+<h4>Indiquer le driver</h4>
+<div class="level4">
+
+<p>
+ Vous devez indiquer le nom du driver utilisé au niveau de l&rsquo;option <strong>driver</strong>. Vous devez ensuite avoir une section portant ce même nom, pour les options propres au driver.
+</p>
+<pre class="code ini">   <span class="re1">driver</span>=<span class="re2">XXX</span>
+   
+   <span class="re0"><span class="br0">&#91;</span>XXX<span class="br0">&#93;</span></span>
+   <span class="re1">foo</span>=<span class="re2">bar</span></pre>
+<p>
+Par exemple, pour le driver <strong>Db</strong> (les informations sont stockées alors dans une base de donnée) :
+</p>
+<pre class="code ini"> <span class="re1">driver</span>=<span class="re2">Db</span>
+   
+ <span class="re0"><span class="br0">&#91;</span>Db<span class="br0">&#93;</span></span>
+ <span class="re1">dao </span>=<span class="re2"> &quot;mon_dao&quot;</span>
+ <span class="re1">password_crypt_function </span>=<span class="re2"> md5</span></pre>
+<p>
+Pour en savoir plus sur les spécificités de chaque driver disponibles, ou même en créer un, consultez <a href="authentification_drivers.html" class="wikilink1" title="manuel:authentification:drivers"  >la documentation sur les drivers jauth</a>.
+</p>
+
+</div>
+
+<h4>Timeout</h4>
+<div class="level4">
+
+<p>
+ L&rsquo;option <strong>timeout</strong> permet d&rsquo;indiquer en minutes le temps d&rsquo;inactivité au bout duquel l&rsquo;authentification ne sera plus valide. Si vous mettez <strong>0</strong>, il n&rsquo;y a pas de limite de temps. La session expirera à la fermeture du navigateur.
+</p>
+
+</div>
+
+<h4>contrôler l'authentification pour chaque action</h4>
+<div class="level4">
+
+<p>
+ Le plugin peut contrôler si l&rsquo;action demandée a besoin d&rsquo;une authentification ou non. Avec l&rsquo;option <strong>auth_required</strong> dans le fichier ini, vous pouvez dire si par défaut toutes les actions nécessitent une authentification (valeur &ldquo;on&rdquo;), ou si par défaut, il n&rsquo;y en a pas besoin (valeur &ldquo;off&rdquo;).
+</p>
+<pre class="code ini"><span class="re1">auth_required</span>=<span class="re2">on</span></pre>
+<p>
+Dans un cas comme dans l&rsquo;autre, il faut pouvoir gérer les exceptions (par exemple, une action qui ne nécessite pas une authentification alors que par défaut toutes les actions le nécessitent). Les exceptions sont indiquées au niveau des contrôleurs, dans les paramètres de plugin.
+</p>
+<pre class="code php"><span class="kw2">class</span> xxxCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+    public <span class="re0">$pluginParams</span> = <span class="kw3">array</span><span class="br0">&#40;</span> ...  <span class="br0">&#41;</span>;
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Pour les actions concernées, vous indiquerez le parametre <strong>auth.required</strong> et le mettrez à <strong>false</strong> ou <strong>true</strong>. Par exemple pour les actions <strong>index</strong> et <strong>affiche</strong>, il faut une authentification, alors que pour le reste des actions du contrôleur (&rdquo;*&rdquo; indique &ldquo;toutes les actions&rdquo;), ce n&rsquo;est pas utile :
+</p>
+<pre class="code php"><span class="kw2">class</span> xxxCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+    public <span class="re0">$pluginParams</span> = <span class="kw3">array</span><span class="br0">&#40;</span>
+        <span class="st0">'*'</span>=&gt;array<span class="br0">&#40;</span><span class="st0">'auth.required'</span>=&gt;false<span class="br0">&#41;</span>,
+        <span class="st0">'index'</span>=&gt;array<span class="br0">&#40;</span><span class="st0">'auth.required'</span>=&gt;true<span class="br0">&#41;</span>,
+        <span class="st0">'affiche'</span>=&gt;array<span class="br0">&#40;</span><span class="st0">'auth.required'</span>=&gt;true<span class="br0">&#41;</span>,
+     <span class="br0">&#41;</span>;
+<span class="br0">&#125;</span></pre>
+</div>
+
+<h4>spécifier le comportement en cas de défaut d'authentification</h4>
+<div class="level4">
+
+<p>
+ Si l&rsquo;authentification n&rsquo;est pas faite alors que l&rsquo;action en nécessite une, le plugin va alors agir en fonction de l&rsquo;option <strong>on_error</strong>.
+</p>
+
+<p>
+Si vous mettez la valeur <strong>1</strong>, alors le plugin génèrera une erreur dont le message (ou plutôt la clé de la locale du message) est dans l&rsquo;option <strong>error_message</strong>. Si par contre la valeur est <strong>2</strong>, alors le plugin exécutera l&rsquo;action définie dans l&rsquo;option <strong>on_error_action</strong>. Cela peut être une action d&rsquo;un contrôleur du module auth (comme c&rsquo;est le cas par défaut), ou alors une action de votre propre contrôleur dans un module tierce. Cette action en général affiche une page demandant un login/mot de passe (mais cela peut être autre chose...)
+</p>
+
+</div>
+
+<h2>utiliser le contrôleur par défaut</h2>
+<div class="level2">
+
+<p>
+ Le module jauth propose des contrôleurs que vous pouvez utiliser pour gérer les actions de connexion, de déconnexion, en faisant appel à la classe jAuth. Il propose aussi des zones et des templates.
+</p>
+
+<p>
+À l&rsquo;avenir, il proposera également des zones de formulaire de changement de mot de passe, de formulaire de destruction de compte (si un utilisateur veut supprimer un compte sur une appli type portail), de création de compte et de récupération de mot de passe. Bien sûr, on aurait des paramètres de configuration qui permettrait de dire si on autorise un utilisateur à supprimer son compte, à récupérer son mot de passe, etc...
+</p>
+
+</div>
+
+<h4>configuration classique</h4>
+<div class="level4">
+
+<p>
+Quand on utilise le module <strong>jauth</strong>, il est possible d&rsquo;ajouter des options de configuration propre au module. Par exemple, une configuration possible dans le fichier <em>auth.plugin.ini.php</em> peut être celle-ci:
+</p>
+<pre class="code ini">  <span class="re1">driver </span>=<span class="re2"> Db</span>
+  <span class="re1">on_error_action </span>=<span class="re2"> &quot;jauth~login_out&quot;</span>
+  <span class="re1">after_login </span>=<span class="re2"> &quot;myapp~default_index&quot;</span>
+  <span class="re1">after_logout </span>=<span class="re2"> &quot;jauth~login_form&quot;</span>
+  <span class="re1">on_error_sleep </span>=<span class="re2"> <span class="nu0">3</span></span>
+  <span class="re0"><span class="br0">&#91;</span>Db<span class="br0">&#93;</span></span>
+  <span class="re1">dao </span>=<span class="re2"> &quot;jauth~jelixuser&quot;</span></pre>
+<p>
+Le paramètre on_error_sleep est le nombre de secondes d&rsquo;attente quand l&rsquo;utilisateur a donné un mauvais mot de passe ou login.
+</p>
+
+<p>
+Vous remarquerez aussi que dans l&rsquo;exemple, on utilise le driver Db. Le module jauth propose en effet un <acronym title="Datas Access Object">DAO</acronym> pour le driver Db. Si vous l&rsquo;utilisez, il faut créer alors la table jlx_user suivante (ici pour mysql):
+</p>
+<pre class="code sql">  <span class="kw1">CREATE</span> <span class="kw1">TABLE</span> <span class="st0">`jlx_user`</span> <span class="br0">&#40;</span>
+  <span class="st0">`usr_login`</span> VARCHAR<span class="br0">&#40;</span> <span class="nu0">50</span> <span class="br0">&#41;</span> <span class="kw1">NOT</span> <span class="kw1">NULL</span> ,
+  <span class="st0">`usr_email`</span> VARCHAR<span class="br0">&#40;</span> <span class="nu0">255</span> <span class="br0">&#41;</span> <span class="kw1">NOT</span> <span class="kw1">NULL</span> ,
+  <span class="st0">`usr_password`</span> VARCHAR<span class="br0">&#40;</span> <span class="nu0">50</span> <span class="br0">&#41;</span> <span class="kw1">NOT</span> <span class="kw1">NULL</span> ,
+  <span class="kw1">PRIMARY</span> <span class="kw1">KEY</span> <span class="br0">&#40;</span> <span class="st0">`usr_login`</span> <span class="br0">&#41;</span>
+  <span class="br0">&#41;</span>;</pre>
+<p>
+Vous pouvez bien sûr ajouter d&rsquo;autres champs, il faudra alors proposer votre propre <acronym title="Datas Access Object">DAO</acronym>. (voir <a href="authentification_drivers.html" class="wikilink1" title="manuel:authentification:drivers"  >la doc sur le driver Db</a>).
+</p>
+
+<p>
+A noter que vous pouvez surcharger les templates du module en créant vos propres templates dans le dossier 
+</p>
+<pre class="code">myapp/
+  var/
+    themes/
+      default/
+        jauth/</pre>
+
+</div>
+
+<h4>configuration de la redirection</h4>
+<div class="level4">
+
+<p>
+ Dans la configuration du plugin, vous pouvez ajouter les paramètres suivants, pour gérer la redirection : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>after_login</strong></div>
+</li>
+<li class="level2"><div class="li"> <strong>after_logout</strong></div>
+</li>
+<li class="level2"><div class="li"> <strong>enable_after_login_override</strong> </div>
+</li>
+<li class="level2"><div class="li"> <strong>enable_after_logout_override</strong> </div>
+</li>
+</ul>
+
+<p>
+ Les paramètres <strong>after_login</strong> et <strong>after_logout</strong> doivent contenir les selecteurs des actions vers lesquelles il faut rediriger une fois que l&rsquo;identification ou la déconnexion sont effectuées.
+</p>
+
+<p>
+Il est possible dans un formulaire d&rsquo;authentification ou de déconnexion, d&rsquo;ajouter un paramètre caché contenant l&rsquo;<acronym title="Uniform Resource Locator">URL</acronym> vers laquelle il faut rediriger. Cela permet de redirigé vers une page différente en fonction de la page sur laquelle on est quand on se déconnecte ou se connecte. Dans ce cas, ce paramètre caché doit se nommer &ldquo;<strong>auth_url_return</strong>&ldquo;, et doit contenir l&rsquo;<acronym title="Uniform Resource Locator">URL</acronym>. Et vous devez mettre les paramètres de configuration <strong>enable_after_login_override</strong> et/ou <strong>enable_after_logout_override</strong> à &ldquo;<strong>on</strong>&ldquo;.
+</p>
+
+</div>
+
+<h2>Utiliser son propre contrôleur</h2>
+<div class="level2">
+
+<p>
+ Vous pouvez utiliser vos propres contrôleurs pour gérer l&rsquo;authentification : formulaire de login, connexion, déconnexion. Vous ferez appel alors à la classe jAuth et ses méthodes statiques pour verifier les logins/mots de passe, connecter et déconnecter un utilisateur.
+</p>
+
+</div>
+
+<h2>classe jAuth</h2>
+<div class="level2">
+
+<p>
+ C&rsquo;est la classe principale du système d&rsquo;authentification. Toutes ses méthodes sont statiques. Elle permet de gérer un utilisateur, de &ldquo;connecter&rdquo;/&rdquo;déconnecter&rdquo; un utilisateur etc.. Vous appellerez ces méthodes quand bon vous semble, sachant que les contrôleurs du module jauth peuvent se charger pour vous d&rsquo;une bonne partie du travail. Voir <a href="http://jelix.org/reference/trunk/jelix/auth/jAuth.html" class="urlextern" title="http://jelix.org/reference/trunk/jelix/auth/jAuth.html"   rel="nofollow">son descriptif dans la référence</a>.
+</p>
+
+<p>
+l&rsquo;<em>objet user</em> que vous passez à certaines méthodes vous est donné par jAuth lui même. C&rsquo;est un objet contenant les données d&rsquo;un utilisateur et il n&rsquo;a pas de classe précise : son type dépend du driver utilisé et éventuellement de sa configuration (pour le driver Db, on peut fournir un <acronym title="Datas Access Object">DAO</acronym> de notre choix par exemple). Il doit par contre respecter l&rsquo;interface attendue par le driver, et doit avoir au moins un champs <strong>login</strong> et un champs <strong>password</strong>.
+</p>
+
+<p>
+jAuth n&rsquo;a pas à être surchargée. Elle s&rsquo;appuie sur des &ldquo;drivers&rdquo; pour gérer les différents types d&rsquo;authentification.
+</p>
+
+</div>
+
+<h3>Évènements</h3>
+<div class="level3">
+
+<p>
+ Pour la plupart des méthodes de jAuth, un évènement est émis. Cela permet à des modules tiers d&rsquo;être au courant des différentes actions d&rsquo;authentification, et donc de charger des données supplémentaires dans l&rsquo;objet user, ou de gérer les données dépendantes à l&rsquo;utilisateur etc. 
+</p>
+<ul>
+<li class="level1"><div class="li"> AuthNewUser : indique qu&rsquo;un utilisateur vient d&rsquo;être ajouté</div>
+</li>
+<li class="level1"><div class="li"> AuthCanRemoveUser : demande si on peut supprimer l&rsquo;utilisateur ou pas</div>
+</li>
+<li class="level1"><div class="li"> AuthRemoveUser : l&rsquo;utilisateur a été supprimé</div>
+</li>
+<li class="level1"><div class="li"> AuthUpdateUser : l&rsquo;utilisateur vient d&rsquo;être mis à jour</div>
+</li>
+<li class="level1"><div class="li"> AuthCanLogin : demande si l&rsquo;utilisateur peut se connecter</div>
+</li>
+<li class="level1"><div class="li"> AuthLogin : un utilisateur vient de se connecter</div>
+</li>
+<li class="level1"><div class="li"> AuthLogout : un utilisateur vient de se déconnecter</div>
+</li>
+</ul>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

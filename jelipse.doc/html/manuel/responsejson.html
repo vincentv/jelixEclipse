@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsejson - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse json</h1>
+<div class="level1">
+
+<p>
+ <a href="http://fr.wikipedia.org/wiki/JSON" class="urlextern" title="http://fr.wikipedia.org/wiki/JSON"   rel="nofollow">JSON</a> est un format de données qui reutilise des éléments syntaxique de javascript. Cela facilite alors grandement l&rsquo;utilisation de contenu en JSON dans une page <acronym title="HyperText Markup Language">HTML</acronym>. C&rsquo;est de plus en plus utilisé pour la technique Ajax.
+</p>
+
+<p>
+Pour envoyer un contenu en JSON au navigateur, vous pouvez employer la réponse jResponseJson dont l&rsquo;alias est &ldquo;json&rdquo;. Vous n&rsquo;avez ensuite qu&rsquo;à mettre n&rsquo;importe quelles données dans la propriété $datas
+</p>
+<pre class="code php">  <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'json'</span><span class="br0">&#41;</span>;
+  <span class="re0">$rep</span>-&gt;<span class="me1">datas</span> = <span class="kw3">array</span><span class="br0">&#40;</span> <span class="st0">'nom'</span>=&gt;<span class="st0">'dupont'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'jean'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Vous recevrez alors coté client, ceci :
+</p>
+<pre class="code javascript">  <span class="br0">&#123;</span> nom: <span class="st0">'dupont'</span>, prenom:<span class="st0">'jean'</span><span class="br0">&#125;</span></pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

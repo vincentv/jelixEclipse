@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:daos:methodes_php - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer des méthodes en PHP</h1>
+<div class="level1">
+
+<p>
+ Les <a href="daos_methodes_xml.html" class="wikilink1" title="manuel:daos:methodes_xml"  >méthodes déclarées en XML</a> permettent de créer facilement des méthodes, et peuvent répondre à beaucoup de situations. Néanmoins elles sont tout de même limitées dans la cadre de requêtes complexes. On ne peut pas créer des requêtes complexes.
+</p>
+
+<p>
+Une première solution serait de se créer une classe <acronym title="Hypertext Preprocessor">PHP</acronym> classique, et utiliser jDb pour effectuer les requêtes. Cependant, lorsque les enregistrements sur lesquels on opère correspondent à ce qui a déjà été défini dans un <acronym title="Datas Access Object">DAO</acronym>, il est plus logique de pouvoir intégrer une telle méthode dans la factory d&rsquo;un <acronym title="Datas Access Object">DAO</acronym>.
+</p>
+
+</div>
+
+<h2>Déclaration d'une méthode en PHP</h2>
+<div class="level2">
+
+<p>
+ C&rsquo;est relativement simple à faire : il suffit de déclarer en <acronym title="Extensible Markup Language">XML</acronym> une méthode de type &ldquo;php&rdquo; :
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"foo"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"bar"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[   
+        ici le code php de la méthode
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Les autres balises autorisées dans les autres types de méthodes (<em>conditions</em>, <em>order</em>...) ne peuvent être utilisées ici, puisque vous êtes censés écrire vous même la requête <acronym title="Structured Query Language">SQL</acronym> !
+</p>
+
+<p>
+Vous devez indiquer bien sûr un nom à la méthode, et vous pouvez déclarer des paramètres comme d&rsquo;habitude.
+</p>
+
+</div>
+
+<h2>API interne d'une factory</h2>
+<div class="level2">
+
+<p>
+ Au niveau du code <acronym title="Hypertext Preprocessor">PHP</acronym>, vous pouvez faire presque ce que vous voulez. Cependant : 
+</p>
+<ul>
+<li class="level1"><div class="li"> pour respecter le pattern <acronym title="Datas Access Object">DAO</acronym>, et si vous renvoyez des résultats d&rsquo;enregistrement, vous devez renvoyer des objets qui sont des records du même type que ceux définis dans la <acronym title="Datas Access Object">DAO</acronym>. Le nom de la classe du record correspondant se trouve dans la propriété <em>_DaoRecordClassName</em></div>
+</li>
+<li class="level1"><div class="li"> Pour effectuer les requêtes, vous devez utiliser l&rsquo;objet jDbConnection placé dans la propriété <em>_conn</em>.</div>
+</li>
+<li class="level1"><div class="li"> Vous avez à votre disposition d&rsquo;autres propriétés et méthodes qui vous facilitent le travail d&rsquo;écriture.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>Manière de coder</h3>
+<div class="level3">
+
+<p>
+ Vous avez deux manières de réaliser les méthodes <acronym title="Hypertext Preprocessor">PHP</acronym> : soit vous écrivez des requêtes quasimement &ldquo;en dur&rdquo;, soit vous créez les requêtes à partir des informations (comme les noms de tables, les noms des champs, les types de champs etc...) stockées dans la factory et le record. La première façon permet d&rsquo;avoir un fonctionnement un peu plus performant, et peut être plus simple à écrire. Mais la deuxième évite d&rsquo;avoir systématiquement à mettre à jour votre méthode quand vous modifiez certaines informations dans la section <em>datasources</em> ou <em>properties</em>. Cependant notez qu&rsquo;une fois en production, c&rsquo;est la performance qui prime. À vous de choisir.
+</p>
+
+<p>
+Avec la deuxième façon de réaliser les méthodes <acronym title="Hypertext Preprocessor">PHP</acronym>, vous aurez besoin de lire les informations sur les tables et les propriétés. Sachez que vous trouverez ces informations dans plusieurs propriétés : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>$this&rarr;primaryTable</em> : l&rsquo;alias de la table primaire</div>
+</li>
+<li class="level1"><div class="li"> <em>$this&rarr;_tables</em> : une liste d&rsquo;informations (voir la documentation de référence sur la description détaillée)</div>
+</li>
+</ul>
+
+<p>
+ Et sur un record que vous aurez préalablement instancié : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>$record&rarr;getProperties()</em> : retourne une liste de propriétés lues (voir la documentation de référence sur la description détaillée)</div>
+</li>
+</ul>
+
+<p>
+ Dans les deux manières de coder, vous aurez besoin des méthodes et propriétés qui suivent.
+</p>
+
+</div>
+
+<h3>préparer les valeurs</h3>
+<div class="level3">
+
+<p>
+ Toutes les valeurs qu&rsquo;on vous passe en paramètre, vous devez les &ldquo;filtrer&rdquo;, les preparer, avant de les intégrer dans une requête <acronym title="Structured Query Language">SQL</acronym>, ceci pour éviter des problèmes de sécurité type <acronym title="Structured Query Language">SQL</acronym> injection.
+</p>
+
+<p>
+Pour cela, vous avez une méthode, _prepareValue, qui accepte en paramètre une valeur, et un nom de type de donnée (celle que l&rsquo;on indique à l&rsquo;attribut datatype de la balise <em>property</em>).
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"updateLabel"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"id"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"label"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[
+        $sql = 'update products set label=' . $this-&gt;_prepareValue($label,'string');
+        $sql.= ' where product_id='.$this-&gt;_prepareValue($id,'integer');
+        $this-&gt;_conn-&gt;exec($sql);
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Ou encore
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"updateLabel"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"id"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"label"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[
+        $sql = 'update '.$this-&gt;_tables[$this-&gt;primaryTable]['realname'];
+        $sql.= ' set label=' . $this-&gt;_prepareValue($label,'string');
+        $sql.= ' where product_id='.$this-&gt;_prepareValue($id,'integer');
+        $this-&gt;_conn-&gt;exec($sql);
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h3>Faire des selects</h3>
+<div class="level3">
+
+<p>
+ Normalement, quand vous faites des <em>SELECT</em> pour renvoyer un ensemble de résultats, vous devez retourner tous les champs déclarés dans les balises <em>property</em>, donc faire aussi les jointures explicitement décrites. Et il faut aussi retourner les résultats sous la forme des objets correspondants aux records. Pour éviter d&rsquo;avoir à réécrire entièrement les requêtes, il y a une série de propriétés indispensables : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>_selectClause</em> : comporte la clause <em>SELECT</em> avec l&rsquo;ensemble des champs déclarés</div>
+</li>
+<li class="level1"><div class="li"> <em>_fromClause</em> : comporte la clause <em>FROM</em> avec la déclaration des tables et des jointures externes</div>
+</li>
+<li class="level1"><div class="li"> <em>_whereClause</em> : comporte la clause <em>WHERE</em> avec les jointures internes</div>
+</li>
+</ul>
+
+<p>
+ Une méthode qui renverrait un ensemble de résultats pourrait ressembler à ceci (Ce type de requête pourrait être trés bien réalisé via les méthodes en <acronym title="Extensible Markup Language">XML</acronym>, mais la complexité de la requête n&rsquo;est pas l&rsquo;objectif ici) : 
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"findByPrice"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"price"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[
+        $sql = $this-&gt;_selectClause.$this-&gt;_fromClause.$this-&gt;_whereClause;
+        $sql .= ($this-&gt;_whereClause == ''?' WHERE ':' AND ');
+        $sql .= ' price = '. $this-&gt;_prepareValue($price,'float');
+        $sql .= ' ORDER BY label ASC';
+&nbsp;
+        $rs = $this-&gt;_conn-&gt;query($sql);
+        $rs-&gt;setFetchMode(8,$this-&gt;_DaoRecordClassName);
+        return $rs;
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre><ul>
+<li class="level1"><div class="li"> <em>_whereClause</em> peut être vide ou pas, c&rsquo;est pourquoi il faut toujours tester.</div>
+</li>
+<li class="level1"><div class="li"> On a préparé la valeur avec _prepareValue, ainsi on &ldquo;protège&rdquo; la requête</div>
+</li>
+<li class="level1"><div class="li"> On a utilisé $this&rarr;_conn pour faire la requête, et on récupère donc un jDbRecordSet</div>
+</li>
+<li class="level1"><div class="li"> Indispensable : on fait un setFetchMode, pour indiquer le nom de la classe des objets qui contiendront les enregistrements ! On y indique donc la classe des record du <acronym title="Datas Access Object">DAO</acronym></div>
+</li>
+<li class="level1"><div class="li"> Enfin on retourne directement le recordSet : puisque jDbRecordSet implémente Iterator, on peut l&rsquo;utiliser directement dans une boucle foreach, et on n&rsquo;a donc pas besoin de créer une liste intermédiaire.</div>
+</li>
+</ul>
+
+</div>
+
+<h4>Récupération d'un seul enregistrement</h4>
+<div class="level4">
+
+<p>
+ C&rsquo;est un peu le même principe que pour récupérer un ensemble :
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"findByLabel"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"label"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[
+        $sql = $this-&gt;_selectClause.$this-&gt;_fromClause.$this-&gt;_whereClause;
+        $sql .= ($this-&gt;_whereClause == ''?' WHERE ':' AND ');
+        $sql .= ' price = '. $this-&gt;_prepareValue($label,'string');
+&nbsp;
+        $rs = $this-&gt;_conn-&gt;query($sql);
+        $rs-&gt;setFetchMode(8,$this-&gt;_DaoRecordClassName);
+&nbsp;
+        $record = $rs-&gt;fetch();
+        return $record;
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Notez le fetch().
+</p>
+
+</div>
+
+<h3>Faire d'autres requêtes</h3>
+<div class="level3">
+
+<p>
+ Pour faire des UPDATE, DELETE, INSERT, rien de spécial à dire. Vous ne pouvez bien entendu pas utiliser <em>_selectClause</em>,  <em>_fromClause</em> et <em>_whereClause</em>.
+</p>
+
+<p>
+Vous avez par contre une méthode qui peut être utile pour les update et delete : _getPkWhereClauseForNonSelect. Elle génère une condition pour la clause WHERE, sur les clés primaires.
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"php"</span> <span class="re0">name</span>=<span class="st0">"updateLabel"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"id"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"label"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;body<span class="re2">&gt;</span></span><span class="sc2">&lt;![CDATA[
+        $sql = 'update products set label=' . $this-&gt;_prepareValue($label,'string');
+        $keys = array_combine($this-&gt;_pkFields, array($id));
+        $sql.= $this-&gt;_getPkWhereClauseForNonSelect($keys);
+&nbsp;
+        $this-&gt;_conn-&gt;exec($sql);
+    ]]&gt;<span class="sc3"><span class="re1">&lt;/body<span class="re2">&gt;</span></span> 
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Même si l&rsquo;intérêt est limité quand il y a une seule clé primaire, il augmente quand il y en a plusieurs.
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

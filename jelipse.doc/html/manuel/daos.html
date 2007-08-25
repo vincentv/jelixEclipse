@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:daos - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>jDao : mapping objet relationnel</h1>
+<div class="level1">
+
+<p>
+ jDao permet de générer des objets <acronym title="Hypertext Preprocessor">PHP</acronym> qui opèrent sur des tables précises de base de données. La génération de ces objets inclus la génération des requêtes <acronym title="Structured Query Language">SQL</acronym> qui correspondent à ces opérations. 
+</p>
+
+<p>
+Pour ce faire, jDao se base sur un fichier <acronym title="Extensible Markup Language">XML</acronym> que vous devez fournir. Ce fichier permet de s&rsquo;affranchir de l&rsquo;écriture fastidieuse des requêtes <acronym title="Structured Query Language">SQL</acronym>, permet de tenir compte des problématiques du genre <acronym title="Structured Query Language">SQL</acronym> injection : les objets générés s&rsquo;occupent de tout. Le fichier <acronym title="Extensible Markup Language">XML</acronym> peut être généré par un outil de développement, comme par exemple l&rsquo;une des commandes fournies avec le script Jelix.
+</p>
+
+<p>
+À partir d&rsquo;un fichier <acronym title="Extensible Markup Language">XML</acronym> de ce type, jDAO fourni donc deux objets, un objet &ldquo;record&rdquo; et  un objet &ldquo;factory&rdquo;, selon le pattern <acronym title="Datas Access Object">DAO</acronym>.
+</p>
+
+<p>
+Un objet record représente un enregistrement : ses propriétés correspondent avec  les champs d&rsquo;une ou plusieurs tables.
+</p>
+
+<p>
+Un objet factory fourni un certain nombre de méthodes permettant de créer un record, de le sauvegarder, de le détruire ou de récupérer des ensembles d&rsquo;objets record.  
+</p>
+<ol>
+<li class="level1"><div class="li"> <a href="daos_fichier_de_base.html" class="wikilink1" title="manuel:daos:fichier_de_base"  >Fichier DAO de base</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="daos_utilisation.html" class="wikilink1" title="manuel:daos:utilisation"  >Instanciation et utilisation d'une factory et d'un record DAO</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="daos_methodes_xml.html" class="wikilink1" title="manuel:daos:methodes_xml"  >Ajouter des méthodes en XML</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="daos_methodes_php.html" class="wikilink1" title="manuel:daos:methodes_php"  >Développer des méthodes en php</a></div>
+</li>
+</ol>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

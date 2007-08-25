@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responseatom - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Syndication Atom</h1>
+<div class="level1">
+
+<p>
+ Jelix permet, <a href="responserss.html" class="wikilink1" title="manuel:responserss"  >en plus de RSS</a>, de pouvoir générer un fil Atom 1.0. Pour cela il faut utiliser l&rsquo;objet jResponseAtom10, qui prend en charge  quasiement la totalité de la <a href="http://tools.ietf.org/html/rfc4287" class="urlextern" title="http://tools.ietf.org/html/rfc4287"   rel="nofollow">spécification Atom 1.0</a>. Son alias est &ldquo;atom1.0&rdquo;.
+</p>
+<pre class="code php">  <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'atom1.0'</span><span class="br0">&#41;</span>;</pre>
+<p>
+La manipulation de jResponseAtom10 est identique à jResponseRss20. La difference se situe sur quelques propriétés dans les informations du fil ou des items.
+</p>
+
+</div>
+
+<h2>Informations sur le fil atom</h2>
+<div class="level2">
+
+<p>
+ jResponseAtom10, comme jresponseRss20, possède une propriété infos, qui est un objet permettant de spécifier les propriétés du fil Atom. Exemple :
+</p>
+<pre class="code php">   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">title</span> = <span class="st0">'Actualité de Jelix'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">webSiteUrl</span>= <span class="st0">'http://jelix.org/fr/'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">copyright</span> = <span class="st0">'Copyright 2006-2007 jelix.org'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">description</span> = <span class="st0">'Actualité sur le framework PHP5 Jelix'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">updated</span> = <span class="st0">'2007-06-08 12:00:00'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">selfLink</span>=jUrl::<span class="me2">get</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Le champs <em>updated</em> est la date de dernière mise à jour du fil Atom. Elle est en générale déterminée par la date de publication de l&rsquo;item le plus récent qui sera présenté dans le fil. Par exemple, pour un fil Atom d&rsquo;un blog, ce sera la date du dernier billet.
+</p>
+
+<p>
+La propriété <em>selfLink</em> est l&rsquo;url de ce fils Atom.
+</p>
+
+<p>
+Par défaut, la description doit être du texte normal. Cependant vous pouvez indiquer du <acronym title="HyperText Markup Language">HTML</acronym> ou <acronym title="Extensible HyperText Markup Language">XHTML</acronym>. Dans ce cas vous devez l&rsquo;indiquer dans la propriété <em>descriptionType</em>, qui peut prendre la valeur &ldquo;html&rdquo;, &ldquo;xhtml&rdquo; ou &ldquo;text&rdquo;.
+</p>
+
+</div>
+
+<h2>Informations sur les items</h2>
+<div class="level2">
+
+<p>
+ Il faut ensuite remplir le channel avec les items que vous voulez publier. Pour un blog par exemple, les items seront les descriptifs des derniers billets publiés.
+</p>
+
+<p>
+Pour chaque item, vous devez appeler la méthode <em>createItem()</em> de jResponseAtom10 pour récupérer un objet qui contiendra les informations de l&rsquo;item. Vous remplissez alors cet objet et vous le stockez dans l&rsquo;objet jResponseAtom10 avec la méthode <em>addItem()</em>
+</p>
+
+<p>
+Voici un exemple avec une dao de news :
+</p>
+<pre class="code php">  <span class="re0">$newsdao</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">'news'</span><span class="br0">&#41;</span>;
+  <span class="re0">$first</span> = <span class="kw2">true</span>;
+&nbsp;
+  <span class="co1">// ici on récupère la liste des 10 dernières news</span>
+  <span class="co1">// on suppose que la liste est classé de la plus récente à la moins récente</span>
+  <span class="co1">// (méthode définie dans la dao)</span>
+  <span class="re0">$list</span> = <span class="re0">$newsdao</span>-&gt;<span class="me1">findTenFirstNews</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="kw1">foreach</span><span class="br0">&#40;</span><span class="re0">$list</span> <span class="kw1">as</span> <span class="re0">$news</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+&nbsp;
+    <span class="kw1">if</span><span class="br0">&#40;</span><span class="re0">$first</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+        <span class="co1">// le premier enregistrement permet de connaitre</span>
+        <span class="co1">// la date du channel</span>
+        <span class="re0">$rep</span>-&gt;<span class="me1">infos</span>-&gt;<span class="me1">updated</span> = <span class="re0">$news</span>-&gt;<span class="me1">date_create</span>;
+        <span class="re0">$first</span>=<span class="kw2">false</span>;
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="co1">// on récupère l'url de l'article de news</span>
+    <span class="re0">$url</span> = jUrl::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">'news~default_article'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'newsid'</span>=&gt;<span class="re0">$news</span>-&gt;<span class="me1">id</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+&nbsp;
+    <span class="co1">// on crée un item RSS, en donnant un titre, une url, une date </span>
+    <span class="re0">$item</span> = <span class="re0">$rep</span>-&gt;<span class="me1">createItem</span><span class="br0">&#40;</span><span class="re0">$news</span>-&gt;<span class="me1">title</span>, <span class="re0">$url</span>, <span class="re0">$news</span>-&gt;<span class="me1">date_create</span><span class="br0">&#41;</span>;
+&nbsp;
+    <span class="co1">// auteur de la news</span>
+    <span class="re0">$item</span>-&gt;<span class="me1">authorName</span> = <span class="re0">$news</span>-&gt;<span class="me1">author</span>;
+&nbsp;
+    <span class="co1">// résumé de la news en HTML</span>
+    <span class="re0">$item</span>-&gt;<span class="me1">summary</span> = <span class="re0">$news</span>-&gt;<span class="me1">summary</span>;
+    <span class="re0">$item</span>-&gt;<span class="me1">summaryType</span>=<span class="st0">'html'</span>;
+&nbsp;
+    <span class="co1">// contenu HTML de la news</span>
+    <span class="re0">$item</span>-&gt;<span class="me1">content</span> = <span class="re0">$news</span>-&gt;<span class="me1">content</span>;
+    <span class="re0">$item</span>-&gt;<span class="me1">contentType</span>=<span class="st0">'html'</span>;
+&nbsp;
+    <span class="co1">// on ajoute l'item dans le fil RSS</span>
+    <span class="re0">$rep</span>-&gt;<span class="me1">addItem</span><span class="br0">&#40;</span><span class="re0">$item</span><span class="br0">&#41;</span>;
+  <span class="br0">&#125;</span></pre>
+</div>
+
+<h2>Autres informations</h2>
+<div class="level2">
+
+<p>
+ Il est possible d&rsquo;indiquer plus d&rsquo;informations sur le fil atom ou sur chaque item. Consultez la <a href="http://jelix.org/reference/" class="urlextern" title="http://jelix.org/reference/"   rel="nofollow">documentation de reference</a> sur les objets jAtom10Info et jAtom10Item. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:modules - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Les modules</h1>
+<div class="level1">
+
+<p>
+ Les fonctionnalités de votre application doivent être regroupées en modules. Celle-ci doit avoir au moins deux modules : le module &ldquo;jelix&rdquo; livré avec le framework, et un module principale pour l&rsquo;application.
+</p>
+
+</div>
+
+<h2>Déclarer les répertoires de modules</h2>
+<div class="level2">
+
+<p>
+ Un module est un répertoire dans lequel il y a une arborescence précise. Les modules sont regroupés dans un ou plusieurs répertoires que l&rsquo;on appelle groupe de modules.
+</p>
+
+</div>
+
+<h3>configuration générale</h3>
+<div class="level3">
+
+<p>
+ Pour avoir accès aux modules, il faut déclarer ces groupes de modules dans la configuration, par la propriété <strong>modulesPath</strong>. On peut y indiquer plusieurs chemins en les séparant par des virgules. On peut indiquer soit des chemins complets, soit des chemins relatifs à un répertoire spécifique de l&rsquo;arborescence Jelix. Ces chemins relatifs ont une notation spéciale : 
+</p>
+<pre class="code"> coderepertoire:chemin/relatif/</pre>
+
+<p>
+ <em>coderepertoire</em> est un de ces codes : 
+</p>
+<table class="inline">
+	<tr>
+		<td> lib </td><td> répertoire lib/ de jelix </td>
+	</tr>
+	<tr>
+		<td> app </td><td> répertoire de l&rsquo;application </td>
+	</tr>
+</table>
+<br />
+
+<p>
+ Cela évite d&rsquo;avoir à indiquer un véritable chemin relatif. Et donc d&rsquo;avoir à changer à la fois le fichier application.init.php et le fichier de configuration quand on fait une modification dans l&rsquo;arborescence, quand on migre l&rsquo;application d&rsquo;un serveur à un autre (entre le développement et la production par exemple). 
+</p>
+
+<p>
+Exemple :
+</p>
+<pre class="code ini">   <span class="re1">modulesPath </span>=<span class="re2"> lib:jelix-modules/,app:modules/</span></pre>
+<p>
+On déclare ici qu&rsquo;il y a deux groupes de modules : le premier, <em>jelix-modules</em>, se trouvant dans le répertoire <em>lib</em> de jelix; le deuxième, le répertoire <em>modules</em> de l&rsquo;application.
+</p>
+
+<p>
+Tous les modules se trouvant dans ces deux répertoires seront utilisables et les actions qu&rsquo;ils déclarent pourront être appelées depuis un navigateur.
+</p>
+
+</div>
+
+<h3>Restrictions</h3>
+<div class="level3">
+
+<p>
+ Il se peut que parmi les modules présents dans un groupe, on veuille en désactiver certains : cela peut arriver si ce groupe de module est partagé par plusieurs applications et que pour l&rsquo;application courante, on ne veuille pas utiliser certains de ces modules. Ou encore que pour plus de sécurité, on interdisent l&rsquo;accès à certains modules pour certains points d&rsquo;entrée.
+</p>
+
+<p>
+On dispose alors de deux paramètres de configuration :
+</p>
+<pre class="code ini">   <span class="re1">checkTrustedModules </span>=<span class="re2"> on</span>
+   <span class="re1">trustedModules </span>=<span class="re2"> foo,bar,baz</span></pre>
+<p>
+On active la restriction d&rsquo;accès via le paramètre <strong>checkTrustedModules</strong>, et on indique les modules autorisés dans <strong>trustedModules</strong>. Les autres modules ne seront pas accessibles de l&rsquo;extérieur. Par contre, les modules autorisés peuvent accéder aux ressources des modules non autorisés (classes, zones, dao...).
+</p>
+
+</div>
+
+<h2>Créer un module</h2>
+<div class="level2">
+
+<p>
+ Le principe : il suffit de créer un répertoire dans un groupe, avec un nom précis, et d&rsquo;y mettre les contrôleurs, les daos et tout ce qu&rsquo;il faut dans leur sous-répertoires respectifs.
+</p>
+
+<p>
+Le plus simple est encore d&rsquo;utiliser le script jelix et la commande <strong>createmodule</strong> : 
+</p>
+<pre class="code bash">   php jelix.php createmodule monmodule</pre>
+<p>
+Cela vous créé un module de nom &ldquo;monmodule&rdquo; dans le répertoire <em>modules</em>/ de l&rsquo;application, des sous répertoires ainsi qu&rsquo;un contrôleur par défaut.  
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

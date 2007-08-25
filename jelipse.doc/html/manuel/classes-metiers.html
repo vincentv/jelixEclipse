@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:classes-metiers - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer ses classes métiers</h1>
+<div class="level1">
+
+<p>
+ Pour respecter le modèle en couche, il est recommandé de réaliser tout ses traitements métiers et services dans des classes dédiées.
+</p>
+
+<p>
+Dans de telles classes, vous manipulerez par exemple des daos, des données issues de daos ou autre, effectuerez donc des traitements autres que de l&rsquo;affichage. Aussi les méthodes de vos controllers s&rsquo;en trouveront allégées et les traitements réutilisables dans d&rsquo;autres actions.
+</p>
+
+</div>
+
+<h2>Création d'une classe</h2>
+<div class="level2">
+
+<p>
+ Les classes métiers et services dans Jelix sont des classes <acronym title="Hypertext Preprocessor">PHP</acronym> classiques qui n&rsquo;ont rien de spécifique. La seule chose à respecter est de la stocker dans un fichier nom_de_la_classe.class.php dans le répertoire classes du module :
+</p>
+<pre class="code php">   <span class="kw2">class</span> StockService <span class="br0">&#123;</span>
+      public <span class="kw2">function</span> getListeProduits<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+          <span class="re0">$stock</span> = jDAO::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"products"</span><span class="br0">&#41;</span>;
+          
+          <span class="re0">$liste</span> = <span class="re0">$stock</span>-&gt;<span class="me1">findAll</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+          
+          <span class="co1">// ici traitement sur la liste... par exemple</span>
+          
+          
+          <span class="kw1">return</span> <span class="re0">$liste</span>;      
+      <span class="br0">&#125;</span>
+   <span class="br0">&#125;</span></pre>
+<p>
+Cette classe devra être stockée dans classes/StockService.class.php.
+</p>
+
+<p>
+ La différence entre une classe service avec les autres classes est qu&rsquo;une classe service fourni comme son nom l&rsquo;indique, un service. Elle n&rsquo;a pas besoin d&rsquo;être instanciée à chaque utilisation car elle ne possède pas de propriétés &ldquo;discriminantes&rdquo;. Une seule instance suffit pour toute l&rsquo;application.
+</p>
+
+<p>
+Par exemple une classe de type &ldquo;factory&rdquo;, qui permet de récupérer des ensembles de données, est une classe service. Par contre une classe représentant un produit, qui possède donc des champs identifiants, est une classe non service.
+</p>
+
+</div>
+
+<h2>Instanciation</h2>
+<div class="level2">
+
+<p>
+ Jelix propose la classe jClasses, qui vous évite d&rsquo;avoir à faire un include et une instanciation par vous même.
+</p>
+
+<p>
+jClasses fournit deux méthodes statiques, auxquelles vous indiquez un sélecteur : 
+</p>
+<ul>
+<li class="level1"><div class="li"> createInstance($selecteurDeClasse); (ou create($selecteurDeClasse) )</div>
+</li>
+<li class="level2"><div class="li"> getService($selecteurDeClasse);</div>
+</li>
+</ul>
+
+<p>
+La première créera à chaque appel une nouvelle instance. Par contre la deuxième renverra toujours une même instance de la classe. getService sera donc utilisé sur les classes services, et createInstance sur les autres.
+</p>
+
+<p>
+Si notre classe StockService se trouve dans le module &ldquo;shop&rdquo;, voici un exemple d&rsquo;appel dans un actiongroup :
+</p>
+<pre class="code php">    <span class="re0">$stocksrv</span> = jClasses::<span class="me2">getService</span><span class="br0">&#40;</span><span class="st0">"shop~stockservice"</span><span class="br0">&#41;</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'liste_produits'</span>, <span class="re0">$stocksrv</span>-&gt;<span class="me1">getListeProduits</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Cependant dans certains cas, comme celui où le constructeur de la classe métier demande un paramètre, il faut include la classe métier puis l&rsquo;instancier &ldquo;manuellement&rdquo;.
+</p>
+
+<p>
+Dans ce cas la classe jClasses propose la méthode statique inc($selecteurDeClasse). Comme son nom l&rsquo;indique elle inclue (en fait effectue un require_once) la classe spécifiée par le sélecteur.
+</p>
+
+<p>
+Exemple : 
+</p>
+<pre class="code php">    jClasses::<span class="me2">inc</span><span class="br0">&#40;</span><span class="st0">'shop~shoesProduct'</span><span class="br0">&#41;</span>;
+    <span class="re0">$shoe</span> = <span class="kw2">new</span> shoesProduct<span class="br0">&#40;</span><span class="st0">'43'</span>, <span class="st0">'black'</span><span class="br0">&#41;</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

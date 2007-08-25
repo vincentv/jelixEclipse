@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:configuration - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Configuration</h1>
+<div class="level1">
+
+</div>
+
+<h2>organisation</h2>
+<div class="level2">
+
+<p>
+La configuration du framework est stockée dans un fichier de type &ldquo;ini&rdquo;. Il s&rsquo;agit d&rsquo;un fichier contenant des sections, débutant par un nom entre crochet. Chacune de ces sections contenant une serie de paramètres &ldquo;nom=valeur&rdquo;. Il y a une section &ldquo;générale&rdquo;, qui n&rsquo;a pas de nom, et dont les paramètres sont en début du fichier.
+</p>
+
+<p>
+Les fichiers de configurations sont situés dans var/config.
+</p>
+
+<p>
+Chaque point d&rsquo;entrée peut avoir son fichier de configuration spécifique. Mais la plupart du temps ils ont beaucoup de valeurs de paramètres identiques entre eux. Pour éviter de répeter ces paramètres identiques dans chaque fichier, il y a un fichier de configuration commun, qui a pour nom <strong>defaultconfig.ini.php</strong>. Il est automatiquement lu, en plus du fichier spécifique au point d&rsquo;entrée, et il n&rsquo;est pas besoin de l&rsquo;indiquer dans les points d&rsquo;entrée.
+</p>
+
+<p>
+Un fichier de configuration spécifique ne contiendra donc que les valeurs spécifiques pour le point d&rsquo;entrée, et peut bien sûr redéfinir des paramètres définis dans le fichier commun.
+</p>
+
+<p>
+Exemple d&rsquo;un fichier defaultconfig.ini.php (extrait) : 
+</p>
+<pre class="code ini"><span class="re1">defaultModule </span>=<span class="re2"> &quot;testapp&quot;</span>
+<span class="re1">defaultAction </span>=<span class="re2"> &quot;main_index&quot;</span>
+<span class="re1">defaultLocale </span>=<span class="re2"> &quot;fr_FR&quot;</span>
+<span class="re1">defaultCharset </span>=<span class="re2"> &quot;ISO-<span class="nu0">8859</span>-<span class="nu0">1</span>&quot;</span>
+<span class="re1">defaultTimeZone </span>=<span class="re2"> &quot;Europe/Paris&quot;</span>
+&nbsp;
+<span class="re1">checkTrustedModules </span>=<span class="re2"> off</span>
+&nbsp;
+<span class="co0">; list of modules : module,module,module</span>
+trustedModules =
+&nbsp;
+<span class="re1">pluginsPath </span>=<span class="re2"> lib:jelix-plugins/,app:plugins/</span>
+<span class="re1">modulesPath </span>=<span class="re2"> lib:jelix-modules/,app:modules/</span>
+<span class="re1">tplpluginsPath </span>=<span class="re2"> lib:jelix/tpl/plugins/</span>
+&nbsp;
+<span class="re1">dbProfils </span>=<span class="re2"> dbprofils.ini.php</span>
+&nbsp;
+<span class="re1">defaultTheme </span>=<span class="re2"> default</span>
+&nbsp;
+<span class="re0"><span class="br0">&#91;</span>plugins<span class="br0">&#93;</span></span>
+<span class="co0">;nom = nom_fichier_ini</span>
+&nbsp;
+<span class="re0"><span class="br0">&#91;</span>responses<span class="br0">&#93;</span></span>
+...
+&nbsp;</pre>
+<p>
+Pour les requêtes classiques, passant par index.php, on pourrait avoir le fichier var/config/index/config.ini.php. On le met ici dans un sous repertoire index pour une meilleure organisation (il peut en effet y avoir des fichiers de configuration de plugins propre à chaque point d&rsquo;entrée, ça peut donc vite devenir peu lisible dans var/config/).
+</p>
+
+<p>
+Dans ce fichier, on ne va redéfinir que certaines choses :
+</p>
+<pre class="code ini"><span class="re1">defaultModule </span>=<span class="re2"> &quot;testapp&quot;</span>
+<span class="re1">defaultAction </span>=<span class="re2"> &quot;main_index&quot;</span>
+&nbsp;
+<span class="re0"><span class="br0">&#91;</span>plugins<span class="br0">&#93;</span></span>
+<span class="re1">autolocale </span>=<span class="re2"> index/autolocale.ini.php</span>
+&nbsp;
+<span class="re0"><span class="br0">&#91;</span>responses<span class="br0">&#93;</span></span>
+<span class="re1">html</span>=<span class="re2">myHtmlResponse</span></pre>
+<p>
+Pour le fichier de configuration de xmlrpc.php, on pourrait avoir par exemple :
+</p>
+<pre class="code ini"><span class="re1">defaultModule </span>=<span class="re2"> &quot;testapp&quot;</span>
+<span class="re1">defaultAction </span>=<span class="re2"> &quot;xmlrpc_index&quot;</span>
+&nbsp;</pre>
+<p>
+etc.
+</p>
+
+</div>
+
+<h2>Contenu</h2>
+<div class="level2">
+
+<p>
+ Pour avoir la liste complète des options, voir le fichier lib/jelix/core/defaultconfig.ini.php, qui est &ldquo;l&rsquo;original&rdquo; de la copie que vous devez avoir dans var/config/.
+</p>
+
+<p>
+ Voici les différentes sections:
+</p>
+
+</div>
+
+<h3>section générale</h3>
+<div class="level3">
+
+<p>
+ Ce sont les paramètres situés en début de fichier. On y trouve les valeurs par défauts : module, action, langue, charset, zone horaire.
+</p>
+
+<p>
+ @TODO : à compléter
+</p>
+
+</div>
+
+<h3>section plugins</h3>
+<div class="level3">
+
+<p>
+ Doit contenir les noms des plugins à activer. Ils seront chargés à partir des chemins définis dans le paramètre général pluginsPath.
+</p>
+
+<p>
+ @TODO : à compléter
+</p>
+
+</div>
+
+<h3>section responses</h3>
+<div class="level3">
+
+<p>
+@TODO : à compléter
+</p>
+
+</div>
+
+<h3>section error_handling</h3>
+<div class="level3">
+
+<p>
+ @TODO : à compléter
+</p>
+
+</div>
+
+<h3>section compilation</h3>
+<div class="level3">
+
+<p>
+ @TODO : à compléter
+</p>
+
+</div>
+
+<h3>section urlengine</h3>
+<div class="level3">
+
+<p>
+ @TODO : à compléter
+</p>
+
+</div>
+
+<h3>section logfiles</h3>
+<div class="level3">
+
+<p>
+@TODO : à compléter
+</p>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

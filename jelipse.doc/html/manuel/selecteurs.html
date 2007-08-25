@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:selecteurs - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Comment est défini un sélecteur</h1>
+<div class="level1">
+
+<p>
+ Un sélecteur est une chaîne ayant ce format : &ldquo;unModule~uneRessource&rdquo; . On peut omettre le module si on se trouve actuellement dans le module en question. Dans ce cas on écrit &ldquo;uneRessource&rdquo;.
+</p>
+
+<p>
+Un sélecteur désigne une ressource d&rsquo;un type précis. Voici donc les différents types de sélecteurs : 
+</p>
+<table class="inline">
+	<tr>
+		<th> Ressource </th><th> Préfixe </th><th> Classe </th>
+	</tr>
+	<tr>
+		<td> une action </td><td> act </td><td> jSelectorAct </td>
+	</tr>
+	<tr>
+		<td> une classe </td><td> class </td><td> jSelectorClass </td>
+	</tr>
+	<tr>
+		<td> une locale </td><td> loc </td><td> jSelectorLoc </td>
+	</tr>
+	<tr>
+		<td> un dao </td><td> dao </td><td> jSelectorDao </td>
+	</tr>
+	<tr>
+		<td> un template </td><td> tpl </td><td> jSelectorTpl </td>
+	</tr>
+	<tr>
+		<td> une zone </td><td> zone </td><td> jSelectorZone </td>
+	</tr>
+	<tr>
+		<td> un plugin </td><td> plug </td><td> jSelectorPlugin </td>
+	</tr>
+	<tr>
+		<td> fichier dans var/ </td><td> var </td><td> jSelectorVar </td>
+	</tr>
+	<tr>
+		<td> fichier de configuration </td><td> cfg </td><td> jSelectorCfg </td>
+	</tr>
+	<tr>
+		<td> fichier dans temp/ </td><td> tmp </td><td> jSelectorTmp </td>
+	</tr>
+	<tr>
+		<td> fichier de log </td><td> log </td><td> jSelectorLog</td>
+	</tr>
+	<tr>
+		<td> fichier dans lib/ </td><td> lib </td><td> jSelectorLib </td>
+	</tr>
+</table>
+<br />
+
+<p>
+ En règle générale, vous aurez à donner un sélecteur en paramètre de certaines méthodes sans avoir à indiquer son type. Très souvent en effet ces méthodes savent qu&rsquo;il s&rsquo;agira d&rsquo;un sélecteur sur une ressource d&rsquo;un type précis. 
+</p>
+<pre class="code">jDAO::create(&quot;myModule~myDao&quot;);</pre>
+
+<p>
+ Ici jDAO cherchera un fichier <acronym title="Datas Access Object">DAO</acronym> de nom myDAO.dao.xml dans le module myModule.
+</p>
+
+</div>
+
+<h2>Définir un sélecteur d'un type précis</h2>
+<div class="level2">
+
+<p>
+ Il peut arriver (mais c&rsquo;est en fait très rare dans l&rsquo;<acronym title="Application Programming Interface">API</acronym> de jelix) que la méthode attende n&rsquo;importe quel type de sélecteur. Dans ce cas là, il faut ajouter un préfixe au sélecteur, de manière à indiquer son type. Ce préfixe est indiqué dans le tableau du dessus. La notation d&rsquo;un sélecteur est alors :  
+</p>
+<pre class="code">  &quot;type:unModule~uneRessource&quot;</pre>
+
+<p>
+ On appelle cela un &ldquo;sélecteur complet&rdquo;.
+</p>
+
+<p>
+On utilisera alors l&rsquo;objet jSelectorFactory pour récupérer l&rsquo;objet sélecteur correspondant (voir la colonne classe dans le tableau), et donc le chemin physique de la ressource indiquée.   
+</p>
+<pre class="code php">    <span class="re0">$unSelecteur</span> = <span class="st0">"tpl:foo~bar"</span>;
+    ...
+    <span class="re0">$selector</span> = jSelectorFactory::<span class="me2">create</span><span class="br0">&#40;</span><span class="re0">$unSelecteur</span><span class="br0">&#41;</span>; <span class="co1">// $selector sera un objet de type jSelectorTpl</span>
+    <span class="re0">$chemin_du_template</span> = <span class="re0">$selector</span>-&gt;<span class="me1">getPath</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

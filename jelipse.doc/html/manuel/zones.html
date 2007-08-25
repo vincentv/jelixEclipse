@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:zones - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Utilisation des zones</h1>
+<div class="level1">
+
+</div>
+
+<h2>Création</h2>
+<div class="level2">
+
+<p>
+ Une zone est déclarée via une classe héritant de jZone. Le nom de cette classe est le nom de la zone suivit du mot &ldquo;Zone&rdquo;
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Elle doit être stockée dans un fichier <em>nom_de_la_zone</em>.zone.php, dans le répertoire zones du module. Ici donc, il s&rsquo;agit du fichier zones/test.zone.php.
+</p>
+
+<p>
+Par défaut, un objet jZone instancie un moteur de template.
+</p>
+
+</div>
+
+<h3>Utilisation sans template</h3>
+<div class="level3">
+
+<p>
+ Si vous ne voulez pas utiliser de template pour votre zone, vous devez surcharger la méthode <em>_createContent</em>, qui doit renvoyer le contenu de la zone sous forme de chaine. Vous ne devez pas faire d&rsquo;echo ou de print !
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="kw2">function</span> _createContent<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="kw1">return</span> <span class="st0">"&lt;p&gt;Ceci est le contenu d'une zone&lt;/p&gt;"</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+</div>
+
+<h3>Utilisation avec template</h3>
+<div class="level3">
+
+<p>
+ La plupart du temps, vous utiliserez toutefois un template. Vous devez indiquer  dans la propriété $_tplname le template que vous utilisez (c&rsquo;est un sélecteur), et surcharger la méthode _prepareTpl(). Cette méthode est, comme son nom l&rsquo;indique, chargée d&rsquo;initialiser l&rsquo;objet jTpl instancié automatiquement par jZone et stocké dans la propriété _tpl.
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="re0">$_tplname</span>=<span class="st0">'template_test'</span>;
+&nbsp;
+   protected <span class="kw2">function</span> _prepareTpl<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$this</span>-&gt;_tpl-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'foo'</span>,<span class="st0">'bar'</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Et le template (stocké dans templates/template_test.tpl):
+</p>
+<pre class="code xml">&nbsp;
+<span class="sc3"><span class="re1">&lt;p<span class="re2">&gt;</span></span>Ceci est un template. Et foo vaut {$foo}.<span class="sc3"><span class="re1">&lt;/p<span class="re2">&gt;</span></span>
+&nbsp;</pre>
+</div>
+
+<h2>Appel</h2>
+<div class="level2">
+
+<p>
+ Il y a plusieurs façons de récupérer le contenu d&rsquo;une zone en fonction de ce que l&rsquo;on veut faire.
+</p>
+
+<p>
+Si on veut récupérer simplement son contenu (dans un contrôleur), on fait :
+</p>
+<pre class="code php">   <span class="re0">$contenu</span> = jZone::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">'test'</span><span class="br0">&#41;</span>; <span class="co1">// ou 'leModule~test'...</span></pre>
+<p>
+Cependant, il arrive très souvent qu&rsquo;il s&rsquo;agisse d&rsquo;affecter le contenu de la zone à une variable du template principal, lorsque la réponse possède un template principal (ce qui est le cas des réponses html, qui possède un objet jTpl dans sa propriété body). Dans le contrôleur, on pourra donc utiliser la méthode assignZone de jTpl :
+</p>
+<pre class="code php">    <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'page de test'</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'testapp~main'</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assignZone</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>, <span class="st0">'test'</span><span class="br0">&#41;</span>;</pre>
+<p>
+<em>test</em> correspondant au nom du fichier <em><strong>test</strong>.zone.php</em><br/>
+ <em>MAIN</em> correspondant à la variable de template <em>{$MAIN}</em>
+</p>
+
+<p>
+ Autre solution, on peut avoir dans un template, un appel de zone direct :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;div</span> <span class="kw3">id</span>=<span class="st0">"menu"</span><span class="kw2">&gt;</span> {zone 'leModule~test'} <span class="sc2"><span class="kw2">&lt;/div&gt;</span>
+&nbsp;</pre>
+</div>
+
+<h3>Appel avec des paramètres</h3>
+<div class="level3">
+
+<p>
+ Il est possible de faire passer des paramètres à une zone. Pour cela, on procède de la manière suivante :
+</p>
+
+<p>
+Appel depuis un contrôleur : 
+</p>
+<pre class="code php">    <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'page de test'</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'testapp~main'</span>;
+    <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assignZone</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>, <span class="st0">'test'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'foo'</span>=&gt;<span class="st0">'bar'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Et pour récupérer la variable dans la zone, on utilise la méthode getParam() :
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="re0">$_tplname</span>=<span class="st0">'template_test'</span>;
+&nbsp;
+   protected <span class="kw2">function</span> _prepareTpl<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$foo</span> = <span class="re0">$this</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'foo'</span><span class="br0">&#41;</span>;
+       <span class="re0">$foo</span> = <span class="kw3">strtoupper</span><span class="br0">&#40;</span><span class="re0">$foo</span><span class="br0">&#41;</span>;
+       <span class="re0">$this</span>-&gt;_tpl-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'foo'</span>, <span class="re0">$foo</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+ Dans cet exemple on a fait passer la variable &lsquo;foo&rsquo; avec pour valeur &lsquo;bar&rsquo; en paramètre de la zone. On a récupéré la variable &lsquo;foo&rsquo; dans la zone pour effectuer un traitement dessus (ici, mise en majuscule) et on a affecté &lsquo;foo&rsquo; au template de la zone.
+</p>
+
+<p>
+À noter que Jelix affecte automatiquement les variables passées en paramètres de la zone au template de zone si il existe. Vous pouvez vous passer d&rsquo;écrire : 
+</p>
+<pre class="code php">   protected <span class="kw2">function</span> _prepareTpl<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$this</span>-&gt;_tpl-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'foo'</span>, <span class="re0">$this</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'foo'</span><span class="br0">&#41;</span>;<span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span></pre>
+<p>
+ Si vous utilisez le plugin de template zone, le passage des paramètres à la zone s&rsquo;effectue de cette manière :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;div</span> <span class="kw3">id</span>=<span class="st0">"menu"</span><span class="kw2">&gt;</span> {zone 'leModule~test', array('foo'=&gt;'bar')} <span class="sc2"><span class="kw2">&lt;/div&gt;</span></pre>
+</div>
+
+<h2>Utilisation du cache</h2>
+<div class="level2">
+
+<p>
+ Il est possible de mettre le contenu généré dans un cache. Et il peut y avoir un cache pour chaque valeur des paramètres de la zone.
+</p>
+
+</div>
+
+<h3>activation du cache</h3>
+<div class="level3">
+
+<p>
+ Par défaut, une zone ne gére pas de cache. il faut donc l&rsquo;activer dans votre classe, via la propriété _useCache en la mettant à true :
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="re0">$_useCache</span> = <span class="kw2">true</span>;
+&nbsp;
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Si on s&rsquo;en tiens à cela, il y aura le même cache pour la zone, quelque soit les paramètres. Si vous avez des paramètres, il est très probable que l&rsquo;affichage dépende d&rsquo;eux. Donc il faut indiquer les paramètres identifiant un cache. Pour cela, il faut initialiser la propriété _cacheParams qui est un tableau des noms des paramètres. Si par exemple vous avez une zone affichant un article, et que l&rsquo;id de l&rsquo;article &lsquo;id_article&rsquo; est passé en paramètre, vous devez alors faire ceci :
+</p>
+<pre class="code php"><span class="kw2">class</span> articleZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="re0">$_useCache</span> = <span class="kw2">true</span>;
+&nbsp;
+   protected <span class="re0">$_cacheParams</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'id_article'</span><span class="br0">&#41;</span>;
+<span class="br0">&#125;</span></pre>
+<p>
+Un cache pour chaque article sera généré.
+</p>
+
+<p>
+<strong>ATTENTION</strong> : un cache se matérialise par un fichier dans le répertoire temporaire de l&rsquo;application. Si vous avez des milliers d&rsquo;articles, cela peut engendrer autant de fichiers dans votre répertoire temporaire. Il faut donc éviter dans un cas comme celui-là, d&rsquo;activer le cache si votre hébergeur vous limite en nombre de fichiers par exemple.
+</p>
+
+<p>
+Utilisez donc le cache à bon escient. Par exemple, pour une appli fréquenté moyennement (un même article lu seulement quelque fois par jour), il n&rsquo;est pas forcément nécessaire d&rsquo;activer le cache. À vous de juger..
+</p>
+
+</div>
+
+<h3>Rafraichissement du cache</h3>
+<div class="level3">
+
+<p>
+ Il est nécessaire de régénérer le cache quand les informations contenus sont obsolètes. Cette régénération peut se faire automatiquement régulièrement (toutes les n secondes), ou alors être forcée manuellement.
+</p>
+
+<p>
+Vous utiliserez l&rsquo;une ou l&rsquo;autre des méthodes selon les cas. La deuxième méthode est moins gourmande en ressource puisque le cache ne se régénère uniquement en temps voulu. L&rsquo;inconvénient c&rsquo;est qu&rsquo;il faut explicitement effacer le cache dans vos classes métier. La première méthode évite ce travail, mais consomme plus de ressources, et le contenu de la zone n&rsquo;est pas à jour pendant le délai indiqué. À réserver donc pour afficher des informations non vitales, dont la &ldquo;fraicheur&rdquo; n&rsquo;a pas vraiment d&rsquo;importance.
+</p>
+
+</div>
+
+<h4>automatique</h4>
+<div class="level4">
+
+<p>
+ Pour un rafraichissement automatique, il suffit d&rsquo;indiquer dans la propriété _cacheTimeout le délai d&rsquo;invalidité du cache, en seconde :
+</p>
+<pre class="code php"><span class="kw2">class</span> testZone extends jZone <span class="br0">&#123;</span>
+ 
+   protected <span class="re0">$_useCache</span> = <span class="kw2">true</span>;
+ 
+   protected <span class="re0">$_cacheTimeout</span> = <span class="nu0">60</span>; 
+<span class="br0">&#125;</span></pre>
+<p>
+Ici le cache sera régénéré toutes les 60 secondes. Si vous mettez 0, il n&rsquo;y aura pas de rafraichissement automatique.
+</p>
+
+</div>
+
+<h4>forcé</h4>
+<div class="level4">
+
+<p>
+ La suppression &ldquo;manuelle&rdquo; du cache se fait via les méthodes statiques clear et clearAll.
+</p>
+
+<p>
+Par exemple, dans la classe métier de votre article, au moment de modifier l&rsquo;article (en base de donnée par exemple) ou de le supprimer, vous allez appeler jZone pour qu&rsquo;il supprime le cache correspondant, afin qu&rsquo;il soit régénéré au prochain affichage. Bien sûr, il faut indiquer les valeurs des paramètres qui identifie le cache. Dans notre exemple donc, id_article.
+</p>
+<pre class="code php">   jZone::<span class="me2">clear</span><span class="br0">&#40;</span><span class="st0">'mymodule~article'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'id_article'</span>=&gt;<span class="nu0">546</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Si vous voulez effacer tous les caches d&rsquo;une même zone, vous pouvez appeler clearAll :
+</p>
+<pre class="code php">   jZone::<span class="me2">clearAll</span><span class="br0">&#40;</span><span class="st0">'mymodule~article'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Et si vous voulez effacer tous les caches de toutes les zones :
+</p>
+<pre class="code php">   jZone::<span class="me2">clearAll</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>Empêcher ponctuellement la mise en cache</h3>
+<div class="level3">
+
+<p>
+ Il faut noter que les méthodes _createContent et _prepareTpl (que vous pouvez surcharger), ne sont appelées que lorsque le cache doit être régénéré.
+</p>
+
+<p>
+Il se peut que pour une raison ou pour une autre (en fonction de la valeur d&rsquo;un certain paramètre par exemple), vous ne vouliez pas que parfois le résultat de la zone soit mis en cache.
+</p>
+
+<p>
+Il suffit alors, dans _createContent ou _prepareTpl, de mettre la propriété _cancelCache à true
+</p>
+<pre class="code php">&nbsp;
+   protected <span class="kw2">function</span> _prepareTpl<span class="br0">&#40;</span>
+      <span class="co1">// ....</span>
+      <span class="re0">$this</span>-&gt;_cancelCache=<span class="kw2">true</span>;
+      <span class="co1">//...</span>
+   <span class="br0">&#125;</span>
+&nbsp;</pre>
+</div>
+
+<h2>paramètres automatiques</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;affichage d&rsquo;une zone peut dépendre de paramètres donnés explicitement, mais aussi de paramètres &ldquo;externe&rdquo; implicites. C&rsquo;est le cas par exemple pour une zone qui affiche la version d&rsquo;un article en fonction de la langue configurée dans l&rsquo;appli. On peut bien sûr passer à chaque appel de zone le code langue, mais ce n&rsquo;est pas forcément pratique. On pourrait ne pas avoir à l&rsquo;indiquer dans les paramètres, et le récupérer soit même dans _prepareTpl/_createContent, mais alors il n&rsquo;est pas possible que cela devienne un critère discriminant pour le système de cache si vous l&rsquo;utilisez.
+</p>
+
+<p>
+La solution est de surcharger le constructeur, et d&rsquo;initialiser ce paramètre :
+</p>
+<pre class="code php"><span class="kw2">class</span> articleZone extends jZone <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="re0">$_useCache</span> = <span class="kw2">true</span>;
+&nbsp;
+   protected <span class="re0">$_cacheParams</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'id_article'</span>, <span class="st0">'lang'</span><span class="br0">&#41;</span>;
+&nbsp;
+   public <span class="kw2">function</span> __construct<span class="br0">&#40;</span><span class="re0">$params</span>=<span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$params</span><span class="br0">&#91;</span><span class="st0">'lang'</span><span class="br0">&#93;</span> = <span class="re0">$GLOBALS</span><span class="br0">&#91;</span><span class="st0">'gJConfig'</span><span class="br0">&#93;</span>-&gt;<span class="me1">defaultLang</span>;
+       parent::__construct<span class="br0">&#40;</span><span class="re0">$params</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Remarquez que l&rsquo;on a indiqué ce paramètre automatique &lsquo;lang&rsquo; dans _cacheParams.
+</p>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

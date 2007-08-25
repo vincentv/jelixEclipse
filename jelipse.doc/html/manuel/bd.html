@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:bd - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Accéder aux bases de données</h1>
+<div class="level1">
+
+<p>
+ Jelix possède un système d&rsquo;accès abstrait aux bases de données : jDb. jDb propose donc une <acronym title="Application Programming Interface">API</acronym> commune à toutes les bases de données. Pour le moment, les drivers fournis sont ceux pour :
+</p>
+<ul>
+<li class="level1"><div class="li"> mysql</div>
+</li>
+<li class="level1"><div class="li"> postgresql</div>
+</li>
+<li class="level1"><div class="li"> sqlite</div>
+</li>
+</ul>
+
+<p>
+ Il y a aussi un autre driver, pdo, permettant d&rsquo;indiquer à jDb d&rsquo;utiliser pdo plutôt que les classes d&rsquo;abstractions internes de jDb. Il est d&rsquo;ailleurs recommandé d&rsquo;utiliser pdo pour des raisons de performances.
+</p>
+
+<p>
+Si dans la liste ci-dessus, il n&rsquo;y a pas le driver correspondant à votre base de donnée et que vous n&rsquo;avez pas PDO, vous pouvez <a href="plugins_db.html" class="wikilink1" title="manuel:plugins:db"  >créer votre propre driver pour jDb</a>.
+</p>
+
+<p>
+À noter que bien que jDb soit une <acronym title="Application Programming Interface">API</acronym> commune à toutes les bases de données, ce n&rsquo;est en aucun cas pas une classe qui adaptera les requêtes en fonction des bases de données. Aussi, faites attention à ne pas trop utiliser des spécificités <acronym title="Structured Query Language">SQL</acronym> d&rsquo;une base de donnée précises dans vos modules, si vous souhaitez qu&rsquo;il puisse être réutilisé dans d&rsquo;autres projets qui n&rsquo;utiliseront pas la même base.
+</p>
+
+</div>
+
+<h2>Profils et configuration</h2>
+<div class="level2">
+
+<p>
+ Pour pouvoir accéder à une base de données, il faut d&rsquo;abord indiquer les paramètres de connexion dans un fichier de configuration. Ce fichier est par défaut <em>dbprofils.ini.php</em> situé dans <em>var/config</em>/. Vous pouvez en avoir un avec un nom différent, il faut alors indiquer ce nom dans le fichier de configuration principal de votre application.
+</p>
+
+<p>
+Vous pouvez définir plusieurs connexions, que l&rsquo;on nomme &ldquo;profiles&rdquo;. Ainsi vous pouvez définir des connexions pour la base de production, la base de développement par exemple, ou encore les différentes bases sur lesquelles s&rsquo;appuie votre application.
+</p>
+
+<p>
+Voici un exemple de fichier dbprofils.ini.php :
+</p>
+<pre class="code ini"><span class="re1">default </span>=<span class="re2"> foo</span>
+&nbsp;
+<span class="re0"><span class="br0">&#91;</span>foo<span class="br0">&#93;</span></span>
+<span class="re1">driver</span>=<span class="re2">&quot;mysql&quot;</span>
+<span class="re1">database</span>=<span class="re2">&quot;jelix&quot;</span>
+<span class="re1">host</span>=<span class="re2"> &quot;localhost&quot;</span>
+<span class="re1">user</span>=<span class="re2"> &quot;jelix&quot;</span>
+<span class="re1">password</span>=<span class="re2"> &quot;jelix&quot;</span>
+<span class="re1">persistent</span>=<span class="re2"> on</span>
+<span class="re1">force_encoding</span>=<span class="re2">true</span></pre>
+<p>
+ Il y a une section &ldquo;foo&rdquo;. Chaque section correspond à un profil de connexion. Un paramètre, &ldquo;default&rdquo;, indique le profil à utiliser par défaut.
+</p>
+
+<p>
+Dans une section, vous voyez un certain nombre de paramètres. Le premier, <strong>driver</strong>, indique le driver a utilisé. Le nombre et le nom des autres paramètres diffèrent en fonction du driver utilisé. 
+</p>
+
+</div>
+
+<h3>profil mysql</h3>
+<div class="level3">
+
+<p>
+ Paramètres possibles :
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>driver</strong> : doit valoir &ldquo;mysql&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> <strong>database</strong> : le nom de la base de donnée à utiliser</div>
+</li>
+<li class="level1"><div class="li"> <strong>host</strong> : le nom du serveur mysql sur lequel se connecter</div>
+</li>
+<li class="level1"><div class="li"> <strong>user</strong> et <strong>password</strong> : le login/mot de passe pour la connexion</div>
+</li>
+<li class="level1"><div class="li"> <strong>persistent</strong> : indique si la connexion est persistante (<strong>on</strong>) ou pas (<strong>off</strong>)</div>
+</li>
+<li class="level1"><div class="li"> <strong>force_encoding</strong> : indique si il faut spécifier le charset utilisé dans l&rsquo;application, de manière à récupérer les données avec le bon charset. En effet, certains serveur sont configurés par exemple par défaut avec une connexion en iso-8859-1, même si les données stockées sont en utf-8. Mettez à true si vous voyez que vous n&rsquo;arrivez pas à afficher les données correctement.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>profil postgresql</h3>
+<div class="level3">
+
+<p>
+ Paramètres possibles : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>driver</strong> : doit valoir &ldquo;postgresql&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> <strong>database</strong> : le nom de la base de donnée à utiliser</div>
+</li>
+<li class="level1"><div class="li"> <strong>host</strong> : le nom du serveur postgresql sur lequel se connecter. Si vous le mettez à vide, la connexion se fera via une socket unix.</div>
+</li>
+<li class="level1"><div class="li"> <strong>port</strong> : indique le port de connexion. N&rsquo;indiquez pas ce paramètre si vous voulez utiliser le port par défaut.</div>
+</li>
+<li class="level1"><div class="li"> <strong>user</strong> et <strong>password</strong> : le login/mot de passe pour la connexion. Ne mettez pas ces paramètres si vous voulez utiliser le login/mot de passe par défaut (indiqués par exemple dans les variables d&rsquo;environnement du système).</div>
+</li>
+<li class="level1"><div class="li"> <strong>persistent</strong> : indique si la connexion est persistante (<strong>on</strong>) ou pas (<strong>off</strong>)</div>
+</li>
+<li class="level1"><div class="li"> <strong>force_encoding</strong> : indique si il faut spécifier le charset utilisé dans l&rsquo;application, de manière à récupérer les données avec le bon charset. même explication que pour mysql.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>profil sqlite</h3>
+<div class="level3">
+
+<p>
+ Paramètres possibles : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>driver</strong> : doit valoir &ldquo;sqlite&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> <strong>database</strong> : le nom du fichier de base de donnée à utiliser</div>
+</li>
+<li class="level1"><div class="li"> <strong>persistent</strong> : indique si la connexion est persistante (<strong>on</strong>) ou pas (<strong>off</strong>)</div>
+</li>
+</ul>
+
+<p>
+ A noter que les fichiers de base de données sqlite doivent être déposés dans le répertoire : var/db/sqlite/ de votre application et qu&rsquo;à la fois ce répertoire et le fichier de base de données sqlite doivent avoir les droits de lecture/écriture adéquats (ceux du serveur web).
+</p>
+
+</div>
+
+<h3>profil pdo</h3>
+<div class="level3">
+
+<p>
+ Paramètres possibles : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>driver</strong> : doit valoir &ldquo;pdo&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> <strong>dsn</strong> : contient des informations de connexion (type de base de donnée, serveur, nom de la base..). Le format doit être celui attendu par PDO (voir la <a href="http://fr.php.net/pdo" class="urlextern" title="http://fr.php.net/pdo"   rel="nofollow">doc de pdo sur php.net</a>).</div>
+</li>
+<li class="level1"><div class="li"> <strong>user</strong> et <strong>password</strong> : le login/mot de passe pour la connexion. Ne mettre ces paramètres que si nécessaire.</div>
+</li>
+<li class="level1"><div class="li"> <strong>force_encoding</strong> : indique si il faut spécifier le charset utilisé dans l&rsquo;application, de manière à récupérer les données avec le bon charset. même explication que pour mysql, et ce paramètre n&rsquo;est pour le moment valable que pour mysql et postgresql.</div>
+</li>
+</ul>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>bar<span class="br0">&#93;</span></span>
+<span class="re1">driver</span>=<span class="re2">pdo</span>
+<span class="re1">dsn</span>=<span class="re2"> &quot;mysql:host=localhost</span><span class="co0">;dbname=test&quot;</span>
+user=
+password=</pre>
+</div>
+
+<h2>Faire des requêtes</h2>
+<div class="level2">
+
+<p>
+ Une fois le fichier de configuration écrit, vous pouvez accéder aux bases de données.
+</p>
+
+<p>
+La première chose à faire est de récupérer un objet jDbConnection :
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+<p>
+La méthode getConnection() permet de récupérer un objet de type jDbConnection (ou jDbPDOConnection héritant de PDO, si vous  utilisez PDO, ils ont toutefois la même <acronym title="Application Programming Interface">API</acronym>). Cette méthode accepte un paramètre facultatif : le nom du profil à utiliser. Si il n&rsquo;est pas indiqué, celui déclaré par défaut sera utilisé.
+</p>
+
+<p>
+ Pour construire les requêtes, vous avez une méthode importante à connaître : <em>quote()</em>, qui permet d&rsquo;échapper certains caractères dans les valeurs que vous voulez insérer dans vos requêtes. Elle évite dans une certaine mesure les problèmes comme l&rsquo;injection <acronym title="Structured Query Language">SQL</acronym>.
+</p>
+<pre class="code php">  <span class="re0">$sql</span> = <span class="st0">"INSERT INTO users (nom,prenom) VALUES"</span>;
+  <span class="re0">$sql</span> .=<span class="st0">" ("</span>. <span class="re0">$cnx</span>-&gt;<span class="me1">quote</span><span class="br0">&#40;</span><span class="st0">"de l'ombre"</span><span class="br0">&#41;</span> .<span class="st0">","</span>.<span class="re0">$cnx</span>-&gt;<span class="me1">quote</span><span class="br0">&#40;</span><span class="st0">'robert'</span><span class="br0">&#41;</span>.<span class="st0">")"</span>;</pre>
+<p>
+Notez que la méthode <em>quote()</em> encadre la valeur avec des quotes.
+</p>
+
+<p>
+Pour exécuter des requêtes, il y a principalement deux méthodes, <em>exec</em> et <em>query</em>.
+</p>
+
+</div>
+
+<h3>exec</h3>
+<div class="level3">
+
+<p>
+ <em>exec</em> doit être utilisé pour les requêtes qui ne renvoient pas de résultat (UPDATE, INSERT, DELETE...). cette méthode renvoi juste le nombre de lignes concernées par la requête. Exemple :
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$cnx</span>-&gt;<span class="me1">exec</span><span class="br0">&#40;</span><span class="st0">"INSERT INTO users (nom,prenom) VALUES('dupont','toto')"</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>query</h3>
+<div class="level3">
+
+<p>
+ <em>query</em> est fait pour les requêtes qui renvoient des résultats, vides ou pas (SELECT ou procédures stockées). La méthode renvoi alors un objet jDbResultSet.
+</p>
+
+<p>
+Voici un exemple rapide :
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$rs</span> = <span class="re0">$cnx</span>-&gt;<span class="me1">query</span><span class="br0">&#40;</span><span class="st0">'SELECT nom, prenom FROM users'</span><span class="br0">&#41;</span>;
+  <span class="re0">$result</span>=<span class="st0">''</span>;
+  <span class="kw1">while</span><span class="br0">&#40;</span><span class="re0">$record</span> = <span class="re0">$rs</span>-&gt;<span class="me1">fetch</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+     <span class="re0">$result</span>.=<span class="st0">'nom = '</span>.<span class="re0">$record</span>-&gt;<span class="me1">nom</span>.<span class="st0">' prenom='</span>.<span class="re0">$record</span>-&gt;<span class="me1">prenom</span>.<span class="st0">"<span class="es0">\n</span>"</span>;
+  <span class="br0">&#125;</span></pre>
+</div>
+
+<h3>limitQuery</h3>
+<div class="level3">
+
+<p>
+ Vous pouvez faire des requêtes qui récupèrent un nombre limité d&rsquo;enregistrement. Vous utiliserez alors la méthode <em>limitQuery</em> :
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$rs</span> = <span class="re0">$cnx</span>-&gt;<span class="me1">limitQuery</span><span class="br0">&#40;</span><span class="st0">'SELECT nom, prenom FROM users'</span>, <span class="nu0">5</span>,<span class="nu0">10</span><span class="br0">&#41;</span>;
+  <span class="re0">$result</span>=<span class="st0">''</span>;
+  <span class="kw1">while</span><span class="br0">&#40;</span><span class="re0">$record</span> = <span class="re0">$rs</span>-&gt;<span class="me1">fetch</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+     <span class="re0">$result</span>.=<span class="st0">'nom = '</span>.<span class="re0">$record</span>-&gt;<span class="me1">nom</span>.<span class="st0">' prenom='</span>.<span class="re0">$record</span>-&gt;<span class="me1">prenom</span>.<span class="st0">"<span class="es0">\n</span>"</span>;
+  <span class="br0">&#125;</span></pre>
+<p>
+Le premier paramètre est la requête. Le deuxième est le numéro, dans la liste des résultats, du premier enregistrement à récupérer. Le troisième paramètre est le nombre d&rsquo;enregistrements à récupérer.
+</p>
+
+</div>
+
+<h2>ResultSet</h2>
+<div class="level2">
+
+<p>
+ jDbResultSet est l&rsquo;objet que vous récupérez après avoir fait un SELECT (query ou limitQuery).
+</p>
+
+<p>
+Sa méthode fetch() vous permet de récupérer un à un les enregistrements. À noter que jDbResultSet renvoi toujours un enregistrement sous forme d&rsquo;objet. 
+</p>
+
+<p>
+Sa méthode fetchAll() permet de récupérer tout d&rsquo;un coup dans un tableau <acronym title="Hypertext Preprocessor">PHP</acronym>.
+</p>
+
+<p>
+jDbResultSet implémente l&rsquo;interface Iterator. De ce fait, vous pouvez utiliser cet objet dans certaines boucles, comme les foreach :
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$rs</span> = <span class="re0">$cnx</span>-&gt;<span class="me1">query</span><span class="br0">&#40;</span><span class="st0">'SELECT nom, prenom FROM users'</span><span class="br0">&#41;</span>;
+  <span class="re0">$result</span>=<span class="st0">''</span>;
+  <span class="kw1">foreach</span><span class="br0">&#40;</span> <span class="re0">$rs</span> <span class="kw1">as</span> <span class="re0">$record</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+     <span class="re0">$result</span>.=<span class="st0">'nom = '</span>.<span class="re0">$record</span>-&gt;<span class="me1">nom</span>.<span class="st0">' prenom='</span>.<span class="re0">$record</span>-&gt;<span class="me1">prenom</span>.<span class="st0">"<span class="es0">\n</span>"</span>;
+  <span class="br0">&#125;</span></pre>
+<p>
+Les objets contenant les enregistrements sont des objets &ldquo;anonymes&rdquo; (ils n&rsquo;ont pas de classe précise). Si vous voulez que ce soit des objets d&rsquo;une certaine classe, vous devez l&rsquo;indiquer via setFetchMode :
+</p>
+<pre class="code php">  <span class="kw2">class</span> User <span class="br0">&#123;</span>
+    ...
+  <span class="br0">&#125;</span>
+&nbsp;
+  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$rs</span> = <span class="re0">$cnx</span>-&gt;<span class="me1">query</span><span class="br0">&#40;</span><span class="st0">'SELECT nom, prenom FROM users'</span><span class="br0">&#41;</span>;
+  <span class="re0">$rs</span>-&gt;<span class="me1">setFetchMode</span><span class="br0">&#40;</span><span class="re0">$rs</span>-&gt;<span class="me1">FETCH_CLASS</span> , <span class="st0">'User'</span><span class="br0">&#41;</span>;
+  <span class="re0">$result</span>=<span class="st0">''</span>;
+  <span class="kw1">foreach</span><span class="br0">&#40;</span> <span class="re0">$rs</span> <span class="kw1">as</span> <span class="re0">$record</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+     <span class="co1">// $record est ici un objet de type User</span>
+     <span class="re0">$result</span>.=<span class="st0">'nom = '</span>.<span class="re0">$record</span>-&gt;<span class="me1">nom</span>.<span class="st0">' prenom='</span>.<span class="re0">$record</span>-&gt;<span class="me1">prenom</span>.<span class="st0">"<span class="es0">\n</span>"</span>;
+  <span class="br0">&#125;</span></pre>
+<p>
+Pour le reste des méthodes, voyez <a href="http://jelix.org/reference/" class="urlextern" title="http://jelix.org/reference/"   rel="nofollow">la documentation de référence</a>.
+</p>
+
+</div>
+
+<h3>Utilisation dans un template</h3>
+<div class="level3">
+
+<p>
+ Il est possible de passer un objet jDbResultSet dans un template.
+</p>
+
+<p>
+Dans le contrôleur : 
+</p>
+<pre class="code php">  <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$rs</span> = <span class="re0">$cnx</span>-&gt;<span class="me1">query</span><span class="br0">&#40;</span><span class="st0">'SELECT nom, prenom FROM users'</span><span class="br0">&#41;</span>;
+&nbsp;
+  <span class="re0">$template</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'resultats'</span>, <span class="re0">$rs</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Dans le template :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;table&gt;</span>
+    <span class="sc2"><span class="kw2">&lt;tr&gt;</span> <span class="sc2"><span class="kw2">&lt;th&gt;</span>nom<span class="sc2"><span class="kw2">&lt;/th&gt;</span> <span class="sc2"><span class="kw2">&lt;th&gt;</span>prenom<span class="sc2"><span class="kw2">&lt;/th&gt;</span><span class="sc2"><span class="kw2">&lt;/tr&gt;</span>
+  {foreach $resultats as $user}
+    <span class="sc2"><span class="kw2">&lt;tr&gt;</span> 
+       <span class="sc2"><span class="kw2">&lt;td&gt;</span>{$user-&gt;nom|escxml}<span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+       <span class="sc2"><span class="kw2">&lt;td&gt;</span>{$user-&gt;prenom|escxml}<span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+    <span class="sc2"><span class="kw2">&lt;/tr&gt;</span>
+  {/foreach}
+   <span class="sc2"><span class="kw2">&lt;/table&gt;</span></pre>
+</div>
+
+<h2>Transactions</h2>
+<div class="level2">
+
+<p>
+ jDb permet de faire des transactions. Bien sûr, il faut que le driver utilisé supporte les transactions.
+</p>
+
+<p>
+Pour marquer le début d&rsquo;une transaction, vous appelerez la méthode <em>beginTransaction ()</em>. Ensuite vous lancerez les requêtes, Puis aprés avoir fait vos requêtes, vous pourrez valider la transaction en appelant la méthode <em>commit()</em>. Pour annuler une transaction, il suffit d&rsquo;appeler <em>rollback()</em>.
+</p>
+<pre class="code php">   <span class="re0">$cnx</span> = jDb::<span class="me2">getConnection</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="re0">$cnx</span>-&gt;<span class="me1">beginTransaction</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="re0">$cnx</span>-&gt;<span class="me1">exec</span><span class="br0">&#40;</span>...<span class="br0">&#41;</span>;
+   <span class="re0">$cnx</span>-&gt;<span class="me1">query</span><span class="br0">&#40;</span>...<span class="br0">&#41;</span>;
+   <span class="co1">//....</span>
+   
+   <span class="kw1">if</span><span class="br0">&#40;</span><span class="re0">$ok</span><span class="br0">&#41;</span>
+     <span class="re0">$cnx</span>-&gt;<span class="me1">commit</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+   <span class="kw1">else</span>
+     <span class="re0">$cnx</span>-&gt;<span class="me1">rollback</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>jDbWidget</h2>
+<div class="level2">
+
+<p>
+ jDbWidget est une classe fournissant des méthodes utiles. 
+</p>
+<pre class="code php">  <span class="re0">$dbw</span> = jDb::<span class="me2">getDbWidget</span><span class="br0">&#40;</span><span class="br0">&#41;</span>; <span class="co1">// au lieu de getConnection()</span>
+&nbsp;
+  <span class="re0">$record</span> = <span class="re0">$dbw</span>-&gt;<span class="me1">fetchFirst</span><span class="br0">&#40;</span><span class="st0">"SELECT nom, prenom FROM user"</span><span class="br0">&#41;</span>;
+  
+  <span class="re0">$liste</span> = <span class="re0">$dbw</span>-&gt;<span class="me1">fetchAll</span><span class="br0">&#40;</span><span class="st0">"SELECT nom, prenom FROM user"</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Pour le reste des méthodes, voyez <a href="http://jelix.org/reference/" class="urlextern" title="http://jelix.org/reference/"   rel="nofollow">la documentation de référence</a>. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

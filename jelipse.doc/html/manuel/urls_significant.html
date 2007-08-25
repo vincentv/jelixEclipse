@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:urls:significant - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Moteur d'urls significatives</h1>
+<div class="level1">
+
+<p>
+ Voici comment configurer le moteur significant pour le <a href="urls.html" class="wikilink1" title="manuel:urls"  >système d'url de Jelix</a>.
+</p>
+
+<p>
+ Le principe de configuration pour ce moteur est d&rsquo;indiquer dans un fichier var/config/urls.xml toutes les formes d&rsquo;urls possibles de l&rsquo;application, et les actions qui leurs sont associées. Voici un exemple de fichier :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;urls</span> <span class="re0">xmlns</span>=<span class="st0">"http://jelix.org/ns/urls/1.0"</span><span class="re2">&gt;</span>
+    <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"index"</span> <span class="re0">default</span>=<span class="st0">"true"</span><span class="re2">&gt;</span>
+&nbsp;
+        <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/news/:annee/:mois/:id-:title"</span> <span class="re0">module</span>=<span class="st0">"news"</span> <span class="re0">action</span>=<span class="st0">"view"</span><span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"annee"</span> <span class="re0">type</span>=<span class="st0">"year"</span><span class="re2">/&gt;</span>
+           <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"mois"</span>  <span class="re0">type</span>=<span class="st0">"month"</span> <span class="re2">/&gt;</span>
+           <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"id"</span>   <span class="re0">type</span>=<span class="st0">"number"</span> <span class="re2">/&gt;</span>
+           <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"title"</span>   <span class="re0">escape</span>=<span class="st0">"true"</span> <span class="re2">/&gt;</span>
+        <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span>
+&nbsp;
+        <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/articles/:rubrique/:id_art"</span> <span class="re0">module</span>=<span class="st0">"cms"</span> <span class="re0">action</span>=<span class="st0">"show"</span><span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"id_art"</span> <span class="re0">regexp</span>=<span class="st0">"<span class="es0">\d</span>+"</span><span class="re2">/&gt;</span>
+        <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span>
+&nbsp;
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span>
+    <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"shop"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/:category/:product"</span> <span class="re0">module</span>=<span class="st0">"unittest"</span> <span class="re0">action</span>=<span class="st0">"url2"</span><span class="re2">&gt;</span>
+          <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"product"</span>  <span class="re0">regexp</span>=<span class="st0">"<span class="es0">\d</span>{2}"</span> <span class="re2">/&gt;</span>
+          <span class="sc3"><span class="re1">&lt;static</span> <span class="re0">name</span>=<span class="st0">"mystatic"</span> <span class="re0">value</span>=<span class="st0">"valeur statique"</span> <span class="re2">/&gt;</span>
+        <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span>
+    <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"foo/bar"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">handler</span>=<span class="st0">"urlsig"</span> <span class="re0">module</span>=<span class="st0">"unittest"</span> <span class="re0">action</span>=<span class="st0">"url4"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span>
+&nbsp;
+    <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"news"</span><span class="re2">&gt;</span>
+        <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">module</span>=<span class="st0">"news"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span>
+    <span class="sc3"><span class="re1">&lt;xmlrpcentrypoint</span> <span class="re0">name</span>=<span class="st0">"xmlrpc"</span> <span class="re0">default</span>=<span class="st0">"true"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;jsonrpcentrypoint</span> <span class="re0">name</span>=<span class="st0">"jsonrpc"</span> <span class="re0">default</span>=<span class="st0">"true"</span> <span class="re2">/&gt;</span>
+<span class="sc3"><span class="re1">&lt;/urls<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h2>Balises entrypoint</h2>
+<div class="level2">
+
+<p>
+ La balise racine <code>urls</code> contient autant de balises *entrypoint que de points d&rsquo;entrée disponibles dans votre application. Leur nom exact précise le type de requête auxquels ils sont affectés : classicentrypoint pour les requêtes classiques, xmlrpcentrypoint pour du xmlrpc etc... Chacune de ces balises a un attribut <code>name</code> indiquant le nom du point d&rsquo;entrée (sans l&rsquo;extension .php), et éventuellement un attribut <code>default</code> indiquant si ce point d&rsquo;entrée est celui par défaut pour le type de requête en question.
+</p>
+
+</div>
+
+<h2>Balise url</h2>
+<div class="level2">
+
+<p>
+ Chaque point d&rsquo;entrée définit une ou plusieurs formes d&rsquo;urls possibles, sachant que celles qui ne sont pas définies seront acceptées lors d&rsquo;une requête sur un point d&rsquo;entrée spécifié &ldquo;default&rdquo;. 
+</p>
+
+</div>
+
+<h3>Spécifier une forme d'url complète</h3>
+<div class="level3">
+
+</div>
+
+<h4>Selon un pathinfo</h4>
+<div class="level4">
+
+<p>
+Vous voulez indiquer le module et l&rsquo;action à exécuter pour une forme particulière d&rsquo;url. Vous indiquerez alors un attribut <strong>pathinfo</strong>, indiquant le &ldquo;modèle&rdquo; de la partie pathinfo auquel l&rsquo;url doit ressembler, ainsi que le module et l&rsquo;action dans des attributs <strong>module</strong> et <strong>action</strong>.
+</p>
+
+<p>
+L&rsquo;attribut pathinfo doit donc contenir la valeur d&rsquo;un pathinfo. Dans cet exemple, toute url qui aura pour pathinfo la valeur &ldquo;/foo/bar&rdquo; correspondra au module et action indiqués.
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/foo/bar"</span> <span class="re0">module</span>=<span class="st0">"hello"</span> <span class="re0">action</span>=<span class="st0">"world"</span> <span class="re2">/&gt;</span></pre>
+</div>
+
+<h4>Selon un pathinfo contenant des parties indéfinies</h4>
+<div class="level4">
+
+<p>
+ Il est possible d&rsquo;indiquer des parties &ldquo;dynamiques&rdquo; dans le pathinfo. Elles sont à définir par un deux-points suivi d&rsquo;un nom. La valeur trouvée sera alors stockée dans un paramètre du même nom. Dans l&rsquo;exemple qui suit, le pathinfo contient deux parties dynamiques : <code>rubrique</code> et <code>id_art</code>.
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/articles/:rubrique/:id_art"</span> <span class="re0">module</span>=<span class="st0">"cms"</span> <span class="re0">action</span>=<span class="st0">"show"</span> <span class="re2">/&gt;</span></pre>
+<p>
+Si on appelle alors avec l&rsquo;url &ldquo;/articles/aviation/544&rdquo;, alors les paramètres <code>rubrique</code> et <code>id_art</code> seront crées et auront pour valeurs respectives &ldquo;aviation&rdquo; et &ldquo;544&rdquo;.
+</p>
+
+<p>
+Attention : pour éviter les ressemblances avec d&rsquo;autres urls, il faut au moins une partie &ldquo;statique&rdquo; (ici &ldquo;/articles/&rdquo; dans l&rsquo;url pour la distinguer des autres).
+</p>
+
+</div>
+
+<h4>Des parties indéfinies typées ou formatées</h4>
+<div class="level4">
+
+<p>
+ Un autre moyen d&rsquo;éviter ces ressemblances, est de spécifier le format ou le type de chaque paramètre. Par défaut, le type est une chaîne classique. 
+</p>
+
+<p>
+Pour cela, il faut indiquer des balises <code>param</code> pour chacun des paramètres dont on veut spécifier le type/format. Elles devront contenir un attribut <code>name</code> indiquant le paramètre, et soit un attribut <code>type</code>, soit un attribut <code>regexp</code>, contenant une expression régulière du format (sans délimiteur). Dans notre exemple, nous voulons spécifier que <code>rubrique</code> est une chaîne, et une expression régulière pour <code>id_art</code> :
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/articles/:rubrique/:id_art"</span> <span class="re0">module</span>=<span class="st0">"cms"</span> <span class="re0">action</span>=<span class="st0">"show"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"rubrique"</span> <span class="re0">type</span>=<span class="st0">"string"</span> <span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"id_art"</span> <span class="re0">regexp</span>=<span class="st0">"<span class="es0">\d</span>+"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span></pre>
+<p>
+Quand le paramètre est de type string, il n&rsquo;est pas obligatoire de mettre une balise param. Les types disponibles sont : 
+</p>
+<table class="inline">
+	<tr>
+		<td> string </td><td> une chaîne </td>
+	</tr>
+	<tr>
+		<td> letter </td><td> une seule lettre </td>
+	</tr>
+	<tr>
+		<td> number </td><td> un nombre entier, équivalent aussi à &lsquo;int&rsquo; et &lsquo;integer&rsquo;</td>
+	</tr>
+	<tr>
+		<td class="leftalign"> digit  </td><td> un chiffre </td>
+	</tr>
+	<tr>
+		<td class="leftalign"> date   </td><td> une date au format AAAA-MM-JJ </td>
+	</tr>
+	<tr>
+		<td class="leftalign"> year   </td><td> une année sur 4 chiffres </td>
+	</tr>
+	<tr>
+		<td> month </td><td> un mois sur deux chiffres </td>
+	</tr>
+	<tr>
+		<td> day </td><td> un jour sur deux chiffres </td>
+	</tr>
+</table>
+<br />
+
+<p>
+Note : vous devrez bien entendu indiquer les valeurs de ces paramètres lors de l&rsquo;appel à jUrl.
+</p>
+
+</div>
+
+<h4>Des paramètres statiques</h4>
+<div class="level4">
+
+<p>
+ Il peut être nécessaire parfois de rajouter des paramètres &ldquo;statiques&rdquo;, attendues par l&rsquo;action (celle-ci pouvant être attribuées à plusieurs urls différentes), mais non présent dans l&rsquo;url. Pour cela il faut ajouter une balise &lt;static&gt;, avec nom et valeur, comme dans cet exemple :
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/:category/:product"</span> <span class="re0">module</span>=<span class="st0">"shop"</span> <span class="re0">action</span>=<span class="st0">"view"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"product"</span>  <span class="re0">regexp</span>=<span class="st0">"<span class="es0">\d</span>{2}"</span> <span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;static</span> <span class="re0">name</span>=<span class="st0">"details"</span> <span class="re0">value</span>=<span class="st0">"0"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/:category/:product/details"</span> <span class="re0">module</span>=<span class="st0">"shop"</span> <span class="re0">action</span>=<span class="st0">"view"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;param</span> <span class="re0">name</span>=<span class="st0">"product"</span>  <span class="re0">regexp</span>=<span class="st0">"<span class="es0">\d</span>{2}"</span> <span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;static</span> <span class="re0">name</span>=<span class="st0">"details"</span> <span class="re0">value</span>=<span class="st0">"1"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/url<span class="re2">&gt;</span></span></pre>
+<p>
+Ici on utilise la même action pour deux urls différentes. Son traitement differera en partie selon le paramètres <code>details</code>. Dans un cas, on afficherait le produit d&rsquo;un catalogue, avec ses caractéristiques générales, et dans l&rsquo;autre avec ses caractéristiques générales <strong>et</strong> détaillées. Cela évite donc de créer deux actions différentes pour si peu de différence.
+</p>
+
+</div>
+
+<h3>Utiliser un handler spécifique</h3>
+<div class="level3">
+
+<p>
+ Nous avons vu précédemment comment utiliser, en fin de compte, un système par défaut d&rsquo;analyse et de génération d&rsquo;url, avec ses pathinfos et paramètres. Il se peut que ce système ne soit pas suffisant. Imaginons par exemple que vous vouliez transformer une partie de l&rsquo;information contenu dans le pathinfo, comme par exemple chercher dans une base de donnée un id correspondant à un titre contenu dans le pathinfo, et fournir ainsi aux actions, non pas un titre, mais un id (qui n&rsquo;est pas contenu dans cet url).
+</p>
+
+<p>
+Ou encore que la partie pathinfo peut être variable.
+</p>
+
+<p>
+Aussi c&rsquo;est à vous de développer l&rsquo;analyse de l&rsquo;url, et d&rsquo;indiquer l&rsquo;action à executer. Vous le ferez dans une classe spécialisée :
+</p>
+<pre class="code php">&nbsp;
+<span class="kw2">class</span> URLSmyHandler implements jIUrlSignificantHandler <span class="br0">&#123;</span>
+&nbsp;
+    <span class="kw2">function</span> parse<span class="br0">&#40;</span><span class="re0">$url</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+        
+        <span class="kw1">if</span><span class="br0">&#40;</span><span class="kw3">preg_match</span><span class="br0">&#40;</span><span class="st0">"/^<span class="es0">\/</span>(.*)$/"</span>,<span class="re0">$url</span>-&gt;<span class="me1">pathInfo</span>,<span class="re0">$match</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+            <span class="re0">$urlact</span> = <span class="kw2">new</span> jUrlAction<span class="br0">&#40;</span><span class="re0">$url</span>-&gt;<span class="me1">params</span><span class="br0">&#41;</span>;
+            <span class="re0">$urlact</span>-&gt;<span class="me1">setParam</span><span class="br0">&#40;</span><span class="st0">'page'</span>,jUrl::<span class="me2">unescape</span><span class="br0">&#40;</span><span class="re0">$match</span><span class="br0">&#91;</span><span class="nu0">1</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+            <span class="kw1">return</span> <span class="re0">$urlact</span>;
+        <span class="br0">&#125;</span><span class="kw1">else</span>
+            <span class="kw1">return</span> <span class="kw2">false</span>;
+    <span class="br0">&#125;</span>
+&nbsp;
+    <span class="kw2">function</span> create<span class="br0">&#40;</span><span class="re0">$urlact</span>, <span class="re0">$url</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+&nbsp;
+        <span class="re0">$p</span>=jUrl::<span class="me2">escape</span><span class="br0">&#40;</span><span class="re0">$url</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'page'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+&nbsp;
+        <span class="re0">$url</span>-&gt;<span class="me1">pathInfo</span> = <span class="st0">"/$f"</span>;
+        <span class="re0">$url</span>-&gt;<span class="me1">delParam</span><span class="br0">&#40;</span><span class="st0">'page'</span><span class="br0">&#41;</span>;
+    <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Le nom de la classe doit commencer par <code>URLS</code> suivit d&rsquo;un suffixe. La classe sera stockée dans le répertoire classes du module indiqué dans la balise url, sous le nom <code>suffixe</code>.urlhandler.php. Pour notre exemple :  
+</p>
+<pre class="code">myhandler.urlhandler.php.</pre>
+
+<p>
+ La méthode parse est chargée d&rsquo;analyser une url (objet jUrl que vous recevez en paramètre), en l&rsquo;occurence, l&rsquo;url demandée dans l&rsquo;application. Si votre handler reconnait l&rsquo;url, parse() doit renvoyer un objet jUrlAction qui contient toutes les données pour l&rsquo;action. Sinon il doit renvoyer false.
+</p>
+
+<p>
+La méthode create() est appelée à chaque fois que l&rsquo;application demande la création d&rsquo;une url à partir de paramètres d&rsquo;action. Elle reçoit donc un objet de type jUrlAction, et un objet de type jUrl. $urlaction contient donc les paramètres de l&rsquo;action. Ces paramètres ont déjà été inclus dans l&rsquo;objet $url. Vous devez donc modifier $url de façon à produire l&rsquo;url correspondante à l&rsquo;action demandée. Dans l&rsquo;exemple, on récupère le paramètre page, que l&rsquo;on incorpore dans le pathinfo. Et comme il est dans le pathinfo, on le supprime alors des paramètres.
+</p>
+
+<p>
+Notez l&rsquo;usage de jUrl::escape() et jUrl::unescape(), pour &ldquo;nettoyer&rdquo; les chaines à inclure dans un pathinfo (accents enlevés par ex).
+</p>
+
+<p>
+Enfin, dans le fichier urls.xml, vous devez indiquer l&rsquo;utilisation de ce handler : 
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"wiki"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">handler</span>=<span class="st0">"myHandler"</span> <span class="re0">module</span>=<span class="st0">"unittest"</span> <span class="re0">action</span>=<span class="st0">"url4"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span></pre>
+<p>
+Depuis jelix 1.0 beta1, vous pouvez indiquer un handler d&rsquo;un autre module. Exemple :
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"wiki"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">handler</span>=<span class="st0">"autremodule~myHandler"</span> <span class="re0">module</span>=<span class="st0">"unittest"</span> <span class="re0">action</span>=<span class="st0">"url4"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h3>Une même url pour plusieurs actions possibles</h3>
+<div class="level3">
+
+<p>
+ Imaginons que nous avons une url de ce type : &ldquo;/article/54-titre&rdquo;  et par défaut, cela affiche l&rsquo;article 54 avec une action nommée view par exemple :
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/article/:id_art-:title"</span> <span class="re0">module</span>=<span class="st0">"cms"</span> <span class="re0">action</span>=<span class="st0">"view"</span> <span class="re2">/&gt;</span></pre>
+<p>
+On veut pouvoir, sans changer l&rsquo;url, indiquer d&rsquo;autres actions dans certains cas, avec un paramètre action : 
+</p>
+<ul>
+<li class="level1"><div class="li"> &ldquo;/article/54-titre?action=edit&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> &ldquo;/article/54-titre?action=delete&rdquo;</div>
+</li>
+</ul>
+
+<p>
+ Note : On pourrait faire aussi /article/54-titre/edit ou /article/54-titre/delete , avec donc plusieurs balises urls, ce qui nous éviterait ce qui suit. Mais ce n&rsquo;est pas très pratique quand l&rsquo;url est appelée suite à un formulaire par exemple.
+</p>
+
+<p>
+Pour indiquer les actions alternatives autorisées, on ajoute un attribut actionoverride, contenant la liste des actions séparées par un espace ou une virgule :
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">pathinfo</span>=<span class="st0">"/article/:id_art-:title"</span> <span class="re0">module</span>=<span class="st0">"cms"</span> <span class="re0">action</span>=<span class="st0">"view"</span> <span class="re0">actionoverride</span>=<span class="st0">"edit,delete"</span> <span class="re2">/&gt;</span></pre>
+</div>
+
+<h3>Indiquer qu'un point d'entrée est dédié à un module particulier</h3>
+<div class="level3">
+
+<p>
+ Vous n&rsquo;avez pas forcément envie d&rsquo;indiquer une url significative pour les actions d&rsquo;un module particulier. Par contre vous avez créé un point d&rsquo;entrée dédié à un module. Toutes ces actions passeront par ce point d&rsquo;entrée. Vous avez juste alors à faire comme ceci : 
+</p>
+<pre class="code xml">    <span class="sc3"><span class="re1">&lt;classicentrypoint</span> <span class="re0">name</span>=<span class="st0">"news"</span><span class="re2">&gt;</span>
+        <span class="sc3"><span class="re1">&lt;url</span> <span class="re0">module</span>=<span class="st0">"news"</span> <span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/classicentrypoint<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h3>Spécifier des urls en https à certaines actions</h3>
+<div class="level3">
+
+<p>
+ Pour certaines actions, vous voulez que l&rsquo;accés soit en mode sécurisé de http (<acronym title="Secure Sockets Layer">SSL</acronym>). Vous indiquez alors un attribut <code>https</code> sur les balises &lt;url&gt; en question, avec la valeur true. Si cela concerne toutes les actions/urls d&rsquo;un point d&rsquo;entrée, alors vous mettrez cet attribut sur la balise &lt;*entrypoint&gt; correspondante.
+</p>
+
+<p>
+Attention : pour le moment, Jelix ne verifie pas, lors de l&rsquo;execution d&rsquo;une action, que la requête a été faite en https ou non.
+</p>
+
+</div>
+
+<h3>Mod_rewrite et suppression du nom du point d'entrée dans l'url</h3>
+<div class="level3">
+
+<p>
+ Vous préférez peut être que l&rsquo;analyse des urls se fasse par le serveur web, grâce au module rewrite pour apache par exemple. Vous allez donc écrire les rêgles de réécriture.
+</p>
+
+</div>
+
+<h4>Réécriture complète par le serveur web</h4>
+<div class="level4">
+
+<p>
+ On appelle ici réécriture complète, la réécriture qui consiste à fournir à Jelix des urls simples (index.php?module=...&amp;action=...), à partir d&rsquo;urls significatives.
+</p>
+
+<p>
+Pour cela, vous devez indiquer à Jelix, dans la configuration, de ne pas analyser les urls :
+</p>
+<pre class="code ini"> <span class="re0"><span class="br0">&#91;</span>urlengine<span class="br0">&#93;</span></span>
+  ..
+  <span class="re1">enableParser </span>=<span class="re2"> off</span></pre>
+<p>
+Vous devez bien sûr remplir un fichier urls.xml de façon à ce que jelix génère dans vos templates et ailleurs, les urls attendues par vos rêgles de rewrite. 
+</p>
+
+<p>
+Et bien sûr, vous devez ensuite mettre dans un fichier .htaccess les règles de réécritures.
+</p>
+
+<p>
+Si vous voulez définir des urls qui ne contiennent pas le nom du point d&rsquo;entrée, vous devez alors indiquer sur les balises <strong>&lt;url&gt;</strong>  l&rsquo;attribut <strong>noentrypoint=&rdquo;true&rdquo;</strong> (ou sur la balise <strong>&lt;*entrypoint&gt;</strong> si toutes les urls de ce point d&rsquo;entrée sont conçernées). Ainsi Jelix n&rsquo;ajoutera pas le nom du point d&rsquo;entrée (index.php) dans l&rsquo;url.
+</p>
+
+</div>
+
+<h4>Suppression du nom du point d'entrée dans l'url</h4>
+<div class="level4">
+
+<p>
+ Un exemple d&rsquo;utilisation du mod_rewrite, n&rsquo;est pas forcément de transformer complètement les urls, mais par exemple d&rsquo;ajouter le fichier index.php dans les urls dans lesquelles on l&rsquo;aurait supprimé pour faire &ldquo;joli&rdquo;.
+</p>
+
+<p>
+Par exemple, nos URLs sont de la forme : 
+</p>
+<pre class="code">
+ http://monsite.com/index.php/news/2007-02-08-il-neige-a-lille.html
+</pre>
+
+<p>
+ Et on souhaite qu&rsquo;elles deviennent : 
+</p>
+<pre class="code">
+ http://monsite.com/news/2007-02-08-il-neige-a-lille.html
+</pre>
+
+<p>
+ Pour cela, on va utiliser le rewriteEngine de Apache, d&rsquo;une façon toute simple : le chemin appelé sera rajouté après index.php. Un tutorial vaut parfois mieux qu&rsquo;un long discours :
+</p>
+
+<p>
+Copiez ceci dans un fichier .htaccess dans le dossier www de votre application :
+</p>
+<pre class="code">
+&lt;IfModule mod_rewrite.c&gt;
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+&lt;/IfModule&gt;
+</pre>
+
+<p>
+Observez bien :
+</p>
+<ul>
+<li class="level1"><div class="li"> 3ème et 4ème ligne : Réécrire l&rsquo;<acronym title="Uniform Resource Locator">URL</acronym> seulement si la requête ne correspond pas à un fichier déjà existant, ou un dossier déjà existant. Ainsi on préserve ses dossiers d&rsquo;image, de feuille de style, etc. de la règle de réécriture.</div>
+</li>
+<li class="level1"><div class="li"> 5ème ligne : Tout prendre, et mettre après index.php/</div>
+</li>
+</ul>
+
+<p>
+ On retrouve ainsi notre point d&rsquo;entrée index.php ainsi que notre pathinfo.
+</p>
+
+<p>
+Il faut bien sûr utiliser le moteur d&rsquo;url &ldquo;significant&rdquo;, et définir un fichier urls.xml. Comme pour la réécriture complète,  vous devez indiquer sur les balises <strong>&lt;url&gt;</strong> ou <strong>&lt;*entrypoint&gt;</strong>  l&rsquo;attribut <strong>noentrypoint=&rdquo;true&rdquo;</strong>. Ainsi Jelix n&rsquo;ajoutera pas le nom du point d&rsquo;entrée (index.php) dans les urls concernées. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

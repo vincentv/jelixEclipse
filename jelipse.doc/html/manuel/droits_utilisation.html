@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:droits:utilisation - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Utilisation de jAcl dans vos modules</h1>
+<div class="level1">
+
+<p>
+ Quand vous voulez que votre module fonctionne selon des droits, il vous faut, durant la réalisation de ce module, déterminer des sujets et des valeurs de droits, et les enregistrer dans le système de droits, comme il a été vu <a href="droits_configuration.html" class="wikilink1" title="manuel:droits:configuration"  >dans l'article précédent</a>.
+</p>
+
+<p>
+Ensuite, vous pouvez utiliser les méthodes statiques de jAcl pour savoir si l&rsquo;utilisateur courant a tel droit sur tel ou tel sujet. Vous n&rsquo;avez pas, lors de ces interrogations à indiquer un groupe d&rsquo;utilisateur : jAcl s&rsquo;en occupe automatiquement, pour peu que vous utilisiez jAuth pour l&rsquo;authentification, et que  le login de l&rsquo;utilisateur ait été enregistré dans un des groupes au moyen des méthodes de la classe jAclUserGroup par exemple.
+</p>
+
+</div>
+
+<h2>Interrogation du système de droit</h2>
+<div class="level2">
+
+<p>
+ Vous avez principalement deux méthodes statiques de jAcl à connaître : check et getRight.
+</p>
+
+</div>
+
+<h3>jAcl::getRight</h3>
+<div class="level3">
+
+<p>
+ jAcl::getRight() permet de savoir toutes les valeurs possibles à propos d&rsquo;un sujet, pour lesquelles un droit à été défini sur l&rsquo;utilisateur (ou plutôt sur le ou les groupes auxquels il appartient).
+</p>
+<pre class="code php">  <span class="re0">$list</span> = jAcl::<span class="me2">getRight</span><span class="br0">&#40;</span><span class="st0">"cms.articles"</span><span class="br0">&#41;</span>;</pre>
+<p>
+En reprenant l&rsquo;exemple de l&rsquo;article précédent, si l&rsquo;utilisateur fait parti du groupe &ldquo;lecteurs&rdquo;, la liste vaudra :
+</p>
+<pre class="code php">  <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'LIST'</span>,<span class="st0">'READ'</span><span class="br0">&#41;</span>;</pre>
+<p>
+ si il appartient au groupe des redacteurs : 
+</p>
+<pre class="code php">  <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'LIST'</span>,<span class="st0">'READ'</span>, <span class="st0">'CREATE'</span>,<span class="st0">'UPDATE'</span>,<span class="st0">'DELETE'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Si vous indiquez en plus une ressource, par exemple &ldquo;opinions&rdquo; comme dans notre exemple :
+</p>
+<pre class="code php">  <span class="re0">$list</span> = jAcl::<span class="me2">getRight</span><span class="br0">&#40;</span><span class="st0">"cms.articles"</span>, <span class="st0">"opinions"</span><span class="br0">&#41;</span>;</pre>
+<p>
+ si l&rsquo;utilisateur fait parti du groupe &ldquo;lecteurs&rdquo;, la liste vaudra alors : 
+</p>
+<pre class="code php">  <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'LIST'</span>,<span class="st0">'READ'</span>, <span class="st0">'UPDATE'</span><span class="br0">&#41;</span>;</pre>
+<p>
+ si il appartient au groupe des rédacteurs, cela ne change pas, puisque les rédacteurs ont de toute façon le droit de modifier tout les articles, comme cela a été défini précédemment : 
+</p>
+<pre class="code php">  <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'LIST'</span>,<span class="st0">'READ'</span>, <span class="st0">'CREATE'</span>,<span class="st0">'UPDATE'</span>,<span class="st0">'DELETE'</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>jAcl::check</h3>
+<div class="level3">
+
+<p>
+ C&rsquo;est probablement la méthode que vous utiliserez le plus avec jAcl. Elle permet de savoir si l&rsquo;utilisateur a tel ou tel droit, et renvoi donc true ou false. Exemple :
+</p>
+<pre class="code php"><span class="kw1">if</span><span class="br0">&#40;</span> jAcl::<span class="me2">check</span><span class="br0">&#40;</span><span class="st0">"cms.articles"</span>,<span class="st0">"CREATE"</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+   <span class="co1">// code à executer si l'utilisateur a le droit de créer un article</span>
+&nbsp;
+<span class="br0">&#125;</span><span class="kw1">else</span><span class="br0">&#123;</span>
+   <span class="co1">// code à executer si l'utilisateur n'a pas le droit de créer un article</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Pour interroger sur une ressource précise :
+</p>
+<pre class="code php"><span class="re0">$article_id</span> = <span class="st0">"opinions"</span>;
+&nbsp;
+<span class="kw1">if</span><span class="br0">&#40;</span> jAcl::<span class="me2">check</span><span class="br0">&#40;</span><span class="st0">"cms.articles"</span>,<span class="st0">"UPDATE"</span>, <span class="re0">$article_id</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+   <span class="co1">// code à executer si l'utilisateur a le droit de modifier l'article indiqué</span>
+&nbsp;
+<span class="br0">&#125;</span><span class="kw1">else</span><span class="br0">&#123;</span>
+   <span class="co1">// code à executer si l'utilisateur n'a pas le droit de modifier l'article indiqué</span>
+<span class="br0">&#125;</span></pre>
+</div>
+
+<h3>Plugins de template ifacl et ifnotacl</h3>
+<div class="level3">
+
+<p>
+ Des plugins de templates sont disponibles pour générer des portions de contenus en fonction des droits. Leurs arguments sont exactement les mêmes que jAcl::check.
+</p>
+<pre class="code">
+  {ifacl &quot;cms.articles&quot;,&quot;CREATE&quot;}
+    &lt;input type=&quot;button&quot; value=&quot;Créer un article&quot; /&gt;
+  {/ifacl}
+  {ifnotacl &quot;cms.articles&quot;,&quot;CREATE&quot;}
+   &lt;p&gt;Vous ne pouvez pas créer d'articles.&lt;/p&gt;
+  {/ifacl}
+</pre>
+
+<p>
+Vous aurez compris que ifnotacl vérifie le contraire de ifacl, c&rsquo;est à dire que l&rsquo;utilisateur n&rsquo;a <strong>pas</strong> le droit indiqué (Il n&rsquo;est pas encore possible d&rsquo;utiliser {else} avec ce type de plugins).
+</p>
+
+<p>
+La même chose avec une ressource : 
+</p>
+<pre class="code">
+  {ifacl &quot;cms.articles&quot;,&quot;UPDATE&quot;, $article_id}
+    &lt;input type=&quot;button&quot; value=&quot;Modifier l'article&quot; /&gt;
+  {/ifacl}
+</pre>
+
+</div>
+
+<h2>Autres API</h2>
+<div class="level2">
+
+<p>
+ Pour un usage courant de jAcl, check et getRight sont les deux seules méthodes à savoir. 
+</p>
+
+<p>
+Si par contre vous voulez faire un module pour gérer les droits (à l&rsquo;image du module <acronym title="XML User Interface Language">XUL</acronym> jxacl), sachez que vous avez à votre disposition la classe jAclManager et jAclUserGroup qui ont des methodes pour modifier les droits. Cependant leur utilisation étant similaire d&rsquo;un point de vue théorique aux commandes de jelix-scripts, nous vous laissons lire <a href="http://jelix.org/reference" class="urlextern" title="http://jelix.org/reference"   rel="nofollow">la documentation de reference</a>
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

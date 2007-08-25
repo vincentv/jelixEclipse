@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:controleurs - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Les contrôleurs</h1>
+<div class="level1">
+
+<p>
+ Les contrôleurs sont les objets qui vont effectuer les actions correspondantes à chacune des urls de votre application.
+</p>
+
+<p>
+Un contrôleur possède une ou plusieurs méthodes correspondant à des actions, qui vont effectuer des traitements et préparer une réponse (html, redirection, ...) pour le navigateur.
+</p>
+
+<p>
+Un contrôleur est toujours dédié à un type de requête particulier.
+</p>
+
+</div>
+
+<h2>convention de nommage</h2>
+<div class="level2">
+
+</div>
+
+<h3>fichier</h3>
+<div class="level3">
+
+<p>
+Les contrôleurs doivent être stockés dans le répertoire <em>controllers</em> des modules. Ils ont chacun un nom qui va servir de suffixe ou préfixe. 
+</p>
+
+<p>
+Le fichier d&rsquo;un contrôleur a un nom bien précis : 
+</p>
+<pre class="code"> cccc.tttt.php</pre>
+
+<p>
+ où 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>cccc</em> est le nom du contrôleur</div>
+</li>
+<li class="level1"><div class="li"> <em>tttt</em> est le type de requête auquel il est dédié.</div>
+</li>
+</ul>
+
+<p>
+Par exemple, si vous l&rsquo;appelez &ldquo;foo&rdquo;, et qu&rsquo;il est dédié au type de requête &ldquo;classic&rdquo; (ce qui sera le plus souvent le cas), le nom du fichier sera <em>foo.classic.php</em>.
+</p>
+
+</div>
+
+<h3>classe</h3>
+<div class="level3">
+
+<p>
+ La classe d&rsquo;un contrôleur doit toujours avoir le suffixe &ldquo;Ctrl&rdquo;. Dans le cas d&rsquo;un contrôleur nommé &ldquo;foo&rdquo;, sa classe devra être nommée &ldquo;fooCtrl&rdquo;.
+</p>
+
+</div>
+
+<h2>Création d'un contrôleur</h2>
+<div class="level2">
+
+<p>
+Chaque module a en principe un contrôleur principal, que l&rsquo;on appelle généralement &ldquo;default&rdquo;. On va prendre ce nom pour l&rsquo;exemple de création de contrôleur.
+</p>
+
+<p>
+ En suivant les conventions de nommage, on créé donc une classe de nom &ldquo;defaultCtrl&rdquo; dans un fichier <em>controllers/default.classic.php</em>.
+</p>
+
+<p>
+Voici le code source minimal :
+</p>
+<pre class="code php">&nbsp;
+<span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+<span class="br0">&#125;</span>
+&nbsp;</pre>
+<p>
+Une classe de contrôleur doit toujours hériter de la classe jController.
+</p>
+
+<p>
+Ensuite, il faut ajouter au moins autant de méthodes que d&rsquo;actions prises en charge le contrôleur. Ces méthodes sont publiques, n&rsquo;ont pas d&rsquo;arguments, et doivent renvoyer un objet de type <strong>jResponse</strong>.
+</p>
+
+<p>
+Voici un exemple de méthode pour une action &ldquo;index&rdquo; :
+</p>
+<pre class="code php">&nbsp;
+<span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+    public <span class="kw2">function</span> index<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+       <span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'&lt;p&gt;Test&lt;/p&gt;'</span><span class="br0">&#41;</span>;
+       <span class="kw1">return</span> <span class="re0">$rep</span>;
+    <span class="br0">&#125;</span>
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Note : quand le nom d&rsquo;une action est absente, ou incomplète (il n&rsquo;y a que le nom de la méthode ou que le nom du contrôleur), alors Jelix complètera le nom de l&rsquo;action avec &ldquo;default&rdquo; pour le contrôleur et &ldquo;index&rdquo; pour le nom de la méthode.  Il est donc recommandé d&rsquo;avoir toujours un contrôleur &ldquo;default&rdquo; dans un module et une méthode &ldquo;index&rdquo; dans chaque contrôleur.
+</p>
+
+</div>
+
+<h2>Services fournis par jController</h2>
+<div class="level2">
+
+<p>
+ Dans une action, vous avez un certains nombre de méthodes à votre disposition.
+</p>
+
+</div>
+
+<h3>Récupérer un objet jResponse</h3>
+<div class="level3">
+
+<p>
+ Vous devez toujours renvoyer un objet dérivant de jResponse, qui est en fait le &ldquo;view&rdquo; du modèle MVC. Il y a un certains nombres d&rsquo;objet jResponse fournies par Jelix, permettant de générer du <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, du JSON, du text, du css, du xml, du zip ou même faire des redirections. Chaque type d&rsquo;objet jResponse est déclaré dans jelix par un mot clé.
+</p>
+
+<p>
+Aussi, pour récupérer un objet &ldquo;réponse&rdquo; précis, vous appelez la méthode <strong>getResponse</strong> en indiquant le mot clé correspondant au type de réponse que vous voulez. 
+</p>
+<pre class="code php">   <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;</pre>
+<p>
+$rep contient ici une réponse qui va générer du html. l&rsquo;objet $rep est du type jResponseHtml.
+</p>
+
+<p>
+Sachez que vous pouvez définir vos propres types de réponses, voir même plusieurs type de réponse issue d&rsquo;un même type, afin d&rsquo;avoir d&rsquo;éviter de dupliquer du code, ou de prendre en charge un format que ne connait pas jelix. Voyez pour cela l&rsquo;<a href="creer_response.html" class="wikilink1" title="manuel:creer_response"  >article sur la création des réponses personnalisées</a>.
+</p>
+
+</div>
+
+<h3>Récupérer les paramètres de requête</h3>
+<div class="level3">
+
+<p>
+ Comme vous le savez, les paramètres de la requête http sont stockés dans un objet jRequest, qui lui même est stocké dans l&rsquo;objet jCoordinator. On peut ainsi  récupérer un paramètre de cette façon :
+</p>
+<pre class="code php">  <span class="re0">$id</span> = <span class="re0">$GLOBALS</span><span class="br0">&#91;</span><span class="st0">'gJCoord'</span><span class="br0">&#93;</span>-&gt;<span class="me1">request</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'id'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Mais il y a plus pratique : la méthode <strong>param()</strong> disponible dans les contrôleurs, au résultat équivalent.
+</p>
+<pre class="code php">  <span class="re0">$id</span> = <span class="re0">$this</span>-&gt;<span class="me1">param</span><span class="br0">&#40;</span><span class="st0">'id'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Si il n&rsquo;y a pas de paramètre de nom id, le résultat sera la valeur <strong>null</strong>. Vous pouvez aussi indiquer en deuxième argument une valeur qui sera prise si le paramètre indiqué n&rsquo;existe pas.
+</p>
+<pre class="code php">  <span class="re0">$titre</span> = <span class="re0">$this</span>-&gt;<span class="me1">param</span><span class="br0">&#40;</span><span class="st0">'title'</span>,<span class="st0">'un titre'</span><span class="br0">&#41;</span>;</pre>
+<p>
+ Il y a d&rsquo;autres méthodes similaires, comme <strong>intParam()</strong>, <strong>floatParam()</strong> et <strong>boolParam()</strong>, prenant les mêmes arguments, mais transformant le paramètres récupérer dans le type de donnée correspondant. Avec <strong>intParam()</strong>, vous obtiendrez un nombre entier; avec <strong>floatParam()</strong>, un décimal. Cela permet ainsi de &ldquo;filtrer&rdquo; les données. Et pour <strong>boolParam()</strong>, vous obtiendrez <strong>true</strong> si le paramètre vaut &ldquo;true&rdquo;, &ldquo;1&rdquo;, &ldquo;on&rdquo; ou &ldquo;yes&rdquo;, et <strong>false</strong> dans le cas contraire.
+</p>
+
+<p>
+Si vous voulez un filtrage pour d&rsquo;autres types de données, utilisez la classe jFilter. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

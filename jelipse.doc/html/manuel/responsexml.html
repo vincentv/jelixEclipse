@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsexml - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse XML</h1>
+<div class="level1">
+
+<p>
+ jResponseXML permet de renvoyer au navigateur du <acronym title="Extensible Markup Language">XML</acronym>. Son alias est &ldquo;xml&rdquo;
+</p>
+<pre class="code php"><span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'xml'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Pour indiquer le contenu xml, vous avez deux possibilités. 
+</p>
+
+<p>
+<strong>Attention</strong> : dans les deux cas, le <acronym title="Extensible Markup Language">XML</acronym> doit être bien formé. Si ce n&rsquo;est pas le cas, la réponse sera une erreur.
+</p>
+
+</div>
+
+<h2>Générer à partir d'un template</h2>
+<div class="level2">
+
+<p>
+ Par défaut, la propriété $content contient un objet jTpl. Vous devez indiquer le sélecteur de template dans la propriété $contentTpl.
+</p>
+<pre class="code php">  <span class="re0">$rep</span>-&gt;<span class="me1">contentTpl</span> = <span class="st0">'monMOdule~monxml'</span>;
+  <span class="re0">$rep</span>-&gt;<span class="me1">content</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'foo'</span>,<span class="st0">'bla bla bla'</span><span class="br0">&#41;</span>;</pre>
+<p>
+jResponseXml s&rsquo;occupe de générer la balise &ldquo;&lt;?xml ?&gt;&rdquo;  donc vous n&rsquo;avez pas à vous en occuper dans le template.
+</p>
+
+</div>
+
+<h2>Génération sans template</h2>
+<div class="level2">
+
+<p>
+ Si vous ne voulez pas utiliser un template, vous mettez le contenu xml, sous forme de chaine, dans la propriété $content.
+</p>
+<pre class="code php">  <span class="re0">$rep</span>-&gt;<span class="me1">content</span> = <span class="st0">'&lt;mondoc&gt; &lt;title&gt;jelix&lt;/title&gt; &lt;/mondoc&gt;'</span>;</pre>
+<p>
+jResponseXml s&rsquo;occupe de générer la balise &ldquo;&lt;?xml ?&gt;&rdquo;  donc vous n&rsquo;avez pas à vous en occuper.
+</p>
+
+</div>
+
+<h2>Indiquer des feuilles de styles.</h2>
+<div class="level2">
+
+<p>
+ Vous pouvez attachez des feuilles de styles <acronym title="Cascading Style Sheets">CSS</acronym> ou <acronym title="Extensible Stylesheet Language Transformations">XSLT</acronym> au document <acronym title="Extensible Markup Language">XML</acronym> produit. Pour cela, vous devez utilisez les méthodes <em>addCSSStyleSheet()</em> ou <em>addXSLStyleSheet()</em>. Elles prennent toutes deux en premier argument l&rsquo;url du fichier, et en deuxième argument optionnel un tableau associatif définissant les pseudo attributs à mettre sur la processing instruction générée.
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">addCSSStyleSheet</span><span class="br0">&#40;</span><span class="st0">'my.css'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'title'</span>=&gt;<span class="st0">'super jolie'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+ <span class="re0">$rep</span>-&gt;<span class="me1">addXSLStyleSheet</span><span class="br0">&#40;</span><span class="st0">'my.xsl'</span><span class="br0">&#41;</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

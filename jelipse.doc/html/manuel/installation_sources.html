@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:installation:sources - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Installation des sources</h1>
+<div class="level1">
+
+<p>
+ Jelix est fourni sous forme d&rsquo;une archive tar.gz ou zip. Cette archive contient un répertoire <em>jelix/lib</em> qui contient tous les fichiers du framework et les bibliothèques dépendantes, ainsi qu&rsquo;un répertoire <em>jelix/temp</em>. 
+</p>
+
+<p>
+Décompressez l&rsquo;archive avec des logiciels comme winzip, unzip ou tar. 
+</p>
+<pre class="code">tar xvzf jelix_1.0.tar.gz</pre>
+
+<p>
+ Vous obtenez les répertoires suivants  
+</p>
+<pre class="code">lib/                source de Jelix et bibliothèques tierces
+    jelix/          sources de Jelix
+    jelix-modules/  modules livrés en standard avec Jelix
+    jelix-plugins/  plugins livrés en standard avec Jelix
+    jelix-scripts/  script en ligne de commande d'aide pour le développeur
+    jelix-www/      ressources javascript, css, xul... (1.0alpha3)
+temp/               fichiers temporaires des applications jelix. </pre>
+
+<p>
+Il y a aussi d&rsquo;autres répertoires dans <em>lib</em>/ (non listés ici), qui sont des bibliothèques additionnelles externes au projet jelix, et utilisées par Jelix. Il y a par exemple wikirenderer, JSON, difflib etc.
+</p>
+
+<p>
+Note: Donc jusqu&rsquo;à maintenant, nous avons une hiérarchie de répertoires semblable à /jelix/lib/jelix/... Cette hiéarchie est nécessaire au mini-tutoriel. Poursuivons la lecture de ce tutoriel.
+</p>
+
+<p>
+Il est recommandé d&rsquo;installer ces répertoires en dehors du répertoire de votre site web, pour plus de sécurité, et afin de le partager avec plusieurs applis. Mais ce n&rsquo;est pas une obligation. Nous admettrons par la suite que vous avez copié ces répertoires dans un répertoire <em>monsite</em>/.
+</p>
+
+<p>
+Vous devez mettre les droits en écriture à l&rsquo;utilisateur apache sur le répertoire temp.
+</p>
+
+<p>
+Vous pouvez maintenant créer ou installer une application.
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

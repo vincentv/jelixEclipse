@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:droits:concepts - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Concepts de jAcl</h1>
+<div class="level1">
+
+<p>
+ jAcl propose un système qui répond à la plupart des besoins en la matière. Il comporte divers éléments, qui, ensemble, définissent des droits.
+</p>
+
+</div>
+
+<h2>Élements composant un droit</h2>
+<div class="level2">
+
+<p>
+ Il faut distinguer les différents éléments qui entrent en jeu dans le système de droit : 
+</p>
+<ul>
+<li class="level1"><div class="li"> un sujet </div>
+</li>
+<li class="level1"><div class="li"> une valeur de droit</div>
+</li>
+<li class="level1"><div class="li"> un groupe d&rsquo;utilisateurs</div>
+</li>
+<li class="level1"><div class="li"> une ressource (facultatif)</div>
+</li>
+</ul>
+
+<p>
+ une combinaison de chacun de ces types d&rsquo;éléments représente un droit.
+</p>
+
+</div>
+
+<h3>Sujet</h3>
+<div class="level3">
+
+<p>
+ C&rsquo;est un intitulé représentant un type de ressource ou une fonctionnalité sur laquelle on veut apposer un droit. Par exemple, &ldquo;<strong>cms.articles</strong>&rdquo; pourrait être le sujet regroupant les droits sur la gestion des articles d&rsquo;un <acronym title="Content Management System">CMS</acronym>.
+</p>
+
+<p>
+Par convention, afin d&rsquo;éviter les collisions entre différents modules, le nom du sujet devrait commencer par le nom du module. Mais ce n&rsquo;est pas une obligation.
+</p>
+
+</div>
+
+<h3>Groupes et Utilisateur</h3>
+<div class="level3">
+
+<p>
+ Chaque utilisateur appartient à un ou plusieurs groupes. Un droit s&rsquo;exerce toujours sur un ou plusieurs groupes. 
+</p>
+
+<p>
+Il est possible d&rsquo;affecter des droits à un seul utilisateur, mais cela se traduit en fait par l&rsquo;existence d&rsquo;un groupe &lsquo;privé&rsquo; propre à chaque utilisateur (afin de faciliter les traitements). En clair, chaque utilisateur possède son groupe personnel dans lequel il est seul.
+</p>
+
+<p>
+Il y a trois types de groupes : 
+</p>
+<ul>
+<li class="level1"><div class="li"> les groupes privés. On ne les &ldquo;voit&rdquo; pas dans la liste des groupes</div>
+</li>
+<li class="level2"><div class="li"> les groupes normaux</div>
+</li>
+<li class="level2"><div class="li"> les groupes normaux par défaut : ceux dans lesquels un nouvel utilisateur est intégré automatiquement.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>Valeur de droit</h3>
+<div class="level3">
+
+<p>
+ C&rsquo;est une chaine, une valeur indiquant précisément un droit. Pour un sujet donné, il y a un ensemble de valeurs précises possibles. Par exemple, pour le sujet &ldquo;cms.articles&rdquo;, on pourrait avoir les valeurs &ldquo;LIRE&rdquo;, &ldquo;MODIFIER&rdquo;, &ldquo;CREER&rdquo;, &ldquo;PUBLIER&rdquo;, &ldquo;EFFACER&rdquo;. Et pour le sujet &ldquo;comments.management&rdquo;, juste les valeurs &ldquo;EFFACER&rdquo; et &ldquo;MODIFIER&rdquo;.
+</p>
+
+<p>
+Ainsi donc, les valeurs de droits sont regroupées en <em>groupes de valeurs</em>.
+</p>
+
+<p>
+À noter que le développeur est libre de choisir les intitulés des valeurs de droits, donc de créer ses propres groupes de valeurs de droits.
+</p>
+
+</div>
+
+<h3>Ressource</h3>
+<div class="level3">
+
+<p>
+ Dans la plupart des cas, l&rsquo;association <em>sujet + utilisateur + valeur de droit</em> suffit. Mais parfois on veut pouvoir avoir une granularité plus fine.
+</p>
+
+<p>
+Par exemple, dans un système <acronym title="Content Management System">CMS</acronym>, on veut pouvoir donner le droit de modification à un utilisateur sur ses propres articles, mais pas sur ceux des autres. Il faut alors rajouter dans cette association l&rsquo;identifiant de l&rsquo;article.
+</p>
+
+<p>
+Par exemple, on donnera les valeurs de droits suivants 
+</p>
+<ul>
+<li class="level1"><div class="li"> &ldquo;CREER&rdquo; sur le sujet &ldquo;cms.articles&rdquo; pour le groupe &ldquo;redacteurs&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> &ldquo;MODIFIER&rdquo; sur la ressource &ldquo;monarticle&rdquo; pour l&rsquo;utilisateur toto faisant parti du groupe &ldquo;redacteurs&rdquo;  .</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Principes de fonctionnement</h2>
+<div class="level2">
+
+<p>
+ Le coeur de jAcl contient donc des relations entre trois ou quatres type d&rsquo;élements. 
+</p>
+
+<p>
+La mémorisation d&rsquo;une relation entre un sujet, un groupe et une valeur (plus éventuellement une ressource), définit un droit. Quand une relation n&rsquo;existe pas entre un sujet donné, un groupe donné et une valeur donnée, alors cela signifie qu&rsquo;il n&rsquo;y a pas de droit définit sur ce triplet.
+</p>
+
+<p>
+Par exemple, si on définit juste ces droits suivants dans le système, pour le groupe <em>rédacteur</em>: 
+</p>
+<ul>
+<li class="level1"><div class="li"> &ldquo;LIRE&rdquo; sur le sujet &ldquo;cms.articles&rdquo; pour le groupe &ldquo;redacteurs&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> &ldquo;CREER&rdquo; sur le sujet &ldquo;cms.articles&rdquo; pour le groupe &ldquo;redacteurs&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> &ldquo;MODIFIER&rdquo; sur le sujet &ldquo;cms.articles&rdquo; pour le groupe &ldquo;redacteurs&rdquo;</div>
+</li>
+</ul>
+
+<p>
+ Les utilisateurs faisant parti du groupe <em>redacteurs</em> auront donc les droits LIRE, CREER et MODIFIER sur le sujet cms.articles, mais pas le droit EFFACER puisque la relation n&rsquo;a pas été crée.
+</p>
+
+<p>
+Un module <acronym title="Content Management System">CMS</acronym> qui reposerait sur ces droits, devra, pour savoir ce que peut faire un utilisateur, interroger jAcl, en lui demandant si par exemple l&rsquo;utilisateur courant a le droit MODIFIER au sujet de &ldquo;cms.articles&rdquo;. Si oui, alors le module pourra afficher un bouton &ldquo;modifier&rdquo; dans l&rsquo;interface d&rsquo;administration, et ne l&rsquo;affichera pas sinon (Le module devra également faire cette vérification lors de la sauvegarde d&rsquo;un article, pour éviter les &ldquo;fraudes&rdquo; <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" /> ). 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

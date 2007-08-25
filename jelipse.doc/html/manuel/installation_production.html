@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:installation:production - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Installation sur un serveur de production</h1>
+<div class="level1">
+
+<p>
+ On appelle serveur de production, le serveur sur lequel sera installé votre application une fois terminée, donc accessible aux utilisateurs finaux. Par opposition, il y a le serveur de développement, celui sur lequel vous développez votre application.
+</p>
+
+<p>
+Il y a certaines choses différentes à prendre compte dans le cas du serveur de production, afin d&rsquo;optimiser l&rsquo;execution de votre application basée sur Jelix.
+</p>
+
+</div>
+
+<h2>Choisir la bonne édition de Jelix</h2>
+<div class="level2">
+
+<p>
+ Pour développer, vous utilisez bien sûr <strong>l&rsquo;édition &ldquo;developer&rdquo;</strong> de Jelix. Cette édition comprend les outils de scripts en ligne de commande et d&rsquo;autres choses pour le développement.
+</p>
+
+<p>
+Cependant, pour l&rsquo;installation sur un serveur de production, il est préférable d&rsquo;installer <strong>l&rsquo;édition &ldquo;optimized&rdquo;</strong> de Jelix. Comme son nom l&rsquo;indique, elle est optimisée, et débarrassée des choses inutiles en production. Notez toutefois que votre application fonctionnera à l&rsquo;identique avec l&rsquo;une ou l&rsquo;autre des éditions de Jelix, à un détails prés : on pourra observer de légères améliorations de performance avec l&rsquo;édition &ldquo;Optimized&rdquo; <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" />.
+</p>
+
+<p>
+Si vous choisissez de rester avec l&rsquo;édition &ldquo;developer&rdquo; sur le serveur de production, il n&rsquo;y a pas de problème à cela. Il est toutefois recommandé de supprimer les scripts en ligne de commande de Jelix.
+</p>
+
+<p>
+Note : une <strong>édition &ldquo;Gold&rdquo;</strong> est prévue, pour les developpeurs qui peuvent modifier la configuration de php, en particulier, installer des extensions <acronym title="Hypertext Preprocessor">PHP</acronym>. En effet, cette édition repose sur certaines extensions <acronym title="Hypertext Preprocessor">PHP</acronym> qui ne sont pas disponibles chez tous les hebergeurs, mais aussi sur une extension <acronym title="Hypertext Preprocessor">PHP</acronym> spécialement dédiée à Jelix, qui prend en charge certains traitements du framework. L&rsquo;utilisation de l&rsquo;édition GOLD améliore ainsi sensiblement les performances de votre application. En attendant qu&rsquo;une édition &ldquo;Gold&rdquo; officielle soit disponible, vous pouvez toujours vous la &ldquo;fabriquer&rdquo; en suivant les <a href="http://dev.jelix.org/wiki/fr/sources" class="urlextern" title="http://dev.jelix.org/wiki/fr/sources"   rel="nofollow">instructions sur le manuel du hacker</a> et en indiquant les paramètres adaptées à votre configuration serveur.
+</p>
+
+</div>
+
+<h2>Configuration</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;installation se passe à l&rsquo;identique que sur le serveur de développement, y compris pour l&rsquo;application.
+</p>
+
+<p>
+Pour avoir de meilleur performance et plus de sécurité, voici toutefois quelques conseils supplémentaires.
+</p>
+
+</div>
+
+<h3>Au niveau du serveur</h3>
+<div class="level3">
+<ol>
+<li class="level1"><div class="li"> Tous les répertoires autre que le <em>var/www</em> de votre application devrait être en dehors du &ldquo;document root&rdquo; du site web.</div>
+</li>
+<li class="level1"><div class="li"> Bien spécifier les droits sur le répertoire <em>temp</em>, en particulier, que le propriétaire soit l&rsquo;utilisateur qui exécute apache (ou celui de votre compte, chez certains hébergeurs), qu&rsquo;il ait les droits en écriture. Par exemple, sur linux, il n&rsquo;est pas recommandé de mettre les droits 0777 sur le répertoire <em>temp</em> <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" /></div>
+</li>
+</ol>
+
+</div>
+
+<h3>Au niveau de l'application</h3>
+<div class="level3">
+
+<p>
+ Voici quelques conseils au niveau de la configuration de l&rsquo;application, donc les modifications à faire au niveau du fichier <em>var/config/defaultconfig.ini.php</em> .
+</p>
+
+</div>
+
+<h4>section error_handling</h4>
+<div class="level4">
+
+<p>
+ Dans la section <strong>error_handling</strong>, la configuration suivante est vivement conseillée :
+</p>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>error_handling<span class="br0">&#93;</span></span>
+<span class="re1">messageLogFormat </span>=<span class="re2"> &quot;%date%\t<span class="re0"><span class="br0">&#91;</span>%code%<span class="br0">&#93;</span></span>\t%msg%\t%file%\t%line%\n&quot;</span>
+<span class="re1">logFile </span>=<span class="re2"> error.log</span>
+<span class="re1">email </span>=<span class="re2"> root@localhost</span>
+<span class="re1">emailHeaders </span>=<span class="re2"> &quot;From: webmaster@yoursite.com\nX-Mailer: Jelix\nX-Priority: <span class="nu0">1</span> <span class="br0">&#40;</span>Highest<span class="br0">&#41;</span>\n&quot;</span>
+<span class="re1">quietMessage</span>=<span class="re2">&quot;A technical error has occured. Sorry for this trouble.&quot;</span>
+&nbsp;
+<span class="co0">; mots clés que vous pouvez utiliser : ECHO, ECHOQUIET, EXIT, LOGFILE, SYSLOG, MAIL, TRACE</span>
+<span class="re1">default      </span>=<span class="re2"> ECHOQUIET EXIT LOGFILE</span>
+<span class="re1">error        </span>=<span class="re2"> ECHOQUIET EXIT LOGFILE</span>
+<span class="re1">warning      </span>=<span class="re2"> ECHOQUIET LOGFILE</span>
+<span class="re1">notice       </span>=<span class="re2"> ECHOQUIET </span>
+<span class="re1">strict       </span>=<span class="re2"> ECHOQUIET</span>
+<span class="co0">; pour les exceptions, il y a implicitement un EXIT</span>
+<span class="re1">exception    </span>=<span class="re2"> ECHOQUIET</span>
+&nbsp;</pre>
+<p>
+En clair, il est déconseillé d&rsquo;utiliser le mot clé <strong>ECHO</strong>, qui affiche tous les détails des erreurs dans les pages web (informations qui pourraient être utiles pour des pirates), mais plutôt <strong>ECHOQUIET</strong>, qui affiche simplement le message indiqué dans le paramètre <strong>quietMessage</strong>.
+</p>
+
+<p>
+Toutefois, il est utile d&rsquo;être informé des erreurs et de leurs détails. Aussi, parallèlement à <strong>ECHOQUIET</strong>, il est recommandé d&rsquo;ajouter l&rsquo;un de ces mots clés 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>LOGFILE</strong> : les erreurs sont insérées dans le fichier indiquée dans logFile</div>
+</li>
+<li class="level2"><div class="li"> <strong>SYSLOG</strong> : les erreurs sont enregistrées au niveau du système</div>
+</li>
+<li class="level2"><div class="li"> <strong>MAIL</strong> : les erreurs sont envoyées par Mail.</div>
+</li>
+</ul>
+
+<p>
+ Attention à l&rsquo;usage de <strong>MAIL</strong> : ne l&rsquo;utiliser qu&rsquo;une fois que vous savez que votre application fonctionne bien sur le serveur de production. Sinon vous risquez d&rsquo;être inondé de mails (voir même que votre hébergeur n&rsquo;appréciasse pas l&rsquo;usage intensif du mail, pouvant vous prendre pour un spammeur).
+</p>
+
+<p>
+Attention aussi à l&rsquo;usage de <strong>SYSLOG</strong> : ne mettre cette option que si il s&rsquo;agit de <strong>votre</strong> serveur (c&rsquo;est à dire que vous êtes administrateur de la machine). Sinon le propriétaire de la machine risque de ne pas apprécier.
+</p>
+
+<p>
+En conclusion : <strong>LOGFILE</strong> est plutôt conseillé par rapport à <strong>MAIL</strong> et à <strong>SYSLOG</strong> <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" />
+</p>
+
+</div>
+
+<h4>section compilation</h4>
+<div class="level4">
+
+<p>
+ Dans la section <strong>compilation</strong>, vous pouvez désactiver l&rsquo;option <strong>checkCacheFiletime</strong>, et encore plus recommandé, l&rsquo;option <strong>force</strong> si vous l&rsquo;avez activé pour le développement.
+</p>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>compilation<span class="br0">&#93;</span></span>
+<span class="re1">checkCacheFiletime  </span>=<span class="re2"> off</span>
+<span class="re1">force </span>=<span class="re2"> off</span></pre>
+<p>
+L&rsquo;option <strong>checkCacheFiletime</strong> évite à Jelix de vérifier tout le temps que le cache (les fichiers générés par Jelix pour les fichiers de configurations, les <acronym title="Datas Access Object">DAO</acronym>, templates etc) est bien à jour par rapport aux fichiers de l&rsquo;application. À priori, cette vérification est inutile en production, puisque l&rsquo;application est rarement modifiée. Bien sûr, si vous la désactivez, il faudra <strong>impérativement</strong> vider le répertoire de cache (<em>temp/votre_appli</em>/) <strong>à chaque mise à jour de votre application</strong> , pour que vos modifications soient bien prises en compte ! (surtout quand il s&rsquo;agit de modification dans la configuration, des daos, locales, templates..)
+</p>
+
+</div>
+
+<h4>section mailer</h4>
+<div class="level4">
+
+<p>
+ N&rsquo;oubliez pas de mettre à jour les paramètres de la section <strong>mailer</strong>. En effet, les paramètres pour envoyer des mails ne sont pas toujours identiques entre le serveur de développement et le serveur de production. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

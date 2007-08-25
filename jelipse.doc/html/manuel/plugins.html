@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:plugins - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Les plugins</h1>
+<div class="level1">
+
+</div>
+
+<h2>Présentation</h2>
+<div class="level2">
+
+<p>
+ Ils existent toutes sortes de plugins pour ajouter des fonctionnalités à divers parties de Jelix. On peut ajouter ainsi des plugins pour le coordinateur, des drivers pour jDb, des drivers pour jAuth, des plugins pour jTpl ou encore des nouveaus moteurs d&rsquo;urls.
+</p>
+
+<p>
+Tous les plugins sont regroupés dans des dépôts de plugins (note : ce n&rsquo;était pas le cas dans jelix 1.0beta2 et inférieur).
+</p>
+
+</div>
+
+<h2>Déclaration d'un dépôt de plugins</h2>
+<div class="level2">
+
+<p>
+ Vous pouvez déclarer un ou plusieurs dépôt de plugins. Un dépot est un répertoire ayant une structure précise (voir plus loin). Il faut déclarer chacun de ces dépôt dans le paramètre pluginsPath de la configuration de l&rsquo;application. Par défaut, ce paramètre vaut :
+</p>
+<pre class="code ini"><span class="re1">pluginsPath </span>=<span class="re2"> lib:jelix-plugins/,app:plugins/</span></pre>
+<p>
+Vous remarquez que vous pouvez indiquer plusieurs dépôts, séparés par une virgule. Ici il est indiqué qu&rsquo;il y a deux dépôts, le répertoire jelix-plugins dans le répertoire lib/, et un répertoire plugins dans votre application. Il y en a un troisième, implicitement et automatiquement déclaré, qui est le répertoire lib/jelix/plugins/ et contenant les plugins livrés en standard avec jelix.
+</p>
+
+<p>
+Rappel : <em>lib:</em> est un raccourci indiquant le répertoire de base lib/, et <em>app:</em> un raccourci pour le répertoire de votre application. Vous pouvez aussi indiquer un chemin absolu. Attention toutefois si vous migrez votre appli d&rsquo;une machine à une autre. Il est aussi possible d&rsquo;utiliser un chemin relatif, mais celui-ci doit être relatif au script de point d&rsquo;entrée (index.php par ex).
+</p>
+
+</div>
+
+<h2>Structure d'un dépôt et création de plugins</h2>
+<div class="level2">
+
+<p>
+ Un dépôt de plugins contient un répertoire pour chaque type de plugins, et dans chacun de ces répertoires, un répertoire pour chaque plugin.
+</p>
+
+<p>
+Voici les types de plugins et les répertoires correspondant : 
+</p>
+<ul>
+<li class="level1"><div class="li"> plugins de coordinateur : <em>coord</em>/</div>
+</li>
+<li class="level2"><div class="li"> drivers pour jAuth : <em>auth</em>/</div>
+</li>
+<li class="level2"><div class="li"> drivers pour jDb : <em>db</em></div>
+</li>
+<li class="level2"><div class="li"> plugins de templates : <em>tpl</em>/</div>
+</li>
+<li class="level2"><div class="li"> moteurs de urls : <em>urls</em>/ </div>
+</li>
+</ul>
+
+<p>
+ Note : Pour les version 1.0beta2 ou inférieur, la notion de plugin était restreinte aux seuls plugins pour le coordinateur. Aussi les dépôts de plugins ne contenaient que des <a href="plugins_coord.html" class="wikilink1" title="manuel:plugins:coord"  >plugins pour le coordinateur</a>. Ceux-ci n&rsquo;étaient pas placés dans un sous-répertoire <em>coord</em>/, mais directement dans le dépôt.
+</p>
+
+</div>
+
+<h2>Création de plugins</h2>
+<div class="level2">
+
+<p>
+ Jelix fournis en standard un certain nombre de plugins, dans le dépôt lib/jelix/plugins/. Cependant, il est souvent nécessaire de devoir en créer pour ses propres besoins. D&rsquo;ailleurs, toutes contributions de nouveaux plugins est vivement encouragée <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" /> 
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="plugins_coord.html" class="wikilink1" title="manuel:plugins:coord"  >plugins de coordinateur</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="plugins_auth.html" class="wikilink1" title="manuel:plugins:auth"  >drivers pour jAuth</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="plugins_db.html" class="wikilink1" title="manuel:plugins:db"  >drivers pour jDb</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="plugins_tpl.html" class="wikilink1" title="manuel:plugins:tpl"  >plugins de templates</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="plugins_urls_engine.html" class="wikilink1" title="manuel:plugins:urls_engine"  >moteurs de urls</a></div>
+</li>
+</ul>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

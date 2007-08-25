@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:locales - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Localisation</h1>
+<div class="level1">
+
+<p>
+ Jelix possède son propre mécanisme de localisation/internationalisation. Les fonctions setlocale et gettext de php ne sont pas utilisées car trop contraignantes à mettre en place, et leur configuration est aléatoire sur les serveurs.
+</p>
+
+</div>
+
+<h2>principes</h2>
+<div class="level2">
+
+<p>
+ Chaque texte ou chaîne que vous voulez traduire sont associés à une clé, un code. Ces associations sont stockés dans des fichiers &ldquo;properties&rdquo;. Chaque fichier properties étant attribués à une langue et un encodage de caractère. La langue et l&rsquo;encodage par défaut sont configurés dans le fichier de config de votre application.
+</p>
+
+<p>
+Pour récupérer une chaîne dans la langue courante, il suffit d&rsquo;appeler jLocale::get(&rsquo;selecteurDeLocale&rsquo;), ou dans les templates d&rsquo;utiliser la syntaxe @selecteurDeLocale@ (voir <a href="templates.html" class="wikilink1" title="manuel:templates"  >la page sur les templates</a>).
+</p>
+
+</div>
+
+<h2>fichiers properties</h2>
+<div class="level2">
+
+<p>
+ Ce sont des fichiers contenant des traductions. Ils sont situés dans le répertoire <em>locales</em> des modules. Ce répertoire a une organisation spécifique. Il contient des sous répertoires pour chaque langue. Exemple :<em>locales/fr_FR</em>/, <em>locales/en_US</em>/, etc. Et dans chacun de ces sous-répertoires, il y a les fichiers properties correspondant à la langue.
+</p>
+
+<p>
+Le nom des fichiers properties est structuré comme suit : <em>codefichier.charset</em>.properties. Codefichier est un nom de code que l&rsquo;on utilisera dans les sélecteurs, et charset correspond à un encodage de caractères. Exemple : foo.<acronym title="International Organization for Standardization">ISO</acronym>-8859-1.properties , foo.UTF-8.properties etc.
+</p>
+
+<p>
+Si dans la configuration, &ldquo;defaultLocale=fr_FR&rdquo; et &ldquo;defaultCharset=<acronym title="International Organization for Standardization">ISO</acronym>-8859-1&rdquo;, alors ce sera le fichier fr_FR/foo.<acronym title="International Organization for Standardization">ISO</acronym>-8859-1.properties qui sera utilisé.
+</p>
+
+<p>
+La structure des fichiers est simple : il s&rsquo;agit d&rsquo;une suite de lignes <em>cle=chaine traduite</em>. Exemple, pour un fichier fr_FR/foo.<acronym title="International Organization for Standardization">ISO</acronym>-8859-1.properties :
+</p>
+<pre class="code ini">title.<span class="re1">offlineElements </span>=<span class="re2"> éléments à traiter</span>
+title.<span class="re1">onlineElements </span>=<span class="re2"> éléments en ligne</span>
+buttons.<span class="re1">save </span>=<span class="re2"> Enregistrer</span>
+buttons.<span class="re1">ok</span>=<span class="re2">Valider</span>
+buttons.<span class="re1">cancel</span>=<span class="re2">Annuler</span>
+buttons.<span class="re1">search</span>=<span class="re2">Rechercher</span></pre>
+<p>
+Et dans son équivalent anglais en_US/foo.<acronym title="International Organization for Standardization">ISO</acronym>-8859-1.properties :
+</p>
+<pre class="code ini">title.<span class="re1">offlineElements </span>=<span class="re2"> elements to check</span>
+title.<span class="re1">onlineElements </span>=<span class="re2"> online elements</span>
+&nbsp;
+buttons.<span class="re1">save </span>=<span class="re2"> Save</span>
+buttons.<span class="re1">ok</span>=<span class="re2">Ok</span>
+buttons.<span class="re1">cancel</span>=<span class="re2">Cancel</span>
+buttons.<span class="re1">search</span>=<span class="re2">Search</span></pre>
+<p>
+Si un texte est long et que vous voulez l&rsquo;écrire sur plusieurs lignes, vous devez mettre un anti-slash (\) à la fin de chaque retour à la ligne (sauf sur la dernière du texte)
+</p>
+<pre class="code ini"><span class="re1">intro</span>=<span class="re2">ceci est un trés tres\</span>
+long texte qui fait\
+plusieurs lignes
+<span class="re1">foo</span>=<span class="re2">bar</span></pre>
+<p>
+Vous pouvez aussi mettre des commentaires. Ils doivent commencer par un # en début de ligne, le reste de la ligne étant alors ignoré.
+</p>
+
+</div>
+
+<h2>récupération d'une chaîne localisée</h2>
+<div class="level2">
+
+<p>
+ Pour récupérer une chaîne, il faut utiliser la méthode statique get de jLocale. Cette méthode accepte en premier argument un sélecteur de locale, qui a cette structure : <em>module~codefichier.clechaine</em>. la partie &ldquo;module~&rdquo; est facultative si il s&rsquo;agit d&rsquo;un fichier se trouvant dans le module courant.
+</p>
+
+<p>
+Pour récupérer par exemple la valeur de buttons.save dans foo.<acronym title="International Organization for Standardization">ISO</acronym>-8859-1.properties situé dans le module &ldquo;bar&rdquo; : 
+</p>
+<pre class="code php">  <span class="re0">$chaine</span> = jLocale::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"bar~foo.buttons.save"</span><span class="br0">&#41;</span>;</pre>
+<p>
+Dans un template cela donnerait par exemple :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"button"</span> <span class="kw3">value</span>=<span class="st0">"{@bar~foo.buttons.save@}"</span> /<span class="kw2">&gt;</span></pre>
+</div>
+
+<h2>chaîne localisée avec paramètres</h2>
+<div class="level2">
+
+<p>
+ Il peut être utile d&rsquo;avoir des chaînes localisées dans lesquelles on veut insérer des valeurs dynamiquement. Par exemple, imaginons que voulez écrire :
+</p>
+<pre class="code">
+   Vous allez sur le site http://foo.com et vous cliquez sur la rubrique voiture
+</pre>
+
+<p>
+Vous voulez pouvoir changer l&rsquo;url du site et le nom de la rubrique. Vous pouvez alors passer les données en paramètres à jLocal :
+</p>
+<pre class="code php">  <span class="re0">$chaine</span> = jLocale::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"bar~foo.phrase"</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'http://foo.com'</span>, <span class="st0">'voiture'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Et dans le fichier properties, vous mettez un %s partout où vous voulez insérer des valeurs dynamiques :
+</p>
+<pre class="code">
+   phrase = Vous allez sur le site %s et vous cliquez sur la rubrique %s
+</pre>
+
+<p>
+Et il faut donner les paramètres dans l&rsquo;ordre d&rsquo;apparition des %s. En fait, la chaîne est traité par la fonction sprintf de php, donc vous avez toutes les possibilités syntaxique de sprintf.
+</p>
+
+<p>
+En particulier, il se peut que l&rsquo;ordre d&rsquo;insertion des paramètres change d&rsquo;une langue à une autre. Plutôt donc que de modifier l&rsquo;ordre des paramètres quand vous appelez jLocale, vous indiquez quel paramètre va à quel endroit dans la chaîne localisée, au moyen de la syntaxe %x$s où x est un nombre d&rsquo;ordre.
+</p>
+<pre class="code">
+   phrase = Vous allez sur le site %1$s et vous cliquez sur la rubrique %2$s
+</pre>
+
+<p>
+En anglais (même si ce n&rsquo;est pas la véritable traduction, c&rsquo;est juste pour l&rsquo;exemple) ça pourrait donner ça :
+</p>
+<pre class="code">
+   phrase = Clic on the %2$s section, when you go on the %1$s web site.
+</pre>
+
+<p>
+Ainsi le premier paramètre ira à l&rsquo;emplacement de %1$s, le deuxième à la place de %2$s etc...
+</p>
+
+<p>
+ Par contre, dans un template, vous ne pouvez pas utiliser la notion &ldquo;@foo@&rdquo; quand il faut des paramètres. Vous devez alors utiliser le plugin jlocale :
+</p>
+<pre class="code">
+   &lt;p&gt;{jlocale &quot;bar~foo.phrase&quot;, array('http://foo.com', 'voiture')}&lt;/p&gt;
+</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

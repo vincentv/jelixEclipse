@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsehtml - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse html</h1>
+<div class="level1">
+
+<p>
+ Pour récupérer une réponse xhtml/html, vous indiquez l&rsquo;alias &ldquo;html&rdquo; à la méthode <em>getResponse()</em>. Vous récupérez ainsi la réponse comme ceci :
+</p>
+<pre class="code php">   <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Vous avez alors dans $rep une instance de l&rsquo;objet JResponseHtml. 
+</p>
+
+</div>
+
+<h3>Xhtml ou html</h3>
+<div class="level3">
+
+<p>
+jResponseHtml est utilisé pour renvoyer par défaut une réponse au format  <acronym title="Extensible HyperText Markup Language">XHTML</acronym>. Mais le <acronym title="HyperText Markup Language">HTML</acronym> est possible, en l&rsquo;indiquant via la méthode <em>setXhtmlOutput</em> :
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">setXhtmlOutput</span><span class="br0">&#40;</span><span class="kw2">true</span><span class="br0">&#41;</span>;  <span class="co1">// Réponse au format xhtml</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">setXhtmlOutput</span><span class="br0">&#40;</span><span class="kw2">false</span><span class="br0">&#41;</span>; <span class="co1">// Réponse au format html</span></pre>
+<p>
+Par la suite, vous pouvez savoir si la réponse renverra du html ou du xhtml en appelant la méthode <em>isXhtml()</em>.
+</p>
+
+</div>
+
+<h2>Génération du contenu</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;objet jResponseHtml implémente des méthodes et propriétés pour manipuler le contenu (X)<acronym title="HyperText Markup Language">HTML</acronym>. Il faut savoir qu&rsquo;il s&rsquo;occupe de générer le contenu de la balise &lt;head&gt;. Vous n&rsquo;avez donc à générer par vous même que le contenu de la balise <acronym title="HyperText Markup Language">HTML</acronym> &lt;body&gt;, et à appeler les méthodes ou propriétés permettant de modifier le contenu de &lt;head&gt;.
+</p>
+
+</div>
+
+<h2>Modification de l'entête HTML</h2>
+<div class="level2">
+
+<p>
+ Pour modifier le contenu de la balise &lt;head&gt;, vous avez plusieurs méthodes et propriétés pour cela. Vous pouvez ainsi modifier le titre du document, le &ldquo;favicon&rdquo;, les urls des feuilles de styles et des scripts javascripts à lier au document, du <acronym title="Cascading Style Sheets">CSS</acronym> ou du javascript à inclure directement dans le &lt;head&gt;, ou encore les mots clés associés, la description de la page, et autres metas. Voyons un exemple qui montre l&rsquo;ensemble de ces possibilités :
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">"Le titre de mon document"</span>;
+&nbsp;
+<span class="co1">// génère une balise &lt;script src=&quot;lib.js&quot;....&gt;</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addJSLink</span><span class="br0">&#40;</span><span class="st0">'lib.js'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// génère une balise &lt;script&gt;alert....&lt;/script&gt; qui sera incluse dans &lt;head&gt;</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addJSCode</span><span class="br0">&#40;</span><span class="st0">'alert(&quot;essai&quot;);'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// génère une balise &lt;link&gt;</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addCSSLink</span><span class="br0">&#40;</span><span class="st0">'maFeuille.css'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// génère une balise &lt;style&gt;</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addStyle</span><span class="br0">&#40;</span><span class="st0">'span'</span>, <span class="st0">'font-weight:bold;'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// ajoute une balise meta pour la description</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addMetaDescription</span><span class="br0">&#40;</span><span class="st0">'description'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// ajoute une balise meta pour les mots clés</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addMetaKeywords</span><span class="br0">&#40;</span><span class="st0">'motclé motclé motclé'</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Notez que pour la méthode <em>addCSSLink</em> et <em>addJSLink</em>, vous pouvez indiquer un paramètre supplémentaire qui doit être un tableau associatif, décrivant les attributs supplémentaires à mettre.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addCSSLink</span><span class="br0">&#40;</span><span class="st0">'maFeuille.css'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'title'</span>=&gt;<span class="st0">'design bleu'</span>, rel=&gt;<span class="st0">'alternate stylesheet'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Si vous voulez injecter du contenu spécifique dans la balise &lt;head&gt;, vous pouvez le faire via la méthode <em>addHeadContent()</em>
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addHeadContent</span><span class="br0">&#40;</span><span class="st0">'&lt;link rel=&quot;alternate&quot; type=&quot;application/rss+xml&quot; title=&quot;Recent Changes&quot; href=&quot;/feed.php&quot; /&gt;'</span><span class="br0">&#41;</span></pre>
+<p>
+Si à un moment ou à un autre, vous voulez annuler les modification faites dans le head (par exemple, vous êtes dans une zone qui est appelée par un module tierce que vous ne voulez pas/pouvez pas modifier), vous pouvez appeler la méthode <em>clearHtmlHeader()</em>. Cette fonction vous permet d&rsquo;effacer une partie du header de votre document html, en indiquant quoi effacer : &lsquo;CSSLink&rsquo;, &lsquo;Styles&rsquo;, &lsquo;JSLink&rsquo;, &lsquo;JSCode&rsquo; et/ou &lsquo;Others&rsquo;.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">clearHtmlHeader</span><span class="br0">&#40;</span><span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'CSSLink'</span>, <span class="st0">'Styles'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Cela effacera les liens <acronym title="Cascading Style Sheets">CSS</acronym> (addCSSLink) et les balises &lt;style&gt; (<em>addStyle</em>).
+</p>
+
+</div>
+
+<h2>Générer le contenu de la page HTML</h2>
+<div class="level2">
+
+<p>
+ jResponseHtml génère la balise &lt;body&gt;, mais c&rsquo;est vous qui en contrôlez ses attributs et son contenu.
+</p>
+
+<p>
+Pour définir les attributs de la balise &lt;body&gt;, vous pouvez utiliser la propriété bodyTagAttributes.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">bodyTagAttributes</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'onload'</span>=&gt;<span class="st0">'bodyonload()'</span>, <span class="st0">'class'</span>=&gt;<span class="st0">'maincontent'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Pour générer le contenu même de la balise body, vous avez deux choix : soit utiliser un template, soit utiliser la méthode addContent().
+</p>
+
+</div>
+
+<h3>générer avec un template</h3>
+<div class="level3">
+
+<p>
+ Pour utiliser un template, jResponseHtml propose deux propriétés : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>bodyTpl</em>, qui doit contenir le  sélecteur du template à utiliser</div>
+</li>
+<li class="level1"><div class="li"> <em>body</em> qui contient un objet jTpl permettant de &ldquo;paramétrer&rdquo; le template.</div>
+</li>
+</ul>
+
+<p>
+ Exemple :
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'myapp~main'</span>;
+<span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'person'</span>,<span class="st0">'Laurent'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Le contenu généré par le moteur de template sera intégré entre les balises &lt;body&gt; et &lt;/body&gt;.
+</p>
+
+<p>
+Pour en savoir plus sur l&rsquo;utilisation des templates, consultez le <a href="templates.html" class="wikilink1" title="manuel:templates"  >chapitre sur les templates</a>.
+</p>
+
+<p>
+Il se peut que vous ayez besoin d&rsquo;ajouter du contenu en plus de celui produit par le template. Pour cela vous utiliserez la méthode addContent(). Elle prend en paramètre une chaine pour lecontenu, et un booléen (facultatif) pour indiquer si on veut que le contenu soit ajouté avant (true) ou après (false, valeur par défaut) le contenu du template.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'Mon contenu HTML après le template'</span><span class="br0">&#41;</span>;
+<span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'Mon contenu HTML avant le template'</span>, <span class="kw2">true</span><span class="br0">&#41;</span>;</pre>
+<p>
+Notez que le contenu à ajouter peut être aussi le contenu de <a href="zones.html" class="wikilink1" title="manuel:zones"  >zones</a>
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span>jZone::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">'monmodule~uneZone'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>générer sans template</h3>
+<div class="level3">
+
+<p>
+ Si vous ne voulez pas utiliser de template pour le body, alors il faut laisser la propriété bodyTpl à vide, et utiliser seulement la méthode <em>addContent()</em> :
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'contenu pour mon body'</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>Autres paramètres de la réponses</h2>
+<div class="level2">
+
+<p>
+ Comme jResponseHtml est dérivé de jReponse, vous pouvez aussi influer sur les entêtes <acronym title="Hyper Text Transfer Protocol">HTTP</acronym> : le code &ldquo;status&rdquo; et ajouter d&rsquo;autres en-têtes.
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">setHttpStatus</span>  <span class="br0">&#40;</span><span class="st0">"404"</span>, <span class="st0">"Not Found"</span><span class="br0">&#41;</span>;
+ <span class="re0">$rep</span>-&gt;<span class="me1">addHttpHeader</span>  <span class="br0">&#40;</span><span class="st0">"Date-modified"</span>, <span class="st0">"...."</span><span class="br0">&#41;</span>;</pre>
+<p>
+ Il y a aussi une autre propriété, propre à jResponseHtml : <em>xhtmlContentType</em>. Cette propriété défini si le contenu xHTML doit être envoyé avec une entête <acronym title="Hyper Text Transfer Protocol">HTTP</acronym> Content-Type spécifique : <em>application/xhtml+xml</em>. Bien sûr, une vérification des capacités du navigateur à recevoir du xhtml est faites, et si le navigateur ne peut pas recevoir du xHTML, la réponse sera envoyée avec le Content-Type <em>text/html</em> comme pour le <acronym title="HyperText Markup Language">HTML</acronym> classique.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">xhtmlContentType</span> = <span class="kw2">true</span> ;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

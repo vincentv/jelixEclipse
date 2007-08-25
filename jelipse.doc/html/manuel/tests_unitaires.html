@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:tests_unitaires - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Développer des tests unitaires</h1>
+<div class="level1">
+
+<p>
+ <strong>Attention : les possibilités et fonctionnalités décrites ici ne sont disponibles que dans la version de développement du future Jelix 1.0 Beta3</strong> (utilisez une <a href="/articles/telechargement" class="wikilink1" title="telechargement"  >nightly build de jelix</a> pour tester).
+</p>
+
+<p>
+Le développement de test unitaires est de plus en plus présents dans les projets, et jelix propose de quoi en réaliser facilement. La réalisation des tests unitaires fait d&rsquo;ailleurs partie des méthodes de développement comme XP (eXtreme programming). Le processus de développement veut, en théorie (et en gros), qu&rsquo;à chaque fois que l&rsquo;on développe une fonctionnalité, une méthode, on développe aussi les tests qui vont permettre de vérifier le bon fonctionnement de la méthode. Et à chaque fois que l&rsquo;on modifie ou ajoute un bout de code, on lance tout les tests unitaires pour vérifier qu&rsquo;il n&rsquo;y a pas de regressions. Cela permet ainsi de garantir un minimum, un fonctionnement robuste de l&rsquo;application.
+</p>
+
+</div>
+
+<h2>Préparation</h2>
+<div class="level2">
+
+<p>
+ Les tests unitaires dans Jelix ne peuvent s&rsquo;effectuer qu&rsquo;avec l&rsquo;édition &ldquo;developer&rdquo; de Jelix. Celle-ci contient en effet un module spécifique pour lancer les tests unitaires, junittests, et la bibliothèque <a href="http://www.lastcraft.com/simple_test.php" class="urlextern" title="http://www.lastcraft.com/simple_test.php"   rel="nofollow">SimpleTest</a>. Si vous voulez absolument lancer les tests unitaires sur un serveur en production avec une édition &ldquo;optimized&rdquo; de jelix, vous devez y copier les répertoires lib/simpletest/ et lib/jelix-modules/junittests de l&rsquo;édition &ldquo;developer&rdquo;.
+</p>
+
+<p>
+Pour pouvoir lancer les tests, il faut aussi ajouter au début du fichier de configuration de votre application : 
+</p>
+<pre class="code ini">  <span class="re1">enableTests </span>=<span class="re2"> on</span></pre>
+<p>
+Vous <strong>devez</strong> mettre à off quand vous passez votre application sur le serveur de production, ou utilisez une édition &ldquo;optimized&rdquo; de jelix (ou encore supprimer le module junittests tout simplement). Cela évite que n&rsquo;importe qui puisse lancer les tests unitaires.
+</p>
+
+</div>
+
+<h2>Création de tests unitaires</h2>
+<div class="level2">
+
+</div>
+
+<h3>les fichiers de tests</h3>
+<div class="level3">
+
+<p>
+ Les tests unitaires, ce sont des scripts qui font des tests sur des classes, des méthodes, des fonctions.
+</p>
+
+<p>
+Les tests dans Jelix doivent reposer sur la bibliothèque simpletest : vous devez donc réaliser des classes, qui héritent de la classe UnitTestCase de simpletest, et vous les placez dans un ou plusieurs fichiers dans les répertoires &ldquo;tests&rdquo; de vos modules.
+</p>
+
+<p>
+Ces fichiers seront ensuite appelés par le module junittests quand vous voudrez les exécuter.
+</p>
+
+<p>
+Les tests peuvent être lancés soit par l&rsquo;interface web de junittests, soit par le script en ligne de commande fourni par junittests. Certains tests doivent parfois s&rsquo;exécuter uniquement via le web, ou uniquement via la ligne de commande (tout dépend de la nature de ces tests). Aussi les noms des fichiers de tests doivent se terminer par un suffixe précis pour faire savoir à junittests les tests qu&rsquo;il peut lancer dans tel ou tel contexte : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>.html.php</em> : le test ne pourra être lancé que via l&rsquo;interface web</div>
+</li>
+<li class="level1"><div class="li"> <em>.cli.php</em> : le test ne pourra être lancé que via la ligne de commande</div>
+</li>
+<li class="level1"><div class="li"> <em>.html_cli.php</em> : le test peut être lancé indifféremment via le web ou via la ligne de commande.</div>
+</li>
+</ul>
+
+<p>
+ Le nom qui précède le suffixe importe peu. Sachez toutefois qu&rsquo;il sert de libellé lors des affichages des tests, et une transformation est effectué sur ce nom pour un affichage plus lisible : 
+</p>
+<ul>
+<li class="level1"><div class="li"> les points sont transformés en &ldquo;: &quot;</div>
+</li>
+<li class="level1"><div class="li"> les caractères soulignés &ldquo;_&rdquo; sont transformés en espaces.</div>
+</li>
+</ul>
+
+<p>
+ Par exemple si on nomme le fichier ainsi, &ldquo;jdao.main_api_with_pdo.html.php&rdquo;, le libellé des tests contenus dans ce fichier sera &ldquo;jdao: main api with pdo&rdquo;. Et comme il a le suffixe &ldquo;.html.php&rdquo;, il ne pourra être lancé que via l&rsquo;interface web de junittests.
+</p>
+
+</div>
+
+<h3>Création d'un test</h3>
+<div class="level3">
+
+<p>
+ Pour créer un test, il faut créer une classe héritant de UnitTestCase ou des autres classes héritières de UnitTestCase proposées par simpletest, et y écrire des méthodes dont le nom doit commencer par &ldquo;test&rdquo;. Ces méthodes feront alors les tests que vous désirez, en utilisant l&rsquo;<acronym title="Application Programming Interface">API</acronym> de simpletest. Pour plus de détails sur cette <acronym title="Application Programming Interface">API</acronym>, lisez la <a href="http://www.lastcraft.com/simple_test.php" class="urlextern" title="http://www.lastcraft.com/simple_test.php"   rel="nofollow">documentation sur le site de simpletest</a>, en particulier <a href="http://www.lastcraft.com/unit_test_documentation.php" class="urlextern" title="http://www.lastcraft.com/unit_test_documentation.php"   rel="nofollow">la page sur unittestcase</a>. Notez que dans cette documentation, vous devez ignorer tout ce qui concerne les &ldquo;reporters&rdquo; et les &ldquo;group tests&rdquo; : le module junittests s&rsquo;occupant déjà de tout ça. Vous pouvez aussi regarder les tests qui sont présents dans le module unittest de l&rsquo;application testapp disponible en téléchargement.
+</p>
+
+<p>
+Voici un exemple de test. Admettons que l&rsquo;on veuille faire des tests sur une classe &ldquo;panier&rdquo; d&rsquo;un module &ldquo;shop&rdquo;. On créer alors un fichier &ldquo;shop/tests/panier.html.php&rdquo; et on y place la classe suivante :
+</p>
+<pre class="code php"><span class="kw2">class</span> testShopPanier extends UnitTestCase <span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> testPanierVide <span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+      <span class="re0">$panier</span> = jClasses::<span class="me2">create</span><span class="br0">&#40;</span><span class="st0">"shop~panier"</span><span class="br0">&#41;</span>;
+      <span class="re0">$content</span> = <span class="re0">$panier</span>-&gt;<span class="me1">getProductList</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+      <span class="re0">$this</span>-&gt;<span class="me1">assertIdentical</span><span class="br0">&#40;</span> <span class="re0">$content</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Le nom de la classe &ldquo;testShopPanier&rdquo; est totalement libre. Mais il faut faire attention que ce ne soit pas un nom déjà pris par une autre classe de tests dans d&rsquo;autres modules. Aussi il est recommandé que le nom contienne le nom du module ou autre signe distinctif.
+</p>
+
+<p>
+On a ici créé une fonction qui teste si, lors de la création d&rsquo;un panier, celui-ci est bien vide. On instancie donc la classe <em>panier</em>, on appelle sa méthode <em>getProductList</em> qui devrait nous renvoyer une liste de produit. Et ensuite on test si le contenu renvoyé est bien un tableau vide. 
+</p>
+
+<p>
+Vous pouvez ajouter autant de méthodes de tests que vous voulez dans une même classe de test, mais aussi de classes dans un seul fichier. Voici un deuxième exemple :
+</p>
+<pre class="code php">   <span class="kw2">function</span> testAjoutProduit <span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+     <span class="co1">// creation d'un panier</span>
+     <span class="re0">$panier</span> = jClasses::<span class="me2">create</span><span class="br0">&#40;</span><span class="st0">"shop~panier"</span><span class="br0">&#41;</span>;
+&nbsp;
+     <span class="co1">// creation d'un produit</span>
+     <span class="re0">$product</span> = jClasses::<span class="me2">create</span><span class="br0">&#40;</span><span class="st0">"shop~product"</span><span class="br0">&#41;</span>;
+     <span class="re0">$product</span>-&gt;<span class="me1">label</span> = <span class="st0">"DVD coluche"</span>;
+     <span class="re0">$product</span>-&gt;<span class="me1">price</span> = <span class="nu0">12</span>.<span class="nu0">40</span>;
+&nbsp;
+     <span class="co1">// ajout du produit dans le panier</span>
+     <span class="re0">$panier</span>-&gt;<span class="me1">addProduct</span><span class="br0">&#40;</span><span class="re0">$product</span><span class="br0">&#41;</span>;
+&nbsp;
+     <span class="re0">$liste</span> = <span class="re0">$panier</span>-&gt;<span class="me1">getProductList</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+&nbsp;
+     <span class="co1">// test si le panier contient bien un produit</span>
+     <span class="re0">$this</span>-&gt;<span class="me1">assertTrue</span><span class="br0">&#40;</span> <span class="kw3">count</span><span class="br0">&#40;</span><span class="re0">$liste</span><span class="br0">&#41;</span> == <span class="nu0">1</span><span class="br0">&#41;</span>;
+&nbsp;
+     <span class="co1">// test si le produit contenu correspond bien à celui mis</span>
+     <span class="re0">$p</span> = <span class="re0">$liste</span><span class="br0">&#91;</span><span class="nu0">0</span><span class="br0">&#93;</span>;
+     <span class="co1">// verification que c'est un objet product</span>
+     <span class="kw1">if</span><span class="br0">&#40;</span><span class="re0">$this</span>-&gt;<span class="me1">assertIsA</span><span class="br0">&#40;</span><span class="re0">$p</span> , <span class="st0">'product'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+          <span class="re0">$this</span>-&gt;<span class="me1">assertEqual</span><span class="br0">&#40;</span><span class="re0">$p</span>-&gt;<span class="me1">label</span> , <span class="st0">'DVD coluche'</span><span class="br0">&#41;</span>;
+          <span class="re0">$this</span>-&gt;<span class="me1">assertEqual</span><span class="br0">&#40;</span><span class="re0">$p</span>-&gt;<span class="me1">price</span> , <span class="nu0">12</span>.<span class="nu0">40</span><span class="br0">&#41;</span>;
+     <span class="br0">&#125;</span>
+&nbsp;
+     <span class="co1">// on enleve le produit</span>
+     <span class="re0">$panier</span>-&gt;<span class="me1">removeProduct</span><span class="br0">&#40;</span><span class="st0">'DVD coluche'</span><span class="br0">&#41;</span>;
+&nbsp;
+     <span class="co1">// on vérifie que le panier est bien vide à nouveau</span>
+     <span class="re0">$content</span> = <span class="re0">$panier</span>-&gt;<span class="me1">getProductList</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+     <span class="re0">$this</span>-&gt;<span class="me1">assertIdentical</span><span class="br0">&#40;</span> <span class="re0">$content</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="br0">&#125;</span></pre>
+</div>
+
+<h2>Lancement des tests</h2>
+<div class="level2">
+
+<p>
+ Une fois vos tests réalisés, il faut les lancer avec le module junittests.
+</p>
+
+</div>
+
+<h3>Via l'interface web</h3>
+<div class="level3">
+
+<p>
+ Le lancement des tests se fait en appelant la page principale du module junittests. Un exemple d&rsquo;url : <a href="http://testapp.jelix.org/index.php?module=junittests" class="urlextern" title="http://testapp.jelix.org/index.php?module=junittests"   rel="nofollow">http://testapp.jelix.org/index.php?module=junittests</a> . Vous pouvez d&rsquo;ailleurs vous rendre à cette url précise : vous y verrez tous les tests unitaires sur jelix <img src="/lib/images/smileys/icon_wink.gif" align="middle" alt=";-)" />
+</p>
+
+<p>
+N&rsquo;oubliez pas de mettre dans la configuration le paramètre enableTests = on, sinon vous aurez droit à une erreur 404.
+</p>
+
+<p>
+Cette première page présente sur la gauche toute la liste des tests présents dans votre application, classés par module. Il suffit de cliquer sur un des tests pour le lancer et voir le résultat. Vous avez des liens aussi pour lancer tous les tests d&rsquo;un module, ou tous les tests de votre application (attention cependant, les lancer tous peut être long pour les grosses applications, et provoquer un &ldquo;timeout&rdquo; au niveau du navigateur).
+</p>
+
+<p>
+À la fin du lancement de tests, il est affiché le nombre de tests unitaires qui sont passés avec succés, et celui des tests échoués.
+</p>
+
+<p>
+Notez que le module junittests utilise sa propre réponse <acronym title="HyperText Markup Language">HTML</acronym>, et fait appel à une feuille de style tests/design.css qui doit être placée dans le répertoire www de votre application. Vous en trouverez une dans le répertoire <em>install</em> du module junittests.
+</p>
+
+</div>
+
+<h3>Via la ligne de commande</h3>
+<div class="level3">
+
+<p>
+ Fonctionnalité non encore disponible.
+</p>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:plugins:coord - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Développement d'un plugin</h1>
+<div class="level1">
+
+<p>
+ Un plugin est en fait une classe qui implémente l&rsquo;interface <em>jICoordPlugin</em> (dans jelix 1.0beta2 ou inférieur, il s&rsquo;agissait de l&rsquo;interface <em>jIPlugin</em>). Cette classe doit donc implémenter les méthodes suivantes : 
+</p>
+<pre class="code php">    public <span class="kw2">function</span> __construct<span class="br0">&#40;</span><span class="re0">$config</span><span class="br0">&#41;</span>;
+    public <span class="kw2">function</span> beforeAction<span class="br0">&#40;</span><span class="re0">$params</span><span class="br0">&#41;</span>;
+    public <span class="kw2">function</span> beforeOutput<span class="br0">&#40;</span><span class="br0">&#41;</span>;
+    public <span class="kw2">function</span> afterProcess <span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Le constructeur reçoit la configuration du plugin.
+</p>
+
+<p>
+La méthode <em>beforeAction</em> reçoit les paramètres de plugins déclarés dans le contrôleur. Elle peut renvoyer <em>null</em> si tout est ok ou alors un sélecteur d&rsquo;action, <em>jSelectorAct</em>, si il faut exécuter une autre action que celle prévue.
+</p>
+
+<p>
+La méthode <em>beforeOutput</em> sera appelée après exécution de l&rsquo;action.
+</p>
+
+<p>
+Le méthode <em>afterProcess</em> sera appelée en fin de traitement (après affichage donc).
+</p>
+
+<p>
+Cette classe est à placer dans un <a href="plugins.html" class="wikilink1" title="manuel:plugins"  >dépôt de plugins</a>. Par exemple, le répertoire <em>plugins</em>/ de votre application. Ou alors dans un répertoire <em>plugins</em>/ d&rsquo;un module. Le sous répertoire dans lequel est placé le plugin doit porter le nom du plugin, et la classe doit suivre un nommage particulier. Si le plugin s&rsquo;appelle <em>exemple</em>, alors :
+</p>
+
+<p>
+Pour jelix 1.0beta3 et supérieur :
+</p>
+<ul>
+<li class="level1"><div class="li"> le répertoire du plugin sera <strong>plugins/coord/exemple/</strong></div>
+</li>
+<li class="level1"><div class="li"> le fichier contenant la classe du plugin devra être <strong>plugins/coord/exemple/exemple.coord.php</strong></div>
+</li>
+<li class="level1"><div class="li"> le nom de la classe du plugin devra être <strong>exempleCoordPlugin</strong>, implémentant l&rsquo;interface <strong>jICoordPlugin</strong></div>
+</li>
+</ul>
+
+<p>
+ Pour jelix 1.0Beta2 et inférieur :
+</p>
+<ul>
+<li class="level1"><div class="li"> le répertoire du plugin sera <strong>plugins/exemple/</strong></div>
+</li>
+<li class="level1"><div class="li"> le fichier contenant la classe du plugin devra être <strong>plugins/exemple/exemple.plugin.php</strong></div>
+</li>
+<li class="level1"><div class="li"> le nom de la classe du plugin devra être <strong>exemplePlugin</strong>, implémentant l&rsquo;interface <strong>jIPlugin</strong></div>
+</li>
+</ul>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

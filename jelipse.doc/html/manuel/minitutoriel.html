@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:minitutoriel - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Mini Tutoriel</h1>
+<div class="level1">
+
+<p>
+ Ce tutoriel a pour but de vous montrer succinctement comment on réalise une application. Pour commencer, téléchargez l&rsquo;édition &ldquo;Developer&rdquo; de Jelix, et installez la comme indiqué sur la page d&rsquo;<a href="installation.html" class="wikilink1" title="manuel:installation"  >installation</a>. Dans cette page vous devez suivre les indications des étapes suivantes:
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="installation_prerequis.html" class="wikilink1" title="manuel:installation:prerequis"  >Logiciels pré-requis sur le serveur</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="installation_sources.html" class="wikilink1" title="manuel:installation:sources"  >Installation de l'archive de jelix</a></div>
+</li>
+</ul>
+
+<p>
+Nous considèrerons que vous utilisez la configuration par défaut, donc que vous n&rsquo;avez pas modifié l&rsquo;arborescence de Jelix. 
+</p>
+
+<p>
+Vous devriez alors avoir un répertoire jelix/lib dans le répertoire de votre site web (accessible par une url du genre <a href="http://localhost/jelix/" class="urlextern" title="http://localhost/jelix/"   rel="nofollow">http://localhost/jelix/</a> ).
+</p>
+
+</div>
+
+<h2>Scripts de Jelix</h2>
+<div class="level2">
+
+<p>
+ Les scripts sont stockés dans le répertoire <em>lib/jelix-scripts</em>/, celui qui nous intéresse est <strong>jelix.php</strong> : il automatise la création et la modification des différents fichiers d&rsquo;une application basée sur Jelix. Il faut l&rsquo;invoquer avec la version ligne de commande de <acronym title="Hypertext Preprocessor">PHP</acronym> : depuis une console sous Linux ou l&rsquo;invite de commandes sous Windows.
+</p>
+
+<p>
+Pour commencer, stockez le nom de l&rsquo;application dans la variable d&rsquo;environnement <em>JELIX_APP_NAME</em> : 
+</p>
+<pre class="code bash">  <span class="kw3">export</span> <span class="re2">JELIX_APP_NAME=</span>hello        <span class="co1">#sous linux</span>
+  <span class="kw3">set</span> <span class="re2">JELIX_APP_NAME=</span>hello           <span class="co1">#sous windows</span></pre>
+<p>
+puis allez dans le répertoire des scripts : 
+</p>
+<pre class="code bash">   <span class="kw3">cd</span> lib/jelix-scripts/          <span class="co1">#sous linux</span>
+   <span class="kw3">cd</span> lib\jelix-scripts\          <span class="co1">#sous windows</span></pre>
+<p>
+il sera alors possible de lancer la commande comme suit : 
+</p>
+<pre class="code bash">php jelix.php nom_commande <span class="br0">&#91;</span>options<span class="br0">&#93;</span> <span class="br0">&#91;</span>paramètres<span class="br0">&#93;</span></pre>
+</div>
+
+<h2>Création d'une application</h2>
+<div class="level2">
+
+<p>
+ Créons l&rsquo;arborescence de l&rsquo;application au moyen de la commande <em>createapp</em> :
+</p>
+<pre class="code bash">php jelix.php createapp</pre>
+<p>
+Vous obtenez alors un répertoire <em>hello</em>/ situé au même niveau que le répertoire <em>lib</em>/ (d&rsquo;après le nom stocké dans la variable d&rsquo;environnement). Son contenu est le suivant : 
+</p>
+<pre class="code">hello/
+   modules/      les modules propres à votre application
+   plugins/      les plugins propres à votre application
+   var/config/   les fichiers de configuration de votre application
+   var/log/      les éventuels fichiers journaux
+   var/themes/   les différents thèmes possibles dans votre application
+   var/overloads/  contiendra les différents fichiers que vous aurez redéfinis, issus de modules tiers.
+   www/          la racine du site</pre>
+
+</div>
+
+<h2>Création d'un module</h2>
+<div class="level2">
+
+<p>
+ Un module regroupe un ensemble d&rsquo;actions. Il en faut au moins un dans une application. Créons ce premier module &ldquo;hello&rdquo; :
+</p>
+<pre class="code bash">php jelix.php createmodule hello</pre>
+<p>
+Voici le répertoire que cela crée : 
+</p>
+<pre class="code"> hello/modules/
+            hello/                le répertoire du module
+              module.xml          fichier décrivant l'identité du module
+              controllers/       les classes de traitement des actions
+                 default.classic.php   un controleur par défaut
+              classes/            vos classes métiers et services
+              daos/               les fichiers de mappings relationnel-objet
+              locales/            fichiers de langues (fichiers &quot;properties&quot;)
+                  en_EN/
+                  fr_FR/
+              templates/          templates du module
+              zones/              objets traitant des zones spécifiques dans une page</pre>
+
+</div>
+
+<h2>Implémentation d'une action</h2>
+<div class="level2">
+
+<p>
+ Implémentons l&rsquo;action par défaut. Ouvrez le fichier <em>controllers/default.classic.php</em>, il contient : 
+</p>
+<pre class="code php"><span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> index <span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+&nbsp;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+ Nous récupérons ici l&rsquo;objet jResponseHtml (car de type <em>html</em> comme spécifié), et nous le retournons pour que son contenu soit renvoyé au navigateur.
+</p>
+
+</div>
+
+<h3>Objet réponse</h3>
+<div class="level3">
+
+<p>
+ L&rsquo;objet <a href="responsehtml.html" class="wikilink1" title="manuel:responsehtml"  >jResponseHtml</a> s&rsquo;occupe de générer une réponse en <acronym title="HyperText Markup Language">HTML</acronym> (donc une page en <acronym title="HyperText Markup Language">HTML</acronym>). Il génère automatiquement la partie &lt;head&gt; du <acronym title="HyperText Markup Language">HTML</acronym>, à partir de certaines de ses propriétés. Définissons le titre de la page :
+</p>
+<pre class="code php">   <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'Hello World !'</span>;</pre>
+<p>
+Par défaut, jResponseHtml utilise un template pour générer le corps de la page (le contenu de &lt;body&gt;). Vous devez donc indiquer quel template vous voulez utiliser. Le nom du fichier template doit être placé dans la propriété bodyTpl. Ici, il s&rsquo;agit du fichier hello.tpl. 
+</p>
+<pre class="code php">   <span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'hello'</span>;</pre>
+<p>
+On ne met pas la partie &ldquo;.tpl&rdquo; car le contenu de la chaîne est en fait un <em>sélecteur</em> Jelix. Un sélecteur est un raccourci pour désigner une ressource d&rsquo;un module. 
+</p>
+
+<p>
+Notez que vous pouvez réaliser vos propres objets réponse (dérivant éventuellement de la classe jResponseHtml), et de ce fait, y mettre tous les traitements de préparation communs à plusieurs ou toutes vos actions, choses que vous n&rsquo;aurez pas alors à dupliquer dans chaque action (comme le nom du template, l&rsquo;inclusion de <a href="zones.html" class="wikilink1" title="manuel:zones"  >zones</a> communes etc..).
+</p>
+
+</div>
+
+<h3>Le template</h3>
+<div class="level3">
+
+<p>
+ Créez le fichier <em>hello.tpl</em> dans le répertoire <em>templates</em> du module. Et mettez-y ce contenu :
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;h2<span class="re2">&gt;</span></span>Hello {$nom} !<span class="sc3"><span class="re1">&lt;/h2<span class="re2">&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;p<span class="re2">&gt;</span></span>Bienvenue dans Jelix !<span class="sc3"><span class="re1">&lt;/p<span class="re2">&gt;</span></span></pre>
+<p>
+&ldquo;{$nom}&rdquo; est une variable de template : elle sera remplacée par la valeur que vous donnerez, comme dans cet exemple :
+</p>
+<pre class="code php">   <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'nom'</span>,<span class="st0">'Moi'</span><span class="br0">&#41;</span>;</pre>
+<p>
+La propriété body de l&rsquo;objet jResponseHtml est un objet <em>jTpl</em>, le moteur de template fourni dans Jelix.
+</p>
+
+</div>
+
+<h3>En résumé</h3>
+<div class="level3">
+
+<p>
+Le code du contrôleur doit maintenant ressembler à ceci :
+</p>
+<pre class="code php"><span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> index <span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'Hello World !'</span>;
+      
+      <span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'hello'</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'nom'</span>,<span class="st0">'Moi'</span><span class="br0">&#41;</span>;
+    
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+</div>
+
+<h2>Premier affichage</h2>
+<div class="level2">
+
+<p>
+ Nous sommes maintenant presque prêts à afficher notre page. 
+</p>
+
+<p>
+Il faut juste régler une petite chose (ce ne sera plus nécessaire à partir de Jelix 1.0b3). Votre application est accessible normalement via l&rsquo;url <a href="http://localhost/jelix/hello/www/" class="urlextern" title="http://localhost/jelix/hello/www/"   rel="nofollow">http://localhost/jelix/hello/www/</a>. Il faut indiquer dans la configuration le chemin <em>/jelix/hello/www</em>/ dans la config. Pour cela, ouvrez le fichier <em>hello/var/config/defaultconfig.ini.php</em>. Recherchez le paramètre <strong>basePath</strong> et indiquez-y la valeur <strong>/jelix/hello/www/</strong>.
+</p>
+
+<p>
+Vous pouvez maintenant lancer votre application. Pour cela tapez l&rsquo;url suivante :
+</p>
+<pre class="code">http://localhost/jelix/hello/www/index.php?module=hello&amp;action=default_index</pre>
+
+<p>
+ Vous verrez alors s&rsquo;afficher votre page html, avec le message de bienvenue.
+</p>
+
+<p>
+Bien sûr, à l&rsquo;avenir, vous pourrez configurer votre application et votre serveur de manière à avoir des urls plus simple. En particulier, vous pouvez configurer le serveur de manière à spécifier le &ldquo;document root&rdquo; du site sur le répertoire <em>jelix/hello/www</em> (et donc éviter d&rsquo;avoir à taper le chemin <em>jelix/hello/www</em>). Et puis sachez que Jelix peut prendre en charge les urls significatives pour éviter tout ces paramètres disgracieux.
+</p>
+
+</div>
+
+<h2>Récupération de paramètres</h2>
+<div class="level2">
+
+<p>
+ Il serait intéressant de pouvoir indiquer en paramètre de l&rsquo;url le nom à afficher dans le template :
+</p>
+<pre class="code php">   <span class="re0">$nom</span> = <span class="re0">$this</span>-&gt;<span class="me1">param</span><span class="br0">&#40;</span><span class="st0">'nom'</span><span class="br0">&#41;</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'nom'</span>, <span class="re0">$nom</span><span class="br0">&#41;</span>;</pre>
+<p>
+Tapez maintenant : 
+</p>
+<pre class="code">  http://localhost/jelix/hello/www/index.php?module=hello&amp;action=default_index&amp;nom=Robert</pre>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

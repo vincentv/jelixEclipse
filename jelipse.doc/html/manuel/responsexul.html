@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsexul - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse XUL</h1>
+<div class="level1">
+
+<p>
+ <acronym title="XML User Interface Language">XUL</acronym> est un langage de description d&rsquo;interface utilisateur. Il peut être très utile pour réaliser des applications web ayant l&rsquo;ergonomie d&rsquo;une application desktop, sans avoir à inclure des scripts <acronym title="JavaScript">JS</acronym> et de faire du <acronym title="Dynamic HyperText Markup Language">DHTML</acronym> partout. Voir <a href="http://xulfr.org" class="urlextern" title="http://xulfr.org"   rel="nofollow">http://xulfr.org</a>. <acronym title="XML User Interface Language">XUL</acronym> est utilisé dans Firefox pour son interface utilisateur. Notez qu&rsquo;il faut obligatoirement un navigateur basé sur le moteur Gecko de Mozilla (dont Firefox) pour pouvoir afficher du <acronym title="XML User Interface Language">XUL</acronym>.
+</p>
+
+<p>
+L&rsquo;objet jResponseXul permet de générer une fenêtre <acronym title="XML User Interface Language">XUL</acronym> (&lt;window&gt;). Il y a aussi jResponseXulDialog pour les boîtes de dialogue (&lt;dialog&gt;), jResponseXulOverlay pour les overlays <acronym title="XML User Interface Language">XUL</acronym> (&lt;overlay&gt;), et jResponseXulPage pour les pages <acronym title="XML User Interface Language">XUL</acronym> incluses via une balise &lt;iframe&gt; dans une fenêtre <acronym title="XML User Interface Language">XUL</acronym>. Chacun de ces objets ont la même <acronym title="Application Programming Interface">API</acronym> (tous basés sur jResponseXul), il y a seulement quelques différences minimes, au niveau notamment de la balise principale générée.
+</p>
+
+<p>
+jResponseXul permet de générer, comme jResponseHtml, les liens vers les feuilles de styles et les scripts javascript, la balise principale, et les liens des overlays, qu&rsquo;ils soient statiques ou dynamiques (voir plus loin).
+</p>
+
+</div>
+
+<h2>Générer du XUL</h2>
+<div class="level2">
+
+<p>
+ Voici les alias pour récupérer les différentes réponses <acronym title="XML User Interface Language">XUL</acronym> :
+</p>
+<pre class="code php">  <span class="re0">$window</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"xul"</span><span class="br0">&#41;</span>;
+  <span class="re0">$dialog</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"xuldialog"</span><span class="br0">&#41;</span>;
+  <span class="re0">$overlay</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"xuloverlay"</span><span class="br0">&#41;</span>;
+  <span class="re0">$page</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"xulpage"</span><span class="br0">&#41;</span>;</pre>
+<p>
+Dans la suite, on utilisera <em>$window</em> mais les exemples fonctionnent aussi avec les autres objets (sauf indication contraire).
+</p>
+
+<p>
+ Vous pouvez indiquer des attributs à mettre sur la balise principale (&lt;window&gt;, &lt;overlay&gt;, &lt;dialog&gt; ou &lt;page&gt;) :
+</p>
+<pre class="code php">  <span class="re0">$window</span>-&gt;<span class="me1">rootAttributes</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">"width"</span>=&gt;<span class="st0">"300"</span><span class="br0">&#41;</span>;</pre>
+<p>
+Pour lier la page <acronym title="XML User Interface Language">XUL</acronym> avec des feuilles de styles, des scripts et des overlays, il suffit d&rsquo;utiliser les méthodes <em>addCssLink()</em>, <em>addJsLink()</em> et <em>addOverlay()</em> :
+</p>
+<pre class="code php">  <span class="re0">$window</span>-&gt;<span class="me1">addCssLink</span><span class="br0">&#40;</span><span class="st0">'style.css'</span><span class="br0">&#41;</span>;
+  <span class="re0">$window</span>-&gt;<span class="me1">addJsLink</span><span class="br0">&#40;</span><span class="st0">'scripts.js'</span><span class="br0">&#41;</span>;
+  <span class="re0">$window</span>-&gt;<span class="me1">addOverlay</span><span class="br0">&#40;</span><span class="st0">'overlay.xul'</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>Générer sans template</h3>
+<div class="level3">
+
+<p>
+ Si vous ne voulez pas utiliser de template, vous pouvez tout simplement utiliser la methode <em>addContent</em> pour ajouter du <acronym title="XML User Interface Language">XUL</acronym> dans la page :
+</p>
+<pre class="code php">   <span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'contenu xul'</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h3>Générer avec un template</h3>
+<div class="level3">
+
+<p>
+ Dans la propriété <em>$body</em> vous avez un objet jTpl, et vous devez indiquer dans la propriété <em>$bodyTpl</em> le sélecteur du template à utiliser. Et <em>$title</em> permet d&rsquo;indiquer le titre de la fenêtre :
+</p>
+<pre class="code php"> <span class="re0">$window</span>-&gt;<span class="me1">title</span> = <span class="st0">"ma fenêtre"</span>;
+ <span class="re0">$window</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">"monmodule~listexul"</span>;
+ <span class="re0">$window</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">"liste"</span>, <span class="re0">$liste</span><span class="br0">&#41;</span>;</pre>
+<p>
+Comme pour jResponseHtml, vous pouvez inclure du contenu avant ou après celui du template. Pour cela vous utiliserez la méthode addContent(). Elle prend en paramètre une chaine pour le contenu, et un booléen (facultatif) pour indiquer si on veut que le contenu soit ajouté avant (true) ou après (false, valeur par défaut) le contenu du template.
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'Mon contenu XUL après le template'</span><span class="br0">&#41;</span>;
+<span class="re0">$rep</span>-&gt;<span class="me1">addContent</span><span class="br0">&#40;</span><span class="st0">'Mon contenu XUL avant le template'</span>, <span class="kw2">true</span><span class="br0">&#41;</span>;</pre>
+<p>
+Notez que le contenu à ajouter peut être aussi le contenu de <a href="zones.html" class="wikilink1" title="manuel:zones"  >zones</a>
+</p>
+
+</div>
+
+<h2>Réaliser des overlays</h2>
+<div class="level2">
+
+<p>
+ Un overlay est un fichier <acronym title="XML User Interface Language">XUL</acronym> qui permet d&rsquo;ajouter des modifications à une autre page <acronym title="XML User Interface Language">XUL</acronym> sans toucher à son code source. C&rsquo;est très utilisé dans Firefox par les extensions. Cela peut être aussi utilisé dans une application web, et en particulier dans Jelix : un module peut déclarer un overlay pour une page <acronym title="XML User Interface Language">XUL</acronym> générée par un autre module. 
+</p>
+
+</div>
+
+<h3>principe</h3>
+<div class="level3">
+
+<p>
+ La façon dont ça fonctionne est assez simple et repose sur <a href="events.html" class="wikilink1" title="manuel:events"  >le système d'évènement de Jelix</a>. En fait un objet jResponseXul, avant de générer le contenu final, envoi un évènement pour se signaler. En réponse, les modules peuvent lui renvoyer l&rsquo;url d&rsquo;un overlay. Une balise <em>&lt;?xul-overlay?&gt;</em> sera ajoutée alors dans la page.
+</p>
+
+<p>
+Une condition pour que ça fonctionne vraiment : il faut que l&rsquo;action qui génère la page xul mette la propriété <em>$fetchOverlays</em> à true :
+</p>
+<pre class="code php">  <span class="re0">$window</span>-&gt;<span class="me1">fetchOverlays</span> = <span class="kw2">true</span>;</pre>
+<p>
+Dans le cas contraire (et c&rsquo;est le comportement par défaut), aucun évènement ne sera envoyé et donc aucun overlay &ldquo;étranger&rdquo; ne pourra être indiqué.
+</p>
+
+</div>
+
+<h3>mise en oeuvre</h3>
+<div class="level3">
+
+<p>
+ Tout d&rsquo;abord, il faut faire une action qui génère une réponse &ldquo;xuloverlay&rdquo;, comme vous l&rsquo;avez vu plus haut. Imaginons qu&rsquo;il s&rsquo;agisse de l&rsquo;action &ldquo;testa~xul_overlay1&rdquo; et que l&rsquo;action qui affiche la page xul sur laquelle s&rsquo;applique l&rsquo;overlay soit &ldquo;testb~xul_index&rdquo;.
+</p>
+
+<p>
+Dans le module &ldquo;testa&rdquo;, il faut ensuite faire un &ldquo;listener&rdquo; pour pouvoir répondre à l&rsquo;évènement &ldquo;FetchXulOverlay&rdquo; qu&rsquo;envoie jResponseXul quand il demande les overlays à lier. Dans un fichier classes/testa.listener.php, vous aurez alors :
+</p>
+<pre class="code php"><span class="kw2">class</span> testaListener extends jEventListener<span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> onFetchXulOverlay<span class="br0">&#40;</span><span class="re0">$event</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+&nbsp;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+L&rsquo;évènement a un paramètre, &ldquo;tpl&rdquo;, qui indique le sélecteur de template utilisé pour la page principal générée par l&rsquo;action &ldquo;testb~xul_index&rdquo;. Admettons qu&rsquo;il s&rsquo;agisse de &ldquo;testb~mainxul&rdquo;. On va tester si le paramètre est bien le template que l&rsquo;on attend, et en retour, on va indiquer l&rsquo;url de l&rsquo;overlay.
+</p>
+<pre class="code php"><span class="kw2">class</span> testaListener extends jEventListener<span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> onFetchXulOverlay<span class="br0">&#40;</span><span class="re0">$event</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="kw1">if</span><span class="br0">&#40;</span><span class="re0">$event</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'tpl'</span><span class="br0">&#41;</span> == <span class="st0">'testb~mainxul'</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+            <span class="re0">$event</span>-&gt;<span class="me1">Add</span><span class="br0">&#40;</span><span class="st0">'testa~xul_overlay1'</span><span class="br0">&#41;</span>;
+        <span class="br0">&#125;</span>
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+N&rsquo;oublions pas de déclarer ce listener dans le fichier events.xml du module test a :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;events</span> <span class="re0">xmlns</span>=<span class="st0">"http://jelix.org/ns/events/1.0"</span><span class="re2">&gt;</span>
+   <span class="sc3"><span class="re1">&lt;listener</span> <span class="re0">name</span>=<span class="st0">"testa"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;event</span> <span class="re0">name</span>=<span class="st0">"FetchXulOverlay"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/listener<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/events<span class="re2">&gt;</span></span></pre>
+<p>
+Voilà, vous pouvez de cette manière modifier l&rsquo;écran <acronym title="XML User Interface Language">XUL</acronym> du module testb sans toucher à son template xul.
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

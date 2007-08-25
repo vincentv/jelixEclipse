@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:formulaires-classique - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer et gérer des formulaires classiques</h1>
+<div class="level1">
+
+<p>
+ Créer et gérer des formulaires &ldquo;à la main&rdquo; n&rsquo;est pas trés différent que dans une application <acronym title="Hypertext Preprocessor">PHP</acronym> classique. Mais certaines choses (en dehors de jforms) facilitent un peu le travail.
+</p>
+
+</div>
+
+<h2>Les actions à mettre en oeuvre</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;implémentation très simpliste d&rsquo;un formulaire consistera au développement de deux actions (les noms sont purement fictifs et servent juste d&rsquo;exemple): 
+</p>
+<ul>
+<li class="level1"><div class="li"> une action &ldquo;show&rdquo; d&rsquo;affichage de formulaire</div>
+</li>
+<li class="level1"><div class="li"> une action &ldquo;save&rdquo; qui traite les données du formulaire (après le submit) et affiche le résultat</div>
+</li>
+</ul>
+
+<p>
+ Mais dans la plupart des cas, pour répondre correctement aux erreurs, pour éviter que l&rsquo;utilisation des boutons &ldquo;refresh&rdquo; des navigateurs provoque une ré-execution du traitement des données (action &ldquo;save&rdquo;) etc, il vaut mieux mieux avoir ce genre de liste d&rsquo;actions : 
+</p>
+<ul>
+<li class="level1"><div class="li"> une action &ldquo;prepare&rdquo; qui prépare les données pour un nouveau formulaire (initialisation en session par exemple, avec lecture des données initiales en base de donnée par exemple) et redirige vers &ldquo;show&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> une action &ldquo;show&rdquo; qui affiche le formulaire avec les données en sessions, et affiche les éventuelles erreurs de saisie.</div>
+</li>
+<li class="level1"><div class="li"> une action &ldquo;save&rdquo; qui vérifie les données saisies. Si il y a des erreurs, sauve les erreurs en session et redirige vers &ldquo;show&rdquo;, ou alors sauve les données et redirige vers &ldquo;end&rdquo;</div>
+</li>
+<li class="level1"><div class="li"> une action &ldquo;end&rdquo;, qui nettoie les données en session, et affiche une page de confirmation, ou redirige vers une autre action quelconque...</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Création d'un formulaire</h2>
+<div class="level2">
+
+<p>
+ Vous utiliserez en général un template, dans lequel vous y mettrez vos balises html de formulaires. Par exemple :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;form</span> <span class="kw3">action</span>=<span class="st0">"index.php"</span> <span class="kw3">method</span>=<span class="st0">"POST"</span><span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;fieldset&gt;</span> <span class="sc2"><span class="kw2">&lt;legend&gt;</span>Indiquez votre identité<span class="sc2"><span class="kw2">&lt;/legend&gt;</span>
+     <span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"hidden"</span> <span class="kw3">name</span>=<span class="st0">"module"</span> <span class="kw3">value</span>=<span class="st0">"monmodule"</span> /<span class="kw2">&gt;</span>
+     <span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"hidden"</span> <span class="kw3">name</span>=<span class="st0">"action"</span> <span class="kw3">value</span>=<span class="st0">"default_save"</span> /<span class="kw2">&gt;</span>
+     <span class="sc2"><span class="kw2">&lt;table&gt;</span>
+      <span class="sc2"><span class="kw2">&lt;tr&gt;</span>
+        <span class="sc2"><span class="kw2">&lt;td&gt;</span><span class="sc2"><span class="kw2">&lt;label</span> <span class="kw3">for</span>=<span class="st0">"champs-nom"</span><span class="kw2">&gt;</span>Votre nom<span class="sc2"><span class="kw2">&lt;/label&gt;</span><span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+        <span class="sc2"><span class="kw2">&lt;td&gt;</span><span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"text"</span> <span class="kw3">name</span>=<span class="st0">"nom"</span> <span class="kw3">id</span>=<span class="st0">"champs-nom"</span> /<span class="kw2">&gt;</span><span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+      <span class="sc2"><span class="kw2">&lt;/tr&gt;</span>
+      <span class="sc2"><span class="kw2">&lt;tr&gt;</span>
+        <span class="sc2"><span class="kw2">&lt;td&gt;</span><span class="sc2"><span class="kw2">&lt;label</span> <span class="kw3">for</span>=<span class="st0">"champs-prenom"</span><span class="kw2">&gt;</span>Votre prénom<span class="sc2"><span class="kw2">&lt;/label&gt;</span><span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+        <span class="sc2"><span class="kw2">&lt;td&gt;</span><span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"text"</span> <span class="kw3">name</span>=<span class="st0">"prenom"</span> <span class="kw3">id</span>=<span class="st0">"champs-prenom"</span> /<span class="kw2">&gt;</span><span class="sc2"><span class="kw2">&lt;/td&gt;</span>
+      <span class="sc2"><span class="kw2">&lt;/tr&gt;</span>
+      <span class="sc2"><span class="kw2">&lt;/table&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/fieldset&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;p&gt;</span><span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"submit"</span> <span class="kw3">value</span>=<span class="st0">"Valider"</span> /<span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/form&gt;</span></pre>
+<p>
+Vous pouvez bien sûr y ajouter du javascript pour vérifier les données saisies coté client, utiliser tous les types de champs de saisies <acronym title="HyperText Markup Language">HTML</acronym>.
+</p>
+
+<p>
+Par contre, l&rsquo;exemple n&rsquo;est pas totalement bon, dans la mesure où il y a l&rsquo;url en dur dans le formulaire. Cela est problématique par exemple quand on utilise des urls significatives, qu&rsquo;on les change, ou qu&rsquo;on veuille réutiliser dans un autre projet. En effet, suivant l&rsquo;url choisi, le contenu de l&rsquo;attribut action peut être différent, le nombre de champs cachés aussi. 
+</p>
+
+<p>
+Il est donc préférable d&rsquo;utiliser les plugins de templates <strong>formurl</strong> et <strong>formurlparam</strong>, auxquels vous indiquez le sélecteur de l&rsquo;action de traitement du formulaire, et de la liste des paramètres (comme quand vous appelez jUrl::get()). Le premier sert à générer l&rsquo;url à mettre dans l&rsquo;attribut action, et l&rsquo;autre à générer les champs cachés contenant les éventuels paramètres supplémentaires propres à l&rsquo;action. Vous devez toujours utiliser les deux ensembles. Le formulaire devient alors :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;form</span> <span class="kw3">action</span>=<span class="st0">"{formurl 'monmodule~default_save'}"</span> <span class="kw3">method</span>=<span class="st0">"POST"</span><span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;fieldset&gt;</span> <span class="sc2"><span class="kw2">&lt;legend&gt;</span>Indiquez votre identité<span class="sc2"><span class="kw2">&lt;/legend&gt;</span>
+     {formurlparam 'monmodule~default_save'}
+     <span class="sc2"><span class="kw2">&lt;table&gt;</span>
+      ...
+      <span class="sc2"><span class="kw2">&lt;/table&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/fieldset&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;p&gt;</span><span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"submit"</span> <span class="kw3">value</span>=<span class="st0">"Valider"</span> /<span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/form&gt;</span></pre>
+<p>
+Le formulaire résultant sera le même que le premier exemple si le moteur d&rsquo;url est celui par défaut, mais pourrait devenir le formulaire suivant si le moteur d&rsquo;url significant est activé et que l&rsquo;url correpondant à l&rsquo;action indiquée est /user/save (sans paramètres supplémentaires, d&rsquo;où l&rsquo;absence ici de champs cachés) :
+</p>
+<pre class="code html4strict">  <span class="sc2"><span class="kw2">&lt;form</span> <span class="kw3">action</span>=<span class="st0">"/user/save"</span> <span class="kw3">method</span>=<span class="st0">"POST"</span><span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;fieldset&gt;</span> <span class="sc2"><span class="kw2">&lt;legend&gt;</span>Indiquez votre identité<span class="sc2"><span class="kw2">&lt;/legend&gt;</span>
+     <span class="sc2"><span class="kw2">&lt;table&gt;</span>
+      ...
+      <span class="sc2"><span class="kw2">&lt;/table&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/fieldset&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;p&gt;</span><span class="sc2"><span class="kw2">&lt;input</span> <span class="kw3">type</span>=<span class="st0">"submit"</span> <span class="kw3">value</span>=<span class="st0">"Valider"</span> /<span class="kw2">&gt;</span>
+  <span class="sc2"><span class="kw2">&lt;/form&gt;</span></pre>
+</div>
+
+<h2>Traitement des données en retour</h2>
+<div class="level2">
+
+<p>
+ Dans l&rsquo;action servant à traiter les données, vous récupèrerez celles-ci grâce à <strong>$this&rarr;param(&rsquo;champs&rsquo;)</strong> dans votre contrôleur. Vous avez d&rsquo;autres méthodes similaires, comme  <strong>$this&rarr;intParam(&rsquo;champs&rsquo;)</strong>, <strong>$this&rarr;floatParam(&rsquo;champs&rsquo;)</strong> et <strong>$this&rarr;boolParam(&rsquo;champs&rsquo;)</strong>, qui permettent de récupérer directement les valeurs sous un type particulier (voir <a href="controleurs.html" class="wikilink1" title="manuel:controleurs"  >la page sur les contrôleurs</a>).
+</p>
+
+<p>
+Vous pouvez utiliser en plus jFilter, qui est une classe permettant de vérifier le format des données (utilise l&rsquo;extension filter quand Jelix est généré pour <acronym title="Hypertext Preprocessor">PHP</acronym> 5.2). exemple :
+</p>
+<pre class="code php">    <span class="kw2">function</span> save<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+       <span class="re0">$email</span> = <span class="re0">$this</span>-&gt;<span class="me1">param</span><span class="br0">&#40;</span><span class="st0">'email'</span><span class="br0">&#41;</span>;
+       <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$email</span> === <span class="kw2">null</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+             <span class="co1">//.. ici erreur, l'email est obligatoire</span>
+       <span class="br0">&#125;</span>
+       <span class="kw1">if</span><span class="br0">&#40;</span> ! jFilter::<span class="me2">isEmail</span><span class="br0">&#40;</span><span class="re0">$email</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+             <span class="co1">// erreur, email mal saisie</span>
+       <span class="br0">&#125;</span>
+       <span class="co1">//....</span>
+    <span class="br0">&#125;</span></pre>
+<p>
+Voir la <a href="http://jelix.org/reference/trunk/jelix/utils/jFilter.html" class="urlextern" title="http://jelix.org/reference/trunk/jelix/utils/jFilter.html"   rel="nofollow">documentation de référence de jFilter</a> 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

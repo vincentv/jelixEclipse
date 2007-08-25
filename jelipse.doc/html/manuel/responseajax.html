@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responseajax - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse ajax</h1>
+<div class="level1">
+
+<p>
+ Le terme Ajax, bien qu&rsquo;il précise qu&rsquo;une réponse doit être en <acronym title="Extensible Markup Language">XML</acronym> (d&rsquo;où le x dans ajax), il est souvent utiliser avec d&rsquo;autres types de réponses.
+</p>
+
+<p>
+Selon donc ce que vous attendez, coté client, soit dans la propriété responseText, soit dans la propriété responseXml de l&rsquo;objet xmlHttpRequest, vous allez utiliser un objet jResponse différent.
+</p>
+<ul>
+<li class="level1"><div class="li"> Pour tout ce qui est contenu <acronym title="Extensible Markup Language">XML</acronym> quelconque, vous utiliserez <a href="responsexml.html" class="wikilink1" title="manuel:responsexml"  >jResponseXml</a></div>
+</li>
+<li class="level1"><div class="li"> Pour des réponses en json, vous utiliserez <a href="responsejson.html" class="wikilink1" title="manuel:responsejson"  >jResponseJson</a></div>
+</li>
+<li class="level1"><div class="li"> Pour renvoyer des fragments de code <acronym title="HyperText Markup Language">HTML</acronym>, il ne faut <strong>pas</strong> utiliser jResponseHtml, mais <a href="responsetext.html" class="wikilink1" title="manuel:responsetext"  >jResponseText</a> (voir exemple ci-dessous).</div>
+</li>
+<li class="level1"><div class="li"> En rêgle général, vous utiliserez jResponseText.</div>
+</li>
+</ul>
+
+</div>
+
+<h3>Renvoyer des fragments de code HTML</h3>
+<div class="level3">
+
+<p>
+ Il ne faut pas utiliser jResponseHtml, car cet objet génère tout ce qu&rsquo;il faut pour une page html : le &lt;head&gt;, le &lt;body&gt; etc... Bien souvent, dans une requête ajax, on ne veut récupérer qu&rsquo;un fragment de code <acronym title="HyperText Markup Language">HTML</acronym>.
+</p>
+
+<p>
+<a href="responsetext.html" class="wikilink1" title="manuel:responsetext"  >jResponseText</a> est plus adapté pour cela :
+</p>
+<pre class="code php">   <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'text'</span><span class="br0">&#41;</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">content</span> = <span class="st0">'&lt;p&gt;nouvelle donnée&lt;/p&gt;'</span>;
+   <span class="kw1">return</span> <span class="re0">$rep</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

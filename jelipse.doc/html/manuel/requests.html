@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:requests - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>API</h1>
+<div class="level1">
+
+<p>
+ Durant l&rsquo;exécution de l&rsquo;action, l&rsquo;objet request correspondant à la requête est accessible via la propriété request du coordinateur. Ce dernier est accessible via une variable global $gJCoord. 
+</p>
+<pre class="code php">  <span class="co1">// pour récupérer un paramètre en dehors d'un contrôleur</span>
+  <span class="re0">$myfooValue</span> = <span class="re0">$GLOBALS</span><span class="br0">&#91;</span><span class="st0">'gJCoord'</span><span class="br0">&#93;</span>-&gt;<span class="me1">request</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'foo'</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+ Les autres propriétés de request qui peuvent être utiles : 
+</p>
+<table class="inline">
+	<tr>
+		<td> Type </td><td> Pour connaître le type de la requête. </td>
+	</tr>
+	<tr>
+		<td> url_script_path </td><td> Le chemin dans l&rsquo;url jusqu&rsquo;au script </td>
+	</tr>
+	<tr>
+		<td> url_script_name </td><td> Le nom du script (le nom du fichier point d&rsquo;entrée) </td>
+	</tr>
+	<tr>
+		<td> url_path_info </td><td> La partie pathinfo de l&rsquo;url </td>
+	</tr>
+	<tr>
+		<td class="leftalign"> params        </td><td> paramètres de la requête </td>
+	</tr>
+</table>
+<br />
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

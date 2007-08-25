@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:principes - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Principes de fonctionnement</h1>
+<div class="level1">
+
+<p>
+ Voici quelques explications sur le fonctionnement du framework et sur les principaux objets que vous allez avoir à utiliser.
+</p>
+
+<p>
+Le framework se base sur un principe : à chaque url correspond une action.
+</p>
+
+</div>
+
+<h2>Étapes d'exécution</h2>
+<div class="level2">
+
+<p>
+<a href="/lib/exe/detail.php/manuel/workflow_action.png?id=manuel%3Aprincipes&amp;cache=cache" class="media" title="manuel:workflow_action.png"  ><img src="/lib/exe/fetch.php/manuel/workflow_action.png?w=&amp;h=&amp;cache=cache" class="media" alt="" /></a> 
+</p>
+<ol>
+<li class="level1"><div class="li"> Le point d&rsquo;entrée est exécuté par le serveur lorsqu&rsquo;une url l&rsquo;indique. Par défaut il s&rsquo;agit de index.php. </div>
+</li>
+<li class="level1"><div class="li"> Ce script instancie un objet de type jRequest et un coordinateur de type jCoordinator. </div>
+</li>
+<li class="level1"><div class="li"> L&rsquo;objet jRequest analyse alors le contenu de la requête <acronym title="Hyper Text Transfer Protocol">HTTP</acronym> pour en extraire les données. Celles-ci peuvent être dans l&rsquo;url et/ou dans le corps de la requête (méthode POST par exemple).</div>
+</li>
+<li class="level1"><div class="li"> En particulier jRequest détermine le nom de l&rsquo;action à exécuter et le nom du module concerné. </div>
+</li>
+<li class="level1"><div class="li"> Le paramètre action contient le nom du contrôleur et la méthode à exécuter. Ce contrôleur est donc instancié et la méthode exécutée.</div>
+</li>
+<li class="level1"><div class="li"> Lors de l&rsquo;exécution du traitement, un objet jResponse est utilisé pour formater la réponse à renvoyer au navigateur.</div>
+</li>
+<li class="level1"><div class="li"> Une fois terminé, le contenu généré pour la réponse est renvoyé au navigateur.</div>
+</li>
+</ol>
+
+</div>
+
+<h2>Ce que vous avez à manipuler</h2>
+<div class="level2">
+
+<p>
+ En général, vous n&rsquo;aurez pas à utiliser un objet jRequest ou jCoordinator.
+</p>
+
+<p>
+Vous aurez par contre à créer un objet de type jController pour y inclure le code d&rsquo;une action. Cet objet propose des méthodes pour récupérer les paramètres extraits par jRequest, mais aussi pour récupérer un objet jResponse. Vous aurez donc dans le code de l&rsquo;action, en plus de manipuler vos objets &ldquo;métier&rdquo;, à manipuler cet objet jResponse pour indiquer les données à renvoyer au navigateur.
+</p>
+
+</div>
+
+<h2>Objets en détails</h2>
+<div class="level2">
+
+<p>
+ Voyons maintenant un descriptif de chaque objet présenté ici ainsi que d&rsquo;autres, à commencer par les sélecteurs. 
+</p>
+<ol>
+<li class="level1"><div class="li"> <a href="selecteurs.html" class="wikilink1" title="manuel:selecteurs"  >Les sélecteurs</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="requests.html" class="wikilink1" title="manuel:requests"  >Les objets jRequest</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="coordinateur.html" class="wikilink1" title="manuel:coordinateur"  >Le coordinateur</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="responses.html" class="wikilink1" title="manuel:responses"  >Les objets responses</a></div>
+</li>
+</ol>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

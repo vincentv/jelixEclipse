@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:daos:fichier_de_base - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer un fichier DAO</h1>
+<div class="level1">
+
+<p>
+ Pour utiliser jDao, il faut d&rsquo;abord décrire dans un fichier <acronym title="Extensible Markup Language">XML</acronym> le mapping objet-relationnel, c&rsquo;est à dire indiquer dans ce fichier la correspondance entre les propriétés de l&rsquo;objet <acronym title="Datas Access Object">DAO</acronym> et les champs d&rsquo;une ou plusieurs tables
+</p>
+
+</div>
+
+<h2>Création automatique</h2>
+<div class="level2">
+
+<p>
+Le fichier d&rsquo;un <acronym title="Datas Access Object">DAO</acronym> peut être généré par le script <em>jelix</em> en ligne de commande, à partir d&rsquo;une table de base de donnée existante.
+</p>
+<pre class="code bash"> php jelix.php createdao nom_module nom_dao nom_table</pre>
+<p>
+Par exemple, si je veux créer dans le module &ldquo;myshop&rdquo;, un <acronym title="Datas Access Object">DAO</acronym> &ldquo;product&rdquo; qui sera basé sur la table &ldquo;shop_product&rdquo;, vous taperez donc :
+</p>
+<pre class="code bash"> php jelix.php createdao myshop product shop_product</pre>
+<p>
+Dans le répertoire <em>daos</em> du module <em>myshop</em> vous allez donc avoir un fichier <acronym title="Extensible Markup Language">XML</acronym> <em>product.dao.xml</em> qui va contenir la description du mapping.
+</p>
+
+<p>
+Bien que la génération automatique permet de gagner du temps, il faut souvent retoucher le fichier pour que le mapping corresponde mieux à ce que l&rsquo;on veut faire, le générateur ne pouvant tout deviner. Voyez alors la suite pour le compléter, ou en créer un à la main.
+</p>
+
+</div>
+
+<h2>Détails sur le format XML</h2>
+<div class="level2">
+
+<p>
+ La structure d&rsquo;un fichier <acronym title="Datas Access Object">DAO</acronym> ressemble à cela :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;dao</span> <span class="re0">xmlns</span>=<span class="st0">"http://jelix.org/ns/dao/1.0"</span><span class="re2">&gt;</span>
+   <span class="sc3"><span class="re1">&lt;datasources<span class="re2">&gt;</span></span>
+     section datasources
+   <span class="sc3"><span class="re1">&lt;/datasources<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;record<span class="re2">&gt;</span></span>
+     section properties
+   <span class="sc3"><span class="re1">&lt;/record<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;factory<span class="re2">&gt;</span></span>
+     section methodes
+   <span class="sc3"><span class="re1">&lt;/factory<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/dao<span class="re2">&gt;</span></span></pre>
+<p>
+Il y a trois sections, sachant que la section &ldquo;factory&rdquo; (ou &ldquo;methodes&rdquo;) est facultative et est décrite <a href="daos_methodes_xml.html" class="wikilink1" title="manuel:daos:methodes_xml"  >dans une autre page dédiée</a>.
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>datasources</em> : indique les tables sur lequel reposera l&rsquo;objet.</div>
+</li>
+<li class="level1"><div class="li"> <em>record</em> : indique la correspondance entre les propriétés de l&rsquo;objet et les champs des tables et définit donc les propriétés qu&rsquo;il y aura sur l&rsquo;objet record.</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Correspondance simple</h2>
+<div class="level2">
+
+</div>
+
+<h3>Déclaration de la table</h3>
+<div class="level3">
+
+<p>
+ On appelle correspondance simple, une correspondance où un record = une table. Pour déclarer la table sur laquelle reposera le <acronym title="Datas Access Object">DAO</acronym>, on utilise la balise <em>primarytable</em>, avec les attributs suivants : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>name</em> : alias donné à la table et qui sera utilisé dans les requêtes</div>
+</li>
+<li class="level1"><div class="li"> <em>realname</em> (facultatif) : nom réel de la table dans la base de données. Si cet attribut n&rsquo;est pas précisé, il prend la même valeur que l&rsquo;attribut <em>name</em>. Dans ce cas <em>name</em> doit être le nom réel de la table.</div>
+</li>
+<li class="level1"><div class="li"> <em>primarykey</em> indique la clé primaire. Vous pouvez indiquer plusieurs clés en les séparant par un espace ou une virgule.</div>
+</li>
+</ul>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;datasources<span class="re2">&gt;</span></span>
+      <span class="sc3"><span class="re1">&lt;primarytable</span> <span class="re0">name</span>=<span class="st0">"p"</span> <span class="re0">realname</span>=<span class="st0">"products"</span> <span class="re0">primarykey</span>=<span class="st0">"id_product"</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/datasources<span class="re2">&gt;</span></span></pre>
+<p>
+On déclare ici que le record sera basé sur la table &ldquo;products&rdquo;, qui a pour alias &ldquo;p&rdquo;, et dont la clé primaire est &ldquo;id_product&rdquo;.
+</p>
+
+<p>
+Il n&rsquo;y a toujours qu&rsquo;une seule table &ldquo;primaire&rdquo; dans un <acronym title="Datas Access Object">DAO</acronym> (donc une seule balise &lt;primarytable&gt;). Vous verrez que l&rsquo;on peut indiquer des tables annexes (étrangères) plus loin.
+</p>
+
+<p>
+Ensuite, il faut déclarer la correspondance propriété - champs.
+</p>
+
+</div>
+
+<h3>Déclaration des propriétés</h3>
+<div class="level3">
+
+<p>
+ La section <em>record</em> déclare les propriétés d&rsquo;un objet <em>record</em> (enregistrement). Chaque propriété correspond à l&rsquo;un des champs de la table primaire, ou l&rsquo;un de ceux des tables étrangères comme vous le verrez plus loin. Bien sûr, vous n&rsquo;êtes pas obligés de déclarer une propriété pour tous les champs existants. On peut ainsi faire plusieurs <acronym title="Datas Access Object">DAO</acronym> qui travaillent sur une même table mais qui sont destinés à des usages différents. Par exemple faire un <acronym title="Datas Access Object">DAO</acronym> spécifique pour récupérer des listes légères d&rsquo;enregistrement (on ne déclarera que les propriétés essentielles), et un autre pour les gérer de manière complète (on y indiquera tous les champs).
+</p>
+
+<p>
+La section <em>record</em> doit donc contenir une ou plusieurs balises &lt;property&gt; :
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;property</span> 
+      <span class="re0">name</span>=<span class="st0">"nom simplifié"</span> 
+      <span class="re0">fieldname</span>=<span class="st0">"nom du champ"</span> 
+      <span class="re0">datatype</span>=<span class="st0">""</span> <span class="re0">required</span>=<span class="st0">"true/false"</span> <span class="re0">minlength</span>=<span class="st0">""</span> <span class="re0">maxlength</span>=<span class="st0">""</span> <span class="re0">regexp</span>=<span class="st0">""</span> 
+      <span class="re0">sequence</span>=<span class="st0">"nom de la sequence"</span>
+      <span class="re0">updatemotif</span>=<span class="st0">""</span> <span class="re0">insertmotif</span>=<span class="st0">""</span> <span class="re0">selectmotif</span>=<span class="st0">""</span>
+   <span class="re2">/&gt;</span></pre>
+<p>
+L&rsquo;attribut <em>name</em> est le nom de la propriété de l&rsquo;objet.
+</p>
+
+<p>
+L&rsquo;attribut <em>fieldname</em> est le nom du champ qui correspond. Si <em>name</em> et <em>fieldname</em> sont égaux, on peut omettre <em>fieldname</em>.
+</p>
+
+<p>
+Les attributs <em>datatype</em>, <em>required</em>, <em>minlength</em>, <em>maxlength</em>, et <em>regexp</em> sont des contraintes. Cela permet par la suite d&rsquo;appeler la méthode <em>check()</em> sur un record pour vérifier les valeurs des propriétés (avant son stockage par exemple).
+</p>
+
+<p>
+L&rsquo;attribut <em>datatype</em> peut prendre les valeurs :
+</p>
+<ul>
+<li class="level1"><div class="li"> string</div>
+</li>
+<li class="level1"><div class="li"> int/integer</div>
+</li>
+<li class="level1"><div class="li"> autoincrement</div>
+</li>
+<li class="level1"><div class="li"> double/float</div>
+</li>
+<li class="level1"><div class="li"> numeric/bigautoincrement</div>
+</li>
+<li class="level1"><div class="li"> date</div>
+</li>
+<li class="level1"><div class="li"> time</div>
+</li>
+<li class="level1"><div class="li"> datetime</div>
+</li>
+</ul>
+
+<p>
+ Sur certaines bases, on peut associer une séquence à un champ. L&rsquo;attribut <em>sequence</em> indique son nom.
+</p>
+
+<p>
+Les attributs <em>updatemotif</em>, <em>insertmotif</em> et <em>selectmotif</em> permettent d&rsquo;indiquer un &ldquo;motif&rdquo; à appliquer lors de la mise à jour, l&rsquo;insertion ou la lecture de la valeur du champ dans la table. Ce motif doit en fait être une expression <acronym title="Structured Query Language">SQL</acronym>, contenant éventuellement la chaîne &ldquo;%s&rdquo; qui sera remplacée par la valeur ou le nom du champ. Par défaut leurs valeurs vaut &ldquo;%s&rdquo;. Si on indique une valeur vide, cela correspond à une opération nulle (le champ n&rsquo;est pas lu,  inséré ou mis à jour).
+</p>
+
+</div>
+
+<h4>Exemple 1</h4>
+<div class="level4">
+
+<p>
+ Pour un champ qui contient une date de mise à jour, on pourra indiquer : 
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;property</span> <span class="re0">name</span>=<span class="st0">"date_update"</span> <span class="re0">insertmotif</span>=<span class="st0">"NOW()"</span> <span class="re0">updatemotif</span>=<span class="st0">"NOW()"</span> <span class="re2">/&gt;</span></pre>
+<p>
+Ainsi chaque fois qu&rsquo;un <em>INSERT</em> ou un <em>UPDATE</em> sera fait, la valeur insérée sera la date du jour (et non celle que l&rsquo;on aurait indiquée dans la propriété date_update du record).
+</p>
+
+</div>
+
+<h4>Exemple 2</h4>
+<div class="level4">
+
+<p>
+On peut aussi avoir une propriété qui ne correspond pas directement à un champ, mais qui soit le résultat d&rsquo;une expression <acronym title="Structured Query Language">SQL</acronym>. Dans ce cas, il faut désactiver l&rsquo;insertion et la mise à jour.
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;property</span> <span class="re0">name</span>=<span class="st0">"identite"</span> <span class="re0">selectmotif</span>=<span class="st0">"CONCAT(nom, ' ',prenom)"</span> <span class="re0">insertmotif</span>=<span class="st0">""</span> <span class="re0">updatemotif</span>=<span class="st0">""</span> <span class="re2">/&gt;</span></pre>
+<p>
+Note : dans Jelix 1.0 beta 3 à venir, ces attributs changent de nom et deviendront <em>updatepattern</em>, <em>insertpattern</em>, <em>selectpattern</em>.
+</p>
+
+</div>
+
+<h2>Correspondance avec plusieurs tables</h2>
+<div class="level2">
+
+<p>
+ On peut déclarer une table principale, mais aussi des tables annexes qui seraient liées à la table principale par des jointures. Il est utile, lorsque l&rsquo;on veut récupérer un enregistrement, de récupérer en même temps des informations de tables annexes. Par exemple, si on veut récupérer un produit de la table products, et en même temps le libellé de sa catégorie qui se trouve dans une table &ldquo;category&rdquo;, on déclarera aussi la table &ldquo;category&rdquo;. À noter que vous ne pourrez modifier que les données issues de la table principale quand vous voudrez mettre à jour un enregistrement.
+</p>
+
+<p>
+Pour déclarer de telles tables étrangères, qui en toute logique sont liées à la table principale par des clés étrangères, il faut utiliser :
+</p>
+<ul>
+<li class="level1"><div class="li"> <em>foreigntable</em> pour indiquer une table étrangère liée par une jointure normale.</div>
+</li>
+<li class="level1"><div class="li"> <em>optionalforeigntable</em> pour indiquer une table étrangère liée par une jointure externe.</div>
+</li>
+</ul>
+
+</div>
+
+<h4>Exemple</h4>
+<div class="level4">
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;primarytable</span> <span class="re0">name</span>=<span class="st0">"p"</span> <span class="re0">realname</span>=<span class="st0">"products"</span> <span class="re0">primarykey</span>=<span class="st0">"id_product"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;foreigntable</span> <span class="re0">name</span>=<span class="st0">"cat"</span> <span class="re0">realname</span>=<span class="st0">"categories"</span> <span class="re0">primarykey</span>=<span class="st0">"id_cat"</span> <span class="re0">onforeignkey</span>=<span class="st0">"id_cat"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;optionalforeigntable</span> <span class="re0">name</span>=<span class="st0">"man"</span> <span class="re0">realname</span>=<span class="st0">"manufacturers"</span> <span class="re0">primarykey</span>=<span class="st0">"id"</span> <span class="re0">onforeignkey</span>=<span class="st0">"id_manufacturer"</span> <span class="re2">/&gt;</span></pre>
+<p>
+Comme pour la balise <em>primarytable</em>, il y a les attributs <em>name</em>, <em>realname</em> et <em>primarykey</em>. Il y a par contre un attribut supplémentaire, <em>onforeignkey</em>, qui indique le nom du champ dans la table primaire, qui est la clé étrangère sur la table en question. Ainsi, avec l&rsquo;exemple ci-dessus, jDao générera pour les requêtes de type <em>SELECT</em> les clauses <em>FROM</em> et <em>WHERE</em> suivantes : 
+</p>
+<pre class="code sql"> <span class="kw1">FROM</span> products <span class="kw1">AS</span> p <span class="kw1">LEFT</span> <span class="kw1">JOIN</span> manufacturers <span class="kw1">AS</span> man <span class="kw1">ON</span> <span class="br0">&#40;</span>p.id_manufacturer = man.id<span class="br0">&#41;</span>,  categories <span class="kw1">AS</span> cat
+ <span class="kw1">WHERE</span> cat.id_cat = p.id_cat</pre>
+<p>
+Indiquer des tables annexes n&rsquo;a de sens que si vous voulez avoir une ou plusieurs propriétés correspondantes à leurs champs. Vous ajouterez donc autant de balise &lt;property&gt; que vous voudrez. La seule différence est qu&rsquo;il faut ajouter un attribut <em>table</em> qui indique l&rsquo;alias de la table dans lequel se trouve le champ.
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;property</span> 
+      <span class="re0">name</span>=<span class="st0">"libelle_categorie"</span> 
+      <span class="re0">fieldname</span>=<span class="st0">"label"</span> 
+      <span class="re0">table</span>=<span class="st0">"cat"</span>
+   <span class="re2">/&gt;</span></pre>
+<p>
+Dans la propriété <em>libelle_categorie</em> du record, se trouvera la valeur du champ <em>label</em> de la table <em>categories</em> (&rdquo;cat&rdquo; étant l&rsquo;alias de cette table, comme il a été défini plus haut dans la balise <em>foreigntable</em> ). 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:installation:prerequis - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Configuration requise</h1>
+<div class="level1">
+
+<p>
+ Vous devez installer au minimum la version 5.0 de <acronym title="Hypertext Preprocessor">PHP</acronym>. Les extensions <strong>dom</strong>, <strong>simplexml</strong>, <strong>pcre</strong>, <strong>session</strong>, <strong>spl</strong> sont requises (elles sont actives en général dans une installation standard de <acronym title="Hypertext Preprocessor">PHP</acronym> 5.0).
+</p>
+
+<p>
+Il faut aussi l&rsquo;extension <strong>tokenizer</strong>. Cette extension n&rsquo;est pas toujours installée. Avec certaines distributions linux (comme ubuntu), cette extension <strong>tokenizer</strong> n&rsquo;est pas livrée avec le paquet PHP5. Veillez donc à installer le paquet correspondant.
+</p>
+
+<p>
+Vous pouvez installer aussi un connecteur de base de données. Pour le moment Jelix prend en charge mysql 4.0+, postgresql 8.0+, sqlite et pdo.
+</p>
+
+<p>
+Si vous comptez utiliser les scripts en ligne de commande d&rsquo;aide au développement (jelix-scripts), il vous faut aussi installer la version ligne de commande de <acronym title="Hypertext Preprocessor">PHP</acronym>  : <strong><acronym title="Hypertext Preprocessor">PHP</acronym>-CLI</strong>.
+</p>
+
+</div>
+
+<h2>Configuration de php</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> <strong>magic_quotes_gpc</strong> et <strong>magic_quotes_runtime</strong> doivent être à <strong>Off</strong>. Si ce n&rsquo;est pas le cas, il faut activer le plugin magicquotes livré avec jelix.</div>
+</li>
+<li class="level1"><div class="li"> <strong>session.auto_start</strong> doit être à 0</div>
+</li>
+<li class="level1"><div class="li"> <strong>safe_mode</strong> doit être à <strong>Off</strong> (jelix n&rsquo;a pas été testé à <strong>on</strong>)</div>
+</li>
+</ul>
+
+<p>
+   Il est également recommandé de mettre ces valeurs : 
+</p>
+<ul>
+<li class="level1"><div class="li"> <strong>register_globals = off</strong></div>
+</li>
+<li class="level1"><div class="li"> <strong>asp_tags = off</strong></div>
+</li>
+<li class="level1"><div class="li"> <strong>short_open_tag = off</strong></div>
+</li>
+</ul>
+
+<p>
+ Un <a href="http://fr2.php.net/manual/fr/function.phpinfo.php" class="urlextern" title="http://fr2.php.net/manual/fr/function.phpinfo.php"   rel="nofollow">phpinfo()</a> peut vous permettre de vérifier votre configuration. Par défaut la configuration se trouve dans un fichier nommé php.ini. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

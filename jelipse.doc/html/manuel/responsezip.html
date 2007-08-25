@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsezip - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Générer et renvoyer un ZIP</h1>
+<div class="level1">
+
+<p>
+ Jelix propose jResponseZip qui permet de générer un fichier zip à la volée, et le proposer en téléchargement à l&rsquo;utilisateur. L&rsquo;alias est &ldquo;zip&rdquo; :
+</p>
+<pre class="code php"><span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'zip'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Vous devez ensuite indiquer un nom de fichier. C&rsquo;est sous ce nom que le contenu zip sera proposé à l&rsquo;utilisateur. Ce nom de fichier n&rsquo;est pas forcément celui d&rsquo;un fichier existant sur le serveur. 
+</p>
+<pre class="code php"><span class="re0">$rep</span>-&gt;<span class="me1">zipFilename</span>=<span class="st0">'myCrazyPackage.zip'</span>;</pre>
+<p>
+Ensuite, il faut créer le zip. La propriété <em>$content</em> est un objet jZipCreator, dont vous utiliserez les méthodes pour ajouter du contenu dans le zip. (Voyez la <a href="http://jelix.org/reference/" class="urlextern" title="http://jelix.org/reference/"   rel="nofollow">documentation de référence</a> sur jZipCreator).
+</p>
+<pre class="code php"><span class="co1">// ajoute le contenu du fichier datas/truc.txt stocké sur le serveur, </span>
+<span class="co1">// et le réference dans le zip sous le nom machin.txt</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">content</span>-&gt;<span class="me1">addFile</span><span class="br0">&#40;</span>JELIX_VAR_PATH.<span class="st0">'datas/truc.txt'</span>, <span class="st0">'machin.txt'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// ajoute tout le contenu d'un répertoire &quot;exemples&quot; stocké sur le serveur</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">content</span>-&gt;<span class="me1">addFile</span><span class="br0">&#40;</span>JELIX_VAR_PATH.<span class="st0">'exemples/'</span>, <span class="st0">'exemples'</span>, <span class="kw2">true</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="co1">// créer un fichier dans le zip, avec le nom et le contenu donné</span>
+<span class="re0">$rep</span>-&gt;<span class="me1">addContentFile</span><span class="br0">&#40;</span><span class="st0">'dynamic.txt'</span>, <span class="st0">'contenu généré comme on veut'</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Et c&rsquo;est tout <img src="/lib/images/smileys/icon_smile.gif" align="middle" alt=":-)" /> L&rsquo;utilisateur se verra proposer d&rsquo;enregistrer sur son disque un fichier myCrazyPackage.zip, qui contiendra un fichier machin.txt, un répertoire exemples, et un fichier dynamic.txt. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

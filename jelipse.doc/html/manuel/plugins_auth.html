@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:plugins:auth - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer un driver d'authentification</h1>
+<div class="level1">
+
+<p>
+ Si les <a href="authentification_drivers.html" class="wikilink1" title="manuel:authentification:drivers"  >drivers standards</a> pour <a href="authentification_drivers.html" class="wikilink1" title="manuel:authentification"  >jAuth</a> ne vous conviennent pas, vous pouvez donc en créer un. Voici comment.
+</p>
+
+</div>
+
+<h2>Création</h2>
+<div class="level2">
+
+<p>
+Un driver est une classe qui respecte <a href="http://jelix.org/reference/trunk/jelix/auth/jIAuthDriver.html" class="urlextern" title="http://jelix.org/reference/trunk/jelix/auth/jIAuthDriver.html"   rel="nofollow">l'interface jIAuthDriver</a>, qui reprend à peu de chose près l&rsquo;<acronym title="Application Programming Interface">API</acronym> de jAuth (<strong>mais ne dérive pas de jAuth</strong>).
+</p>
+
+<p>
+Ces drivers sont appelés par jAuth. Ils font les opérations de &ldquo;bas&rdquo; niveau (accès base de données, ou à un annuaire ldap, ou à un fichier texte etc...)
+</p>
+
+<p>
+Soit <em>exemple</em> le nom de votre driver :
+</p>
+
+<p>
+<strong>Pour jelix 1.0beta3 et supérieur</strong>, vous devez créer une classe <strong>exempleAuthDriver</strong>, dans un fichier <strong>exemple.auth.php</strong>, et placer celui-ci dans un répertoire <em>auth/exemple</em>/ dans un <a href="plugins.html" class="wikilink1" title="manuel:plugins"  >dépôt de plugins</a>.
+</p>
+
+<p>
+<strong>Pour jelix 1.0beta2 et inférieur</strong> : Le nom de la classe du driver doit être <strong>jAuthDriverExemple</strong> et le nom du fichier <em>jAuthDriverExemple.class.php</em>. Vous devez ensuite mettre ce fichier dans le répertoire <em>lib/jelix/auth</em>/.
+</p>
+
+</div>
+
+<h2>Activation</h2>
+<div class="level2">
+
+<p>
+ Pour utiliser votre nouveau driver, vous devez indiquer &ldquo;exemple&rdquo; au niveau de l&rsquo;option &ldquo;<strong>driver</strong>&rdquo; du <a href="authentification.html" class="wikilink1" title="manuel:authentification"  >fichier de configuration du plugin auth</a>, et avoir une section &ldquo;exemple&rdquo; suivit des éventuelles options spécifiques au driver.
+</p>
+
+<p>
+Exemple : 
+</p>
+<pre class="code ini">   <span class="re1">driver</span>=<span class="re2">exemple</span>
+   
+   <span class="re0"><span class="br0">&#91;</span>exemple<span class="br0">&#93;</span></span>
+   <span class="re1">foo</span>=<span class="re2">bar</span></pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

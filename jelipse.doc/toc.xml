@@ -1,0 +1,75 @@
+<toc label='Jelix : Guide du développeur'>
+
+<topic label="Installation" href="html/manuel/installation.html" />
+
+<topic label="Base du développement"  >
+<topic label="Principes de fonctionnement" href="html/manuel/principes.html" >
+<topic label="Les sélecteurs" href="html/manuel/selecteurs.html" />
+<topic label="Les objets requests" href="html/manuel/requests.html" />
+<topic label="Le coordinateur" href="html/manuel/coordinateur.html" />
+<topic label="Les objets réponses" href="html/manuel/responses.html" />
+</topic>
+<topic label="Développement d'un module" href="html/manuel/modules.html" >
+<topic label="Créer un module" href="html/manuel/modules.html" />
+<topic label="Développer un contrôleur" href="html/manuel/controleurs.html" />
+<topic label="Les différents contenus que vous pouvez renvoyer :"  >
+<topic label="Générer une page Html" href="html/manuel/responsehtml.html" />
+<topic label="Faire une redirection" href="html/manuel/responseredirect.html" />
+<topic label="Générer du texte brut" href="html/manuel/responsetext.html" />
+<topic label="Générer du XML quelconque" href="html/manuel/responsexml.html" />
+<topic label="syndication RSS" href="html/manuel/responserss.html" />
+<topic label="syndication Atom" href="html/manuel/responseatom.html" />
+<topic label="Générer un PDF à partir d'un contenu latex" href="html/manuel/responselatex2pdf.html" />
+<topic label="Renvoyer un fichier binaire" href="html/manuel/responsebinary.html" />
+<topic label="Générer un fichier zip" href="html/manuel/responsezip.html" />
+<topic label="Générer une interface utilisateur en XUL" href="html/manuel/responsexul.html" />
+<topic label="Générer du RDF" href="html/manuel/responserdf.html" />
+</topic>
+<topic label="Services web"  >
+<topic label="type ajax" href="html/manuel/responseajax.html" />
+<topic label="Json" href="html/manuel/responsejson.html" />
+<topic label="JsonRpc" href="html/manuel/responsejsonrpc.html" />
+<topic label="XmlRpc" href="html/manuel/responsexmlrpc.html" />
+</topic>
+<topic label="Faire un contrôleur pour utiliser la technique REST" href="html/manuel/restfull.html" />
+<topic label="Générer un contenu dans un format personnalisé" href="html/manuel/creer_response.html" />
+<topic label="définir des traitements communs à plusieurs actions" href="html/manuel/traitements_communs.html" />
+</topic>
+<topic label="Les zones" href="html/manuel/zones.html" />
+<topic label="Le moteur de templates" href="html/manuel/templates.html" />
+<topic label="jDao : mapping objet relationnel" href="html/manuel/daos.html" >
+<topic label="Fichier DAO de base" href="html/manuel/daos_fichier_de_base.html" />
+<topic label="Instanciation et utilisation d'une factory et d'un record DAO" href="html/manuel/daos_utilisation.html" />
+<topic label="Ajouter des méthodes en XML" href="html/manuel/daos_methodes_xml.html" />
+<topic label="Développer des méthodes en php" href="html/manuel/daos_methodes_php.html" />
+</topic>
+<topic label="Gérer les formulaires" href="html/manuel/formulaires.html" />
+<topic label="Accéder à une base de données : jDb" href="html/manuel/bd.html" />
+<topic label="Localisation" href="html/manuel/locales.html" />
+<topic label="Créer ses classes métiers" href="html/manuel/classes-metiers.html" />
+<topic label="Utilisation des urls automatiques" href="html/manuel/urls.html" />
+</topic>
+
+<topic label="Développement avancé"  >
+<topic label="jAuth : système d'authentification" href="html/manuel/authentification.html" />
+<topic label="jAcl : système de droits" href="html/manuel/droits.html" />
+<topic label="jEvents : communication inter-module" href="html/manuel/events.html" />
+<topic label="Développer des plugins" href="html/manuel/plugins.html" />
+
+<topic label="Développer des tests unitaires" href="html/manuel/tests_unitaires.html" />
+<topic label="Configurer le gestionnaire d'erreur" href="html/manuel/errormanager.html" />
+<topic label="les aides pour debogguer" href="html/manuel/deboggage.html" />
+<topic label="La configuration en détails" href="html/manuel/configuration.html" />
+</topic>
+
+<topic label="Utiliser les classe utilitaires"  >
+<topic label="jFilter : vérification et filtrage de données" href="html/manuel/filtre.html" />
+<topic label="jDateTime : manipulation de dates et heures" href="html/manuel/datetime.html" />
+<topic label="jMailer : envoi de mails" href="html/manuel/mail.html" />
+<topic label="jWiki : transformation de texte wiki" href="html/manuel/wiki.html" />
+<topic label="jParams : paramètres dynamiques" href="html/manuel/parametres.html" />
+</topic>
+
+
+
+    </toc>

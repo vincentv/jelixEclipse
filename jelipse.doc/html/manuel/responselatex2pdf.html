@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responselatex2pdf - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Génération PDF avec latex</h1>
+<div class="level1">
+
+<p>
+ Jelix propose un objet jResponseLatexToPdf qui permet de générer un document <acronym title="Portable Document Format">PDF</acronym> à partir d&rsquo;un document écrit en <a href="http://fr.wikipedia.org/wiki/LaTeX" class="urlextern" title="http://fr.wikipedia.org/wiki/LaTeX"   rel="nofollow">latex</a>. Son alias est &ldquo;ltx2pdf&rdquo;.
+</p>
+<pre class="code php"> <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"ltx2pdf"</span><span class="br0">&#41;</span>;</pre>
+<p>
+ <strong>Note : L&rsquo;utilisation de jResponseLatexToPdf nécessite la présence du programme <em>pdflatex</em> sur le serveur !</strong>
+</p>
+
+<p>
+Si ce programme n&rsquo;est pas situé dans les chemins reconnus par le système (définis par la variable d&rsquo;environnement PATH sous linux par ex), il faut indiquer son chemin complet dans la propriété <em>$pdflatexPath</em>. Exemple: 
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">pdflatexPath</span> = <span class="st0">'/usr/bin/pdflatex'</span>;</pre>
+<p>
+jResponseLatexToPdf s&rsquo;occupe de générer un entête latex comprenant le titre du documents et les auteurs, le reste est à définir (en latex) dans un template que vous indiquerez dans la propriété <em>$bodyTpl</em>. Et vous accédez au moteur de template via la propriété <em>$body</em>.
+</p>
+
+<p>
+Il y a aussi la méthode <em>addCommand</em> qui permet d&rsquo;ajouter des commandes latex au début du document.
+</p>
+
+<p>
+Exemple :
+</p>
+<pre class="code php">   <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"ltx2pdf"</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'titre du document'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">authors</span><span class="br0">&#91;</span><span class="br0">&#93;</span> = <span class="st0">'Michel Dupont'</span>;
+   <span class="re0">$rep</span>-&gt;<span class="me1">bodyTpl</span> = <span class="st0">'monModule~doclatex'</span>;
+&nbsp;
+   <span class="re0">$rep</span>-&gt;<span class="me1">addCommand</span><span class="br0">&#40;</span><span class="st0">'documentclass'</span>, <span class="st0">'article'</span>, <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'a4'</span>, <span class="st0">'14pt'</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+   <span class="re0">$this</span>-&gt;<span class="me1">addCommand</span><span class="br0">&#40;</span><span class="st0">'geometry'</span>, <span class="st0">'hmargin=1cm, vmargin=2cm'</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'texte'</span>, <span class="re0">$unTexte</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="kw1">return</span> <span class="re0">$rep</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

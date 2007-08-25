@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsebinary - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Renvoyer un contenu binaire</h1>
+<div class="level1">
+
+<p>
+ Pour renvoyer un fichier binaire (un exécutable, une image, une video, une archive ou autre), il faut utiliser jReponseBinary dont l&rsquo;alias est &ldquo;binary&rdquo;
+</p>
+<pre class="code php"><span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'binary'</span><span class="br0">&#41;</span>;</pre>
+<p>
+En premier lieu, ill vous faut indiquer dans la propriété $outputFileName le nom de fichier sous lequel apparaitra le contenu, à l&rsquo;utilisateur.
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">outputFileName</span> = <span class="st0">'truc.gif'</span>;</pre>
+<p>
+Vous pouvez aussi définir le type mime du contenu :
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">mimeType</span> = <span class="st0">'image/gif'</span>;</pre>
+<p>
+Et vous devez aussi spécifier si le fichier doit être proposé à l&rsquo;utilisateur pour l&rsquo;enregistrement ou non. Pour des fichiers couramment pris en charge par les navigateur (les images par exemple), on mettra false :
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">doDownload</span> = <span class="kw2">false</span>;</pre>
+<p>
+Ensuite pour le contenu, vous pouvez indiquer soit un fichier existant, soit du contenu que vous générez vous même.
+</p>
+
+<p>
+Pour renvoyer un fichier existant :
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">fileName</span> = JELIX_VAR_PATH.<span class="st0">'fichier_a_renvoyer.gif'</span>;</pre>
+<p>
+Et sinon, si vous générez vous même, mettez le contenu dans une chaîne et mettez le dans $content : 
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">content</span> = <span class="st0">'...'</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

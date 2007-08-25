@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:daos:utilisation - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Utilisation générale</h1>
+<div class="level1">
+
+</div>
+
+<h2>Récupérer des records</h2>
+<div class="level2">
+
+<p>
+ Une factory <acronym title="Datas Access Object">DAO</acronym> propose par défaut deux méthodes : 
+</p>
+<ul>
+<li class="level1"><div class="li"> findAll : pour récupérer tous les enregistrements</div>
+</li>
+<li class="level1"><div class="li"> get : pour récuperer un enregistrement en indiquant sa clé</div>
+</li>
+</ul>
+<pre class="code php">  
+   <span class="co1">// instanciation de la factory</span>
+   <span class="re0">$maFactory</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"foo"</span><span class="br0">&#41;</span>;
+   
+   <span class="co1">// récupération d'une liste complète de records de type foo</span>
+   <span class="re0">$liste</span> = <span class="re0">$maFactory</span>-&gt;<span class="me1">findAll</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+   
+   <span class="co1">// récupération d'un record dont le contenu correspond </span>
+   <span class="co1">// à l'enregistrement ayant pour identifiant  3</span>
+   <span class="re0">$baz</span> = <span class="re0">$maFactory</span>-&gt;<span class="me1">get</span><span class="br0">&#40;</span><span class="nu0">3</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Vous pouvez réaliser d&rsquo;autres méthodes de récupération, en les spécifiant dans le fichier <acronym title="Extensible Markup Language">XML</acronym> (voir <acronym title="Datas Access Object">DAO</acronym> avancés).
+</p>
+
+</div>
+
+<h2>Récupérer des records selon critères</h2>
+<div class="level2">
+
+<p>
+Les factory <acronym title="Datas Access Object">DAO</acronym> mettent à disposition la méthode findBy, qui s&rsquo;utilise en lui passant un objet jDaoConditions :
+</p>
+<pre class="code php">   <span class="re0">$conditions</span> = jDao::<span class="me2">createConditions</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+   <span class="re0">$conditions</span>-&gt;<span class="me1">addCondition</span><span class="br0">&#40;</span><span class="st0">'libelle'</span>,<span class="st0">'='</span>,<span class="re0">$un_nom</span><span class="br0">&#41;</span>;
+   <span class="re0">$conditions</span>-&gt;<span class="me1">addCondition</span><span class="br0">&#40;</span><span class="st0">'status'</span>,<span class="st0">'='</span>,<span class="nu0">5</span><span class="br0">&#41;</span>;
+   
+   <span class="re0">$liste</span> = <span class="re0">$maFactory</span>-&gt;<span class="me1">findBy</span><span class="br0">&#40;</span><span class="re0">$conditions</span><span class="br0">&#41;</span>;</pre>
+<p>
+La méthode addCondition prend en paramètre un nom de propriété, un opérateur (<acronym title="Structured Query Language">SQL</acronym>), et une valeur. findBy renvoi la liste des records qui correspondent aux critères indiqués. Vous pouvez aussi indiquer un ordre de sélection, et regrouper divers critères ensemble :
+</p>
+<pre class="code php">   <span class="re0">$conditions</span> = jDao::<span class="me2">createConditions</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+   
+   <span class="co1">// condition : libelle = $un_nom AND (status=5 OR status=4) ORDER BY libelle desc</span>
+   <span class="re0">$conditions</span>-&gt;<span class="me1">addCondition</span><span class="br0">&#40;</span><span class="st0">'libelle'</span>,<span class="st0">'='</span>,<span class="re0">$un_nom</span><span class="br0">&#41;</span>;   
+   <span class="re0">$conditions</span>-&gt;<span class="me1">startGroup</span><span class="br0">&#40;</span><span class="st0">'OR'</span><span class="br0">&#41;</span>;
+        <span class="re0">$conditions</span>-&gt;<span class="me1">addCondition</span><span class="br0">&#40;</span><span class="st0">'status'</span>,<span class="st0">'='</span>,<span class="nu0">5</span><span class="br0">&#41;</span>;
+        <span class="re0">$conditions</span>-&gt;<span class="me1">addCondition</span><span class="br0">&#40;</span><span class="st0">'status'</span>,<span class="st0">'='</span>,<span class="nu0">4</span><span class="br0">&#41;</span>;
+   <span class="re0">$conditions</span>-&gt;<span class="me1">endGroup</span><span class="br0">&#40;</span><span class="br0">&#41;</span>; 
+   <span class="re0">$conditions</span>-&gt;<span class="me1">addItemOrder</span><span class="br0">&#40;</span><span class="st0">'libelle'</span>,<span class="st0">'desc'</span><span class="br0">&#41;</span>;
+   
+   <span class="re0">$liste</span> = <span class="re0">$maFactory</span>-&gt;<span class="me1">findBy</span><span class="br0">&#40;</span><span class="re0">$conditions</span><span class="br0">&#41;</span>;</pre>
+<p>
+Vous verrez que vous pouvez obtenir le même résultat via des méthodes dans le fichier <acronym title="Extensible Markup Language">XML</acronym>. Cependant, l&rsquo;utilisation de l&rsquo;une ou l&rsquo;autre des possibilités dépend du contexte.
+</p>
+
+<p>
+Vous utiliserez jDaoConditions lorsque que vous ne savez pas à l&rsquo;avance le nombre de critères et leur type. Cela peut être le cas suite à un formulaire de recherche complexe, où l&rsquo;utilisateur peut choisir ses critères. Vous utiliserez aussi jDaoConditions lorsque la recherche que vous faîtes n&rsquo;est utilisée qu&rsquo;à un seul moment et rarement. En effet, les méthodes <acronym title="Extensible Markup Language">XML</acronym> sont compilées en <acronym title="Hypertext Preprocessor">PHP</acronym>, et donc incluses à chaque fois que vous faites appel à la factory. Il n&rsquo;est peut-être pas utile d&rsquo;inclure à chaque fois du code qui ne sert presque jamais. Cela améliore les performances globales.
+</p>
+
+<p>
+Dans les autres cas, il est recommandé de passer par les méthodes <acronym title="Extensible Markup Language">XML</acronym>, en particulier donc quand vous connaissez les critères à l&rsquo;avance (sans forcément connaître leur valeur bien sûr), et que c&rsquo;est une recherche souvent utilisée.
+</p>
+
+<p>
+Il arrive souvent par exemple de redéfinir la méthode findAll en <acronym title="Extensible Markup Language">XML</acronym>, pour indiquer un ordre de récupération...
+</p>
+
+</div>
+
+<h2>Créer, modifier, effacer un enregistrement</h2>
+<div class="level2">
+
+<p>
+ Les méthodes insert, update, et delete de la factory sont faites pour ça. Aux deux premières, vous indiquez un record. Pour delete, vous indiquez les clés de l&rsquo;enregistrement.
+</p>
+
+</div>
+
+<h3>Création</h3>
+<div class="level3">
+
+<p>
+ Il faut récupérer un nouvel objet record, le remplir, et ensuite appeler la méthode insert
+</p>
+<pre class="code php">   <span class="co1">// instanciation de la factory</span>
+   <span class="re0">$maFactory</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"foo"</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="co1">// creation d'un record correspondant au dao foo</span>
+   <span class="re0">$record</span> = jDao::<span class="me2">createRecord</span><span class="br0">&#40;</span><span class="st0">"foo"</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="co1">// on remplie le record</span>
+   <span class="re0">$record</span>-&gt;<span class="me1">champ1</span> = <span class="st0">"hello"</span>;
+   <span class="re0">$record</span>-&gt;<span class="me1">champ2</span> = <span class="st0">"..."</span>;
+&nbsp;
+   <span class="co1">// on le sauvegarde dans la base</span>
+   <span class="re0">$maFactory</span>-&gt;<span class="me1">insert</span><span class="br0">&#40;</span><span class="re0">$record</span><span class="br0">&#41;</span>;   
+&nbsp;</pre>
+<p>
+Si il y a des champs de type autoincrement, les propriétés correspondantes dans  $record seront mises à jour avec la nouvelle valeur.
+</p>
+
+</div>
+
+<h3>Modification</h3>
+<div class="level3">
+
+<p>
+ Le processus est le suivant : on récupère un objet record, on modifie ses propriétés, et on appelle la méthode update :
+</p>
+<pre class="code php">   <span class="co1">// instanciation de la factory</span>
+   <span class="re0">$maFactory</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"foo"</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="co1">// récupération du record dont l'identifiant est 3</span>
+   <span class="re0">$record</span> = <span class="re0">$maFactory</span>-&gt;<span class="me1">get</span><span class="br0">&#40;</span><span class="nu0">3</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="co1">// on modifie le record</span>
+   <span class="re0">$record</span>-&gt;<span class="me1">champ1</span> = <span class="st0">"hello"</span>;
+   <span class="re0">$record</span>-&gt;<span class="me1">champ2</span> = <span class="st0">"..."</span>;
+&nbsp;
+   <span class="co1">// on le sauvegarde dans la base</span>
+   <span class="re0">$maFactory</span>-&gt;<span class="me1">update</span><span class="br0">&#40;</span><span class="re0">$record</span><span class="br0">&#41;</span>;   
+&nbsp;</pre>
+</div>
+
+<h3>Destruction</h3>
+<div class="level3">
+
+<p>
+ Il suffit d&rsquo;appeler la méthode delete en donnant l&rsquo;id du record à détruire
+</p>
+<pre class="code php">   <span class="co1">// instanciation de la factory</span>
+   <span class="re0">$maFactory</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"foo"</span><span class="br0">&#41;</span>;
+&nbsp;
+   <span class="co1">// destruction du record dont l'identifiant est 3</span>
+   <span class="re0">$maFactory</span>-&gt;<span class="me1">delete</span><span class="br0">&#40;</span><span class="nu0">3</span><span class="br0">&#41;</span>;</pre>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

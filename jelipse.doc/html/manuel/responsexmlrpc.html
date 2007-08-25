@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsexmlrpc - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Protocole  XMLRpc</h1>
+<div class="level1">
+
+<p>
+ Jelix propose la prise en charge de <a href="http://www.xmlrpc.com/spec/" class="urlextern" title="http://www.xmlrpc.com/spec/"   rel="nofollow">xml-rpc</a>. C&rsquo;est un protocole d&rsquo;échange de donnée en <acronym title="Extensible Markup Language">XML</acronym> :  un client envoi un contenu <acronym title="Extensible Markup Language">XML</acronym> indiquant une fonction à exécuter et des paramètres. Le serveur renvoi un résultat, toujours sous forme de résultat (<acronym title="Remote Procedure Call">RPC</acronym> = Remote Procedure Call). 
+</p>
+
+</div>
+
+<h2>Point d'entrée spécifique</h2>
+<div class="level2">
+
+<p>
+ Une requête <acronym title="Extensible Markup Language">XML</acronym>-<acronym title="Remote Procedure Call">RPC</acronym> est spécifique, et pour y répondre, on ne peut pas utiliser <a href="requests.html" class="wikilink1" title="manuel:requests"  >l'objet request</a> &ldquo;classic&rdquo;. Il vous faut créer un point d&rsquo;entrée spécifique dans le répertoire www, xmlrpc.php par exemple, qui utilise jXmlRpcRequest plutôt que jClassicRequest. Le type de requête et du point d&rsquo;entrée est donc &ldquo;xmlrpc&rdquo;.
+</p>
+
+<p>
+Le point d&rsquo;entrée devra contenir ceci :
+</p>
+<pre class="code php"><span class="kw1">require_once</span> <span class="br0">&#40;</span><span class="st0">'../../lib/jelix/init.php'</span><span class="br0">&#41;</span>;
+<span class="kw1">require_once</span> <span class="br0">&#40;</span><span class="st0">'../../VOTRE APPLI/application.init.php'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="re0">$config_file</span> = <span class="st0">'xmlrpc/config.ini.php'</span>;
+&nbsp;
+<span class="kw1">require_once</span> <span class="br0">&#40;</span>JELIX_LIB_CORE_PATH.<span class="st0">'request/jXmlRpcRequest.class.php'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="re0">$jelix</span> = <span class="kw2">new</span> JCoordinator<span class="br0">&#40;</span><span class="re0">$config_file</span><span class="br0">&#41;</span>;
+<span class="re0">$jelix</span>-&gt;<span class="me1">process</span><span class="br0">&#40;</span><span class="kw2">new</span> jXmlRpcRequest<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+&nbsp;</pre>
+<p>
+Il ne faut oublier de déclarer ce point d&rsquo;entrée au niveau de la configuration des moteurs d&rsquo;urls simple ou significant. Si vous utilisez <a href="urls.html" class="wikilink1" title="manuel:urls"  >le moteur d'url simple</a>, vous devez mettre dans la section <em>simple_urlengine_entrypoints</em> de la configuration de jelix la déclaration suivante : 
+</p>
+<pre class="code ini"><span class="re1">xmlrpc </span>=<span class="re2"> &quot;@xmlrpc&quot;</span></pre>
+<p>
+ <em>xmlrpc</em> étant le nom du point d&rsquo;entrée, et <em>@xmlrpc</em> indiquant le type de point d&rsquo;entrée.
+</p>
+
+<p>
+Si vous utilisez <a href="urls_significant.html" class="wikilink1" title="manuel:urls:significant"  >le moteur d'url significant</a>, vous devez ajouter la balise suivante : 
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;xmlrpcentrypoint</span> <span class="re0">name</span>=<span class="st0">"xmlrpc"</span> <span class="re0">default</span>=<span class="st0">"true"</span> <span class="re2">/&gt;</span></pre>
+<p>
+Dans un cas comme dans l&rsquo;autre, vous pouvez alors récupérer l&rsquo;url d&rsquo;une action pour xmlrpc comme ceci :
+</p>
+<pre class="code php">  <span class="re0">$url</span> = jUrl::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">"module~action@xmlrpc"</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>Contrôleur</h2>
+<div class="level2">
+
+<p>
+ Comme on a affaire à un type de requête particulier, le nom du fichier du contrôleur doit avoir le suffixe &ldquo;.xmlrpc.php&rdquo;. Par exemple, un contrôleur &ldquo;default&rdquo; : &ldquo;default.xmlrpc.php&rdquo;. (Vous pouvez bien sûr avoir un autre contrôleur &ldquo;default&rdquo; pour d&rsquo;autres types de requêtes, &ldquo;default.classic.php&rdquo; par exemple).
+</p>
+
+<p>
+Ensuite, le contenu du contrôleur est similaire à ce que vous avez l&rsquo;habitude de faire, à la seule différence que vous utiliserez jResponseXmlRpc, qui a pour alias &ldquo;xmlrpc&rdquo;, pour répondre aux requêtes JsonRpc :
+</p>
+<pre class="code php"><span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+  <span class="kw2">function</span> index<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+&nbsp;
+    <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'xmlrpc'</span><span class="br0">&#41;</span>;
+&nbsp;
+    <span class="co1">// n'importe quelles types de données : entier, chaine, array, objets...</span>
+    <span class="re0">$donnees_php</span> = ... ;
+&nbsp;
+    <span class="re0">$rep</span>-&gt;<span class="me1">response</span> = <span class="re0">$donnees_php</span>;
+&nbsp;
+    <span class="kw1">return</span> <span class="re0">$rep</span>;
+&nbsp;
+  <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+</div>
+
+<h2>Appel depuis le client</h2>
+<div class="level2">
+
+<p>
+ Qui dit XmlRpc, dit une partie cliente qui envoi une requête xmlrpc. Comme vous pouvez le lire dans <a href="http://www.xmlrpc.com/spec" class="urlextern" title="http://www.xmlrpc.com/spec"   rel="nofollow">la spécification de xml-rpc</a>, il faut envoyer du contenu <acronym title="Extensible Markup Language">XML</acronym> de ce type :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;</span>?xml <span class="re0">version</span>=<span class="st0">"1.0"</span> ?<span class="re2">&gt;</span>
+<span class="sc3"><span class="re1">&lt;methodCall<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;methodName<span class="re2">&gt;</span></span>module:default_index<span class="sc3"><span class="re1">&lt;/methodName<span class="re2">&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;params<span class="re2">&gt;</span></span>
+     <span class="sc3"><span class="re1">&lt;param<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;string<span class="re2">&gt;</span></span>Allo ?<span class="sc3"><span class="re1">&lt;/string<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/param<span class="re2">&gt;</span></span>
+  <span class="sc3"><span class="re1">&lt;/params<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/methodCall<span class="re2">&gt;</span></span></pre>
+<p>
+Dans <em>methodName</em>, vous indiquerez, dans le cas d&rsquo;un appel à une application jelix, le sélecteur de l&rsquo;action à appeler, comme ici &ldquo;module:default_index&rdquo;. Notez qu&rsquo;il faut indiquer le caractère &ldquo;:&rdquo; plutôt que &ldquo;~&rdquo; comme séparateur du nom du module et du nom de l&rsquo;action (dans jelix 1.0 beta2.1 et précédent, il faut indiquer un point). En effet, le caractère tilde &ldquo;~&rdquo; est interdit dans le nom de la méthode en xmlrpc.
+</p>
+
+<p>
+Les données que vous mettrez dans params seront mises dans le paramètre &ldquo;params&rdquo; dans la réponse jelix. Ainsi, dans l&rsquo;action, pour les récupérer dans l&rsquo;action, vous ferez :
+</p>
+<pre class="code php">  <span class="re0">$parametres</span> = <span class="re0">$this</span>-&gt;<span class="me1">param</span><span class="br0">&#40;</span><span class="st0">'params'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Bien entendu, ce que vous avez dans $parametres sera des données &ldquo;php&rdquo; (chaine, array ou autre), la transformation du contenu de la balise &lt;params&gt; étant réalisée par jXmlRpcRequest..
+</p>
+
+<p>
+Exemple d&rsquo;appel XMLRPC à partir d&rsquo;un page <acronym title="HyperText Markup Language">HTML</acronym> : à faire... 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

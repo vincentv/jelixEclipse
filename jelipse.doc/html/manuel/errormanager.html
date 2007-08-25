@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:errormanager - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>La gestion des erreurs dans Jelix</h1>
+<div class="level1">
+
+<p>
+ Les classes du framework peuvent générer des erreurs de deux façons différentes par : 
+</p>
+<ul>
+<li class="level1"><div class="li"> un trigger_error (erreur <acronym title="Hypertext Preprocessor">PHP</acronym>)</div>
+</li>
+<li class="level1"><div class="li"> une exception</div>
+</li>
+</ul>
+
+<p>
+ Une erreur <acronym title="Hypertext Preprocessor">PHP</acronym> est générée dans le cas d&rsquo;une erreur technique due à un défaut dans la programmation. C&rsquo;est alors au développeur de corriger l&rsquo;erreur.
+</p>
+
+<p>
+Une exception est générée dans le cas d&rsquo;une erreur qui peut survenir de façon imprévisible durant l&rsquo;exécution d&rsquo;une action. Par exemple une erreur suite à l&rsquo;impossibilité de se connecter sur une base de données ou alors une erreur &ldquo;fonctionnelle&rdquo;, &ldquo;métier&rdquo;.
+</p>
+
+</div>
+
+<h2>Paramétrage des gestionnaires d'erreurs</h2>
+<div class="level2">
+
+<p>
+ Quelle que soit l&rsquo;origine de l&rsquo;erreur, celle-ci passe par un gestionnaire d&rsquo;erreur (sauf pour les exceptions qui sont interceptées par un try/catch). Il y a un gestionnaire d&rsquo;erreur attribué aux erreurs <acronym title="Hypertext Preprocessor">PHP</acronym> et un autre attribué aux exceptions.
+</p>
+
+<p>
+Les gestionnaires d&rsquo;erreurs sont chargés d&rsquo;effectuer les actions indiquées dans la configuration selon le type d&rsquo;erreur. Il s&rsquo;agit des paramètres &ldquo;default&rdquo;, &ldquo;error&rdquo;, &ldquo;warning&rdquo;, &ldquo;notice&rdquo;, &ldquo;strict&rdquo;, &ldquo;exception&rdquo; dans la section error_handling. Chacun de ses paramètres doit contenir un ou plusieurs de ces mots qui indique une action a effectuer : 
+</p>
+<table class="inline">
+	<tr>
+		<td> ECHO </td><td> le message sera passé dans la réponse </td>
+	</tr>
+	<tr>
+		<td> LOGFILE </td><td> le message est stocké dans le fichier de log indiqué dans l&rsquo;option logFile de la config </td>
+	</tr>
+	<tr>
+		<td> SYSLOG </td><td> le message est envoyé dans le log système </td>
+	</tr>
+	<tr>
+		<td> MAIL </td><td> le message est envoyé par mail à l&rsquo;adresse indiquée dans l&rsquo;option email </td>
+	</tr>
+	<tr>
+		<td> EXIT </td><td> l&rsquo;exécution s&rsquo;arrête ici (EXIT est implicite pour les exceptions) </td>
+	</tr>
+	<tr>
+		<td> TRACE </td><td> inclus la pile d&rsquo;execution dans le message </td>
+	</tr>
+	<tr>
+		<td> ECHOQUIET </td><td> n&rsquo;affiche pas le details du message, affiche juste le contenu de l&rsquo;option quietMessage de la section error_handling de la config </td>
+	</tr>
+</table>
+<br />
+
+<p>
+ L&rsquo;option messageLogFormat indique le formatage du message d&rsquo;erreur pour son stockage dans le fichier de log, syslog ou le mail.
+</p>
+
+</div>
+
+<h2>Code erreur</h2>
+<div class="level2">
+
+<p>
+ Chaque message d&rsquo;erreur est localisé dans les fichiers properties et chaque erreur devrait posséder un numéro. Ce numéro est indiqué dans les fichiers properties des messages localisés, de cette façon :
+</p>
+
+<p>
+ cle.chaine = (code_erreur)message d&rsquo;erreur
+</p>
+
+<p>
+Le message d&rsquo;erreur au final ne contiendra pas le code erreur. Et ce dernier sera extrait.
+</p>
+
+<p>
+Voici les plages de code erreurs 
+</p>
+<table class="inline">
+	<tr>
+		<td> 0-99 </td><td> erreurs générales </td>
+	</tr>
+	<tr>
+		<td> 100-199 </td><td> erreurs du core </td>
+	</tr>
+	<tr>
+		<td> 200-299 </td><td> erreurs de locale </td>
+	</tr>
+	<tr>
+		<td> 300-399 </td><td> erreurs de templates </td>
+	</tr>
+	<tr>
+		<td> 400-499 </td><td> erreurs de bases de données </td>
+	</tr>
+	<tr>
+		<td> 500-599 </td><td> erreurs de daos </td>
+	</tr>
+	<tr>
+		<td> 600-699 </td><td> erreurs d&rsquo;authentification </td>
+	</tr>
+	<tr>
+		<td> 700-799 </td><td> erreurs de droits </td>
+	</tr>
+	<tr>
+		<td> 800-899 </td><td> erreurs jforms </td>
+	</tr>
+	<tr>
+		<td class="leftalign"> &gt; 5000  </td><td> erreurs utilisateurs </td>
+	</tr>
+</table>
+<br />
+
+<p>
+ Si vous générez des erreurs pour vos propres besoins, leurs codes doivent être supérieur à 5000. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

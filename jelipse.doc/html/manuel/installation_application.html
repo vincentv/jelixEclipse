@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:installation:application - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Configuration du serveur</h1>
+<div class="level1">
+
+<p>
+ Voici ce qu&rsquo;il faut configurer au niveau du serveur.
+</p>
+
+</div>
+
+<h2>Si vous pouvez spécifier le document root</h2>
+<div class="level2">
+
+<p>
+ Si vous pouvez spécifier la racine du site en modifiant les fichiers de configuration du serveur web ou via une interface d&rsquo;administration comme le proposent certains hébergeurs, indiquez alors le répertoire <em>monsite/myapp/www</em> comme étant la racine du site. Par exemple, avec apache, vous indiquerez dans le fichier <em>httpd.conf</em>, quelque chose comme :
+</p>
+<pre class="code htaccess">   &lt;VirtualHost *&gt;
+      ServerName www.monsite.com
+      DocumentRoot /var/monsite/myapp/www/ 
+   &lt;/VirtualHost&gt;
+</pre>
+<p>
+Vous devez indiquer aussi un alias vers le répertoire <em>lib/jelix-www</em>, en le nommant jelix :
+</p>
+<pre class="code htaccess">   &lt;VirtualHost *&gt;
+      ServerName www.monsite.com
+      DocumentRoot /var/monsite/myapp/www/ 
+      Alias /jelix/ &quot;/var/monsite/lib/jelix-www/&quot;
+   &lt;/VirtualHost&gt;
+   
+   &lt;Directory &quot;/var/monsite/lib/jelix-www/&quot;&gt;
+     AllowOverride None
+     Order allow,deny
+     Allow from all
+   &lt;/Directory&gt;
+</pre>
+<p>
+Et enfin, dans le fichier <em>monsite/myapp/var/config/defaultconfig.ini.php</em>, vous ajusterez l&rsquo;option <strong>basePath</strong>, en indiquant le chemin jusqu&rsquo;au index.php (ici donc, /) : 
+</p>
+<pre class="code ini"><span class="re1">basePath</span>=<span class="re2">&quot;/&quot;</span></pre>
+<p>
+ ainsi, en tapant <a href="http://www.monsite.com" class="urlextern" title="http://www.monsite.com"   rel="nofollow">http://www.monsite.com</a> vous accédez à votre site, et <a href="http://www.monsite.com/jelix/" class="urlextern" title="http://www.monsite.com/jelix/"   rel="nofollow">http://www.monsite.com/jelix/</a>, à jelix-www, qui contient un certain nombre de scripts javascript utiles, des ressources <acronym title="XML User Interface Language">XUL</acronym> etc..
+</p>
+
+</div>
+
+<h2>Vous ne pouvez pas spécifier le document root</h2>
+<div class="level2">
+
+<p>
+ Dans ce cas, il est préférable de déplacer le contenu du répertoire <em>monsite/myapp/www</em> à la racine de votre site, <em>monsite</em>/. Vous déplacerez donc les fichiers index.php, jsonrpc.php etc, pour obtenir par exemple l&rsquo;arborescence suivante : 
+</p>
+<pre class="code">monsite/  
+  myapp/
+  lib/
+  temp/
+  index.php
+  jsonrpc.php
+  xmlrpc.php</pre>
+
+<p>
+ Il faut aussi modifier ces trois fichiers <acronym title="Hypertext Preprocessor">PHP</acronym> pour changer les chemins relatifs qu&rsquo;ils contiennent, et faire de même pour le fichier <em>myapp/application.init.php</em>. Par exemple le fichier index.php ressemblera à ceci dans notre exemple :
+</p>
+<pre class="code php"><span class="kw1">require_once</span> <span class="br0">&#40;</span><span class="st0">'lib/jelix/init.php'</span><span class="br0">&#41;</span>;
+<span class="kw1">require_once</span> <span class="br0">&#40;</span><span class="st0">'myapp/application.init.php'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="kw1">require_once</span> <span class="br0">&#40;</span>JELIX_LIB_CORE_PATH.<span class="st0">'request/jClassicRequest.class.php'</span><span class="br0">&#41;</span>;
+<span class="re0">$config_file</span> = <span class="st0">'config.classic.ini.php'</span>;
+<span class="re0">$jelix</span> = <span class="kw2">new</span> jCoordinator<span class="br0">&#40;</span><span class="re0">$config_file</span><span class="br0">&#41;</span>;
+<span class="re0">$jelix</span>-&gt;<span class="me1">process</span><span class="br0">&#40;</span><span class="kw2">new</span> jClassicRequest<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Il faut ensuite déplacer le répertoire <em>lib/jelix-www</em>/ à la racine et le renommer en jelix. Vous obtiendrez : 
+</p>
+<pre class="code">monsite/  
+  myapp/
+  jelix/
+  lib/
+  temp/
+  index.php
+  jsonrpc.php
+  xmlrpc.php</pre>
+
+<p>
+ Dans le fichier <em>myapp/application.ini.php</em>, vous devez modifier la constante <strong>JELIX_APP_<acronym title="World Wide Web">WWW</acronym>_PATH</strong> :
+</p>
+<pre class="code php"><span class="kw3">define</span> <span class="br0">&#40;</span><span class="st0">'JELIX_APP_WWW_PATH'</span>, <span class="kw3">realpath</span><span class="br0">&#40;</span>JELIX_APP_PATH.<span class="st0">'../'</span><span class="br0">&#41;</span>.<span class="st0">'/'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Et enfin, dans le fichier <em>monsite/myapp/var/config/defaultconfig.ini.php</em>, vous ajusterez l&rsquo;option <strong>basePath</strong>, en indiquant le chemin jusqu&rsquo;au index.php (ici donc, /) : 
+</p>
+<pre class="code ini"><span class="re1">basePath</span>=<span class="re2">&quot;/&quot;</span></pre>
+<p>
+Vous pouvez alors taper l&rsquo;adresse de votre site (<a href="http://www.monsite.com" class="urlextern" title="http://www.monsite.com"   rel="nofollow">http://www.monsite.com</a> par exemple, ou <a href="http://localhost/" class="urlextern" title="http://localhost/"   rel="nofollow">http://localhost/</a>)
+</p>
+
+</div>
+
+<h2>Spécifier une extension de fichier autre que .php</h2>
+<div class="level2">
+
+<p>
+ Sur certains serveurs, il vous est proposé PHP4 et PHP5 à la fois. En général, les fichiers <strong>.php</strong> doivent être des fichiers PHP4, et <strong>.php5</strong>, des fichiers PHP5. Il vous faut donc faire des modifications pour que votre application jelix fonctionne avec PHP5. Deux façons, selon les possibilités.
+</p>
+
+</div>
+
+<h3>par le .htaccess</h3>
+<div class="level3">
+
+<p>
+ Dans le repertoire <em>www</em> de votre application, rajoutez un fichier <em>.htaccess</em> et mettez y : 
+</p>
+<pre class="code">AddHandler php5-script .php</pre>
+
+<p>
+ Et vous n&rsquo;avez rien d&rsquo;autre à faire. Si ça ne fonctionne pas, faites comme suit.
+</p>
+
+</div>
+
+<h3>En renommant l'extension</h3>
+<div class="level3">
+
+<p>
+ Il faut renommer le fichier <em>index.php</em> en <em>index.php5</em> (idem pour les autres fichiers php se trouvant dans www : <em>jsonrpc.php, xmlrpc.php</em>, etc...). Par contre, <strong>vous n&rsquo;avez pas besoin</strong> de renommer les fichiers php des autres répertoires !
+</p>
+
+<p>
+Dans le fichier de configuration <em>var/config/defaultconfig.ini.php</em>, indiquez l&rsquo;extension dans la partie urlengine : 
+</p>
+<pre class="code">entrypointExtension = .php5</pre>
+
+</div>
+
+<h2>Configuration pour les urls &quot;cools&quot;</h2>
+<div class="level2">
+
+<p>
+ Pour pouvoir utiliser des urls significatives avec le <a href="urls.html" class="wikilink1" title="manuel:urls"  >système d'url automatique de jelix</a>, il faut activer dans apache (au niveau de la configuration serveur ou dans le .htaccess si cela est permis) : 
+</p>
+<pre class="code"> Options +Multiviews</pre>
+
+<p>
+ Et pour Apache 2, rajouter : 
+</p>
+<pre class="code"> AcceptPathInfo on</pre>
+
+<p>
+ Pour vérifier que cela fonctionne, créez sur votre site web un fichier test.php qui affiche <strong>phpinfo()</strong> et essayez l&rsquo;url : <em>monsite.com/test/foo/bar</em> . Le phpinfo devrait s&rsquo;afficher, et vous devriez avoir dans <strong>$_SERVER[&rsquo;PATH_INFO&rsquo;]</strong> la chaine &ldquo;<strong>/foo/bar</strong>&rdquo; (voir tout en bas de l&rsquo;affichage de phpinfo). 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

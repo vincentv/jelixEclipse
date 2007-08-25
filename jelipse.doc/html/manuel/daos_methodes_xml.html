@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:daos:methodes_xml - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Ajouter des méthodes à la factory</h1>
+<div class="level1">
+
+<p>
+ Une factory générée par jDao contient par défaut un certain nombre de méthodes  (find, findAll, get, insert, etc...) comme décrit sur la page sur <a href="daos_utilisation.html" class="wikilink1" title="manuel:daos:utilisation"  >l'utilisation des daos</a>. Cependant, elles ne sont pas forcément suffisantes, et l&rsquo;on a souvent besoin de faire des sélections, des mises à jour ou des suppressions particulières. 
+</p>
+
+<p>
+La section &lt;factory&gt; permet de définir des méthodes supplémentaires à générer, chacune des méthodes exécutant une requête <acronym title="Structured Query Language">SQL</acronym>. L&rsquo;avantage de déclarer de telles méthodes ici, par rapport à la création de requête <acronym title="Structured Query Language">SQL</acronym> dans une classe normale, est que vous n&rsquo;avez plus à vous préoccuper de problème de sqlinjection, de l&rsquo;écriture fastidieuse des requêtes <acronym title="Structured Query Language">SQL</acronym>, etc...
+</p>
+
+</div>
+
+<h2>Balise &lt;method&gt;</h2>
+<div class="level2">
+
+<p>
+ Les méthodes sont déclarées via la balise <em>&lt;method&gt;</em>. Celle-ci doit avoir au moins un attribut, <em>name</em>, indiquant le nom de la méthode. Il y a différent type de méthode. On indique le type via l&rsquo;attribut <em>type</em>.
+</p>
+
+<p>
+Une balise <em>&lt;method&gt;</em> peut contenir une ou plusieurs balises <em>&lt;parameter&gt;</em>, qui définissent des paramètres. Une balise <em>&lt;parameter&gt;</em> doit avoir un attribut <em>name</em> indiquant son nom.
+</p>
+<pre class="code xml">    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"foo"</span> <span class="re2">/&gt;</span>
+    ...
+&nbsp;</pre>
+<p>
+Il est possible d&rsquo;indiquer une valeur par défaut :
+</p>
+<pre class="code xml">    <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"foo"</span> <span class="re0">default</span>=<span class="st0">"20"</span><span class="re2">/&gt;</span></pre>
+<p>
+Voici les différents types de méthodes. La balise <em>&lt;conditions&gt;</em> est décrite plus loin.
+</p>
+
+</div>
+
+<h2>Méthode de type select, selectfirst</h2>
+<div class="level2">
+
+</div>
+
+<h3>Déclaration</h3>
+<div class="level3">
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"select"</span><span class="re2">&gt;</span> <span class="sc3"><span class="coMULTI">&lt;!-- ou type=&quot;selectfirst&quot;  --&gt;</span>
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;conditions</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;order</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;limit</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Une méthode de type <code>select</code> renvoient une liste d&rsquo;objets &ldquo;record&rdquo;, qui ont donc comme propriétés celles indiquées dans la section record. Une méthode de type <code>selectfirst</code> renvoi le premier objet correspondant aux critères.
+</p>
+
+<p>
+À noter qu&rsquo;il n&rsquo;est pas possible de limiter un select/selectfirst à un nombre réduit de propriétés. En effet, cela n&rsquo;aurait pas vraiment de sens au niveau du concept de &ldquo;mapping&rdquo; et serait même dangereux pour les données puisqu&rsquo;alors les propriétés non sélectionnées seraient vides dans le record, et si on fait ensuite un update derrière... Si on veut sélectionner un nombre restreint des propriétés définies, la seule possibilité pour le moment est de créer un autre <acronym title="Datas Access Object">DAO</acronym>.
+</p>
+
+<p>
+On peut ajouter un attribut distinct pour récupérer seulement les éléments distincts.
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"select"</span> <span class="re0">name</span>=<span class="st0">"findThem"</span> <span class="re0">distinct</span>=<span class="st0">"true"</span><span class="re2">&gt;</span> 
+   ..</pre>
+<p>
+La balise <em>&lt;conditions&gt;</em> (facultative) décrit une condition (la clause <em>WHERE</em> en <acronym title="Structured Query Language">SQL</acronym>). Voir la section correspondante plus loin.
+</p>
+
+<p>
+On peut aussi ajouter une balise <em>&lt;order&gt;</em> qui permet de spécifier l&rsquo;ordre des enregistrements récupérés (clause <em>ORDER</em> en <acronym title="Structured Query Language">SQL</acronym>). Il faut indiquer une ou plusieurs balises <em>&lt;orderitem&gt;</em>, qui contiennent un attribut <em>property</em> indiquant le nom de la propriété sur lequel l&rsquo;ordre s&rsquo;effectue et un attribut <em>way</em>. L&rsquo;attribut way doit contenir &ldquo;asc&rdquo; ou &ldquo;desc&rdquo; ou un nom de paramètre de méthode (précédé alors par un $).
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;order<span class="re2">&gt;</span></span>
+     <span class="sc3"><span class="re1">&lt;orderitem</span> <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">way</span>=<span class="st0">"asc"</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/order<span class="re2">&gt;</span></span></pre>
+<p>
+À noter que <em>property</em> peut contenir, soit un nom d&rsquo;une propriété, soit un nom de paramètre de la méthode (précédé d&rsquo;un $) qui doit alors contenir un nom de propriété.
+</p>
+
+<p>
+Enfin, une balise <em>&lt;limit&gt;</em> optionnelle permet de restreindre le nombre d&rsquo;enregistrement retournés.
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;limit</span> <span class="re0">offset</span>=<span class="st0">"5"</span> <span class="re0">count</span>=<span class="st0">"10"</span> <span class="re2">/&gt;</span></pre>
+<p>
+Les attributs <em>count</em> et <em>offset</em> contiennent soit un nombre, soit un nom de paramètre de méthode (précédé alors par un $).
+</p>
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"select"</span> <span class="re0">name</span>=<span class="st0">"getFewRecord"</span> <span class="re2">&gt;</span> 
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"count"</span><span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re0">name</span>=<span class="st0">"offset"</span><span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;limit</span> <span class="re0">offset</span>=<span class="st0">"$offset"</span> <span class="re0">count</span>=<span class="st0">"$count"</span><span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h3>Utilisation</h3>
+<div class="level3">
+
+</div>
+
+<h2>Méthode de type count</h2>
+<div class="level2">
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"count"</span><span class="re2">&gt;</span>
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;conditions</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+ce type de méthode est équivalent à un SELECT COUNT(*), avec les conditions indiquées. Si on indique une propriété sur laquelle il faut faire un distinct, via l&rsquo;attribut distinct comme pour type=&rdquo;select&rdquo;, alors il sera fait un SELECT COUNT(DISTINCT le_champ_correspondant).
+</p>
+
+</div>
+
+<h2>Méthode de type delete</h2>
+<div class="level2">
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"delete"</span><span class="re2">&gt;</span>
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;conditions</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Génère une méthode qui execute une requête DELETE.
+</p>
+
+</div>
+
+<h2>Méthode de type update</h2>
+<div class="level2">
+<pre class="code xml">  <span class="sc3"><span class="re1">&lt;method</span> <span class="re0">type</span>=<span class="st0">"update"</span><span class="re2">&gt;</span>
+     <span class="sc3"><span class="re1">&lt;parameter</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;conditions</span> <span class="re2">/&gt;</span>
+     <span class="sc3"><span class="re1">&lt;values</span> <span class="re2">/&gt;</span>
+  <span class="sc3"><span class="re1">&lt;/method<span class="re2">&gt;</span></span></pre>
+<p>
+Ce type de méthode exécute une requête de type UPDATE. En plus des paramètres et des conditions, il faut indiquer les valeurs que l&rsquo;on met sur telle ou telle propriété avec les balises <em>&lt;value&gt;</em>.
+</p>
+<pre class="code xml">    <span class="sc3"><span class="re1">&lt;values<span class="re2">&gt;</span></span>
+        <span class="sc3"><span class="re1">&lt;value</span> <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+    <span class="sc3"><span class="re1">&lt;/values<span class="re2">&gt;</span></span></pre>
+<p>
+L&rsquo;attribut <em>property</em> indique la propriété que l&rsquo;on va mettre à jour.  Comme dans les conditions, l&rsquo;attribut <em>value</em> doit contenir une valeur. Mais si on veut indiquer une expression <acronym title="Structured Query Language">SQL</acronym> ou un paramètre de la méthode, il faut utiliser l&rsquo;attribut <em>expr</em>.
+</p>
+
+</div>
+
+<h2>Clause conditions</h2>
+<div class="level2">
+
+<p>
+ Voici la description de la balise <em>&lt;conditions&gt;</em> qui peut être utilisée dans la plupart des méthodes précédentes.
+</p>
+<pre class="code xml">   <span class="sc3"><span class="re1">&lt;conditions</span> <span class="re0">logic</span>=<span class="st0">"AND"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;eq</span>         <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;neq</span>        <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;lt</span>         <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;gt</span>         <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;lteq</span>       <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;gteq</span>       <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;like</span>       <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;isnull</span>     <span class="re0">property</span>=<span class="st0">"foo"</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;notisnull</span>  <span class="re0">property</span>=<span class="st0">"foo"</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;in</span>         <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+      <span class="sc3"><span class="re1">&lt;notin</span>      <span class="re0">property</span>=<span class="st0">"foo"</span> <span class="re0">value</span>=<span class="st0">""</span> <span class="re0">expr</span>=<span class="st0">""</span><span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/conditions<span class="re2">&gt;</span></span></pre>
+<p>
+On peut mettre plusieurs balises &lt;conditions&gt; imbriquées pour faire des groupes or/and. Si l&rsquo;attribut <em>logic</em> n&rsquo;est pas spécifié, il vaut <em>AND</em> par défaut. Sinon il doit valoir &ldquo;OR&rdquo; ou &ldquo;AND&rdquo;.
+</p>
+
+<p>
+L&rsquo;attribut value doit contenir une valeur. Le type de cette valeur est celui de la propriété. Si on préfère utiliser une expression <acronym title="Structured Query Language">SQL</acronym> ou indiquer un paramètre de méthode, il faut utiliser l&rsquo;attribut expr.
+</p>
+
+</div>
+
+<h3>Cas de in/notin</h3>
+<div class="level3">
+
+<p>
+ &lt;in&gt; et &lt;notin&gt; sont l&rsquo;équivalent de &ldquo;foo IN ( liste de valeurs )&rdquo; ou &ldquo;foo NOT IN ( liste de valeurs )&rdquo;. L&rsquo;usage de value et expr est différente. Si vous avez une liste de valeurs statiques, vous les mettrez dans l&rsquo;attribut value comme vous le feriez en <acronym title="Structured Query Language">SQL</acronym> :
+</p>
+
+<p>
+ &lt;in property=&rdquo;foo&rdquo; value=&rdquo;5,3,2&rdquo; /&gt;
+</p>
+
+<p>
+ou
+</p>
+
+<p>
+ &lt;in property=&rdquo;foo&rdquo; value=&rdquo;&lsquo;toto&rsquo;,&rsquo;titi&rsquo;,&rsquo;tata&rsquo;&rdquo; /&gt;
+</p>
+
+<p>
+Vous utiliserez expr quand vous aurez un paramètre de méthode (donc une liste de valeurs dynamiques) :
+</p>
+
+<p>
+ &lt;in property=&rdquo;foo&rdquo; expr=&rdquo;$liste&rdquo; /&gt;
+</p>
+
+<p>
+Ce paramètre doit obligatoirement contenir un tableau <acronym title="Hypertext Preprocessor">PHP</acronym> de valeurs. Et l&rsquo;attribut <em>expr</em> ne peut contenir autre chose qu&rsquo;un nom de paramètre. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

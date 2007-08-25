@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responserdf - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Réponse RDF</h1>
+<div class="level1">
+
+<p>
+ jResponseRdf permet de générer un document au format <acronym title="Resource Description Framework">RDF</acronym>. Cela est utile entre autre lors de la réalisation d&rsquo;application en <acronym title="XML User Interface Language">XUL</acronym>, pour les templates <acronym title="XML User Interface Language">XUL</acronym>. Son alias est &ldquo;rdf&rdquo;.
+</p>
+
+<p>
+Vous avez deux moyens d&rsquo;utiliser jResponseRdf :
+</p>
+<ul>
+<li class="level1"><div class="li"> soit vous fournissez une liste de données et la classe s&rsquo;occupe de générer du <acronym title="Resource Description Framework">RDF</acronym></div>
+</li>
+<li class="level1"><div class="li"> soit vous écrivez vous même le code <acronym title="Resource Description Framework">RDF</acronym> dans un template, ce qui est nécessaire pour les graphes <acronym title="Resource Description Framework">RDF</acronym> complexes.</div>
+</li>
+</ul>
+
+</div>
+
+<h2>Génération automatique de RDF</h2>
+<div class="level2">
+
+<p>
+ Cela ne fonctionne que pour les <acronym title="Resource Description Framework">RDF</acronym> qui representent qu&rsquo;une liste simple de données (pas de sous arbres par exemple).
+</p>
+
+<p>
+Vous indiquez la liste des données au niveau de la propriété <em>$datas</em> : cela peut être une liste de tableaux associatifs, un objet jResultSet (iterateur) que retourne jDb::query ou les méthodes de type &ldquo;select&rdquo; des daos.
+</p>
+<pre class="code php"> <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"rdf"</span><span class="br0">&#41;</span>;
+&nbsp;
+ <span class="re0">$dao</span> = jDao::<span class="me2">get</span><span class="br0">&#40;</span><span class="st0">'users'</span><span class="br0">&#41;</span>;
+ <span class="re0">$rep</span>-&gt;<span class="me1">datas</span> = <span class="re0">$dao</span>-&gt;<span class="me1">findAll</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+<p>
+Ou encore
+</p>
+<pre class="code php"> <span class="re0">$rep</span>-&gt;<span class="me1">datas</span> = <span class="kw3">array</span><span class="br0">&#40;</span>
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'dupont'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'georges'</span><span class="br0">&#41;</span>,
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'durant'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'paul'</span><span class="br0">&#41;</span>,
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'duchemin'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'jacques'</span><span class="br0">&#41;</span>,
+   <span class="br0">&#41;</span>;</pre>
+<p>
+Ce dernier exemple va générer le <acronym title="Resource Description Framework">RDF</acronym> suivant :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;RDF</span> xmlns:<span class="re0">RDF</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     <span class="re0">xmlns</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     xmlns:<span class="re0">row</span>=<span class="st0">"http://dummy/rdf#"</span><span class="re2">&gt;</span>
+&nbsp;
+   <span class="sc3"><span class="re1">&lt;Bag</span> RDF:<span class="re0">about</span>=<span class="st0">"urn:data:row"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description<span class="re2">&gt;</span></span>
+              <span class="sc3"><span class="re1">&lt;row</span>:nom<span class="re2">&gt;</span>dupont<span class="sc3"><span class="re1">&lt;/row</span>:nom<span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;row</span>:prenom<span class="re2">&gt;</span>georges<span class="sc3"><span class="re1">&lt;/row</span>:prenom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description<span class="re2">&gt;</span></span>
+              <span class="sc3"><span class="re1">&lt;row</span>:nom<span class="re2">&gt;</span>durant<span class="sc3"><span class="re1">&lt;/row</span>:nom<span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;row</span>:prenom<span class="re2">&gt;</span>paul<span class="sc3"><span class="re1">&lt;/row</span>:prenom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description<span class="re2">&gt;</span></span>
+              <span class="sc3"><span class="re1">&lt;row</span>:nom<span class="re2">&gt;</span>duchemin<span class="sc3"><span class="re1">&lt;/row</span>:nom<span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;row</span>:prenom<span class="re2">&gt;</span>jacques<span class="sc3"><span class="re1">&lt;/row</span>:prenom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;/Bag<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/RDF<span class="re2">&gt;</span></span></pre>
+<p>
+jResponseRdf donne par défaut le namespace &ldquo;<a href="http://dummy/rdf#" class="urlextern" title="http://dummy/rdf#"   rel="nofollow">http://dummy/rdf#</a>&rdquo; aux éléments contenant les données, namespace déclaré avec le préfixe &ldquo;row&rdquo;. Vous pouvez changer cela via respectivement les propriétés <em>$resNs</em> et <em>$resNsPrefix</em>.
+</p>
+<pre class="code php">  <span class="re0">$rep</span>-&gt;<span class="me1">resNs</span> = <span class="st0">'http://monsite.com/ns/users/'</span>;
+  <span class="re0">$rep</span>-&gt;<span class="me1">resNsPrefix</span> = <span class="st0">'user'</span>;</pre>
+<p>
+Vous pouvez aussi changer l&rsquo;identifiant de la liste qui est par défaut &ldquo;urn:data:row&rdquo; :
+</p>
+<pre class="code php">  <span class="re0">$rep</span>-&gt;<span class="me1">resUriRoot</span> = <span class="st0">'urn:monsite:users'</span>;</pre>
+<p>
+Enfin, pour diverses raisons, vous voudriez peut être mettre certaines informations en tant qu&rsquo;attributs, et d&rsquo;autres en tant qu&rsquo;elements. Il faut alors l&rsquo;indiquer via les propriétés <em>$asElement</em> et <em>$asAttribute</em>.
+</p>
+<pre class="code php">  <span class="re0">$rep</span>-&gt;<span class="me1">asAttribute</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'prenom'</span><span class="br0">&#41;</span>;
+  <span class="re0">$rep</span>-&gt;<span class="me1">asElement</span> = <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span><span class="br0">&#41;</span>;</pre>
+<p>
+Note : à partir du moment où vous changez l&rsquo;une de ces deux propriétés, il faut alors indiquer <strong>tous</strong> les noms des données que vous voulez voir apparaitre dans le <acronym title="Resource Description Framework">RDF</acronym>.
+</p>
+
+<p>
+Cela donne alors :
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;RDF</span> xmlns:<span class="re0">RDF</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     <span class="re0">xmlns</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     xmlns:<span class="re0">user</span>=<span class="st0">"http://monsite.com/ns/users/"</span><span class="re2">&gt;</span>
+&nbsp;
+   <span class="sc3"><span class="re1">&lt;Bag</span> RDF:<span class="re0">about</span>=<span class="st0">"urn:monsite:users"</span><span class="re2">&gt;</span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description</span> user:<span class="re0">prenom</span>=<span class="st0">"georges"</span><span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;user</span>:nom<span class="re2">&gt;</span>dupont<span class="sc3"><span class="re1">&lt;/user</span>:nom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description</span> user:<span class="re0">prenom</span>=<span class="st0">"paul"</span><span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;user</span>:nom<span class="re2">&gt;</span>durant<span class="sc3"><span class="re1">&lt;/user</span>:nom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description</span> user:<span class="re0">prenom</span>=<span class="st0">"jacques"</span><span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;user</span>:nom<span class="re2">&gt;</span>duchemin<span class="sc3"><span class="re1">&lt;/user</span>:nom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+   <span class="sc3"><span class="re1">&lt;/Bag<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/RDF<span class="re2">&gt;</span></span></pre>
+</div>
+
+<h2>Génération à partir d'un template</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;autre façon d&rsquo;utiliser jResponseRdf est de passer par un template pour générer le contenu <acronym title="Resource Description Framework">RDF</acronym>. Vous devez indiquer les données pour le template via la propriété <em>$datas</em>, elles seront ainsi disponible via la variable de template &ldquo;datas&rdquo;. Et vous devez indiquez le sélecteur du template dans la propriété <em>$template</em>.
+</p>
+<pre class="code php"> <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">"rdf"</span><span class="br0">&#41;</span>;
+&nbsp;
+ <span class="re0">$rep</span>-&gt;<span class="me1">datas</span> = <span class="kw3">array</span><span class="br0">&#40;</span>
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'dupont'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'georges'</span><span class="br0">&#41;</span>,
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'durant'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'paul'</span><span class="br0">&#41;</span>,
+         <span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'nom'</span>=&gt;<span class="st0">'duchemin'</span>, <span class="st0">'prenom'</span>=&gt;<span class="st0">'jacques'</span><span class="br0">&#41;</span>,
+   <span class="br0">&#41;</span>;
+ <span class="re0">$rep</span>-&gt;<span class="me1">template</span> = <span class="st0">'monmodule~datasrdf'</span>;</pre>
+<p>
+Et dans datasrdf.tpl :
+</p>
+<pre class="code xml">&nbsp;
+<span class="sc3"><span class="re1">&lt;RDF</span> xmlns:<span class="re0">RDF</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     <span class="re0">xmlns</span>=<span class="st0">"http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+     xmlns:<span class="re0">user</span>=<span class="st0">"http://monsite.com/ns/users/"</span><span class="re2">&gt;</span>
+&nbsp;
+   <span class="sc3"><span class="re1">&lt;Bag</span> RDF:<span class="re0">about</span>=<span class="st0">"urn:monsite:users"</span><span class="re2">&gt;</span>
+&nbsp;
+   {foreach $datas as $dt}
+      <span class="sc3"><span class="re1">&lt;li<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;Description</span> user:<span class="re0">prenom</span>=<span class="st0">"{$data['prenom']|escxml}"</span><span class="re2">&gt;</span>
+              <span class="sc3"><span class="re1">&lt;user</span>:nom<span class="re2">&gt;</span>{$data['nom']|escxml}<span class="sc3"><span class="re1">&lt;/user</span>:nom<span class="re2">&gt;</span>
+           <span class="sc3"><span class="re1">&lt;/Description<span class="re2">&gt;</span></span><span class="sc3"><span class="re1">&lt;/li<span class="re2">&gt;</span></span>
+   {/foreach}
+&nbsp;
+   <span class="sc3"><span class="re1">&lt;/Bag<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/RDF<span class="re2">&gt;</span></span></pre>
+<p>
+Note : vous n&rsquo;avez pas à mettre le prologue xml (&lt;?xml... )
+</p>
+
+<p>
+Note : les propriétés <em>$resNs</em>, <em>$resNsPrefix</em>, <em>$resUriRoot</em>, <em>$asElement</em> et <em>$asAttribute</em> sont inutiles dans le cas de l&rsquo;utilisation d&rsquo;un template. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

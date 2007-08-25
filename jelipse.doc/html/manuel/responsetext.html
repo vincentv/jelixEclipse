@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:responsetext - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Générer du texte brut</h1>
+<div class="level1">
+
+<p>
+ Il faut utiliser jResponseText qui est récupérable via l&rsquo;alias &ldquo;text&rdquo;. Cet objet possède une propriété &ldquo;content&rdquo; dans laquelle vous mettez le texte voulu.
+</p>
+<pre class="code php">   <span class="kw2">function</span> myaction<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'text'</span><span class="br0">&#41;</span>;
+       <span class="re0">$rep</span>-&gt;<span class="me1">content</span> = <span class="st0">'my text'</span>;
+       <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span></pre>
+<p>
+ Par défaut, jResponseText renvoi le type mime text/plain et avec le charset indiqué dans la config de jelix. 
+</p>
+
+<p>
+Toutefois, comme jResponseText dérive de jResponse, vous pouvez modifier les en-tête http, donc le type mime et le charset.
+</p>
+
+<p>
+D&rsquo;ailleurs, jResponseText peut-être utilisé comme base pour d&rsquo;autres formats à contenu textuels (json ou autre réponse pour ajax par ex). 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:events - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Évènements</h1>
+<div class="level1">
+
+<p>
+ Jelix propose un système de communication inter-module sous forme d&rsquo;évènements.
+</p>
+
+<p>
+Il est possible d&rsquo;émettre un évènement de n&rsquo;importe quel endroit, et aux modules d&rsquo;y répondre.
+</p>
+
+<p>
+Pour cela, il y a d&rsquo;une part un objet jEvent, permettant d&rsquo;émettre un évènement et de récupérer les réponses, et d&rsquo;autre part, des &ldquo;listener&rdquo;, qui sont des classes placées dans les modules, contenant les méthodes &ldquo;répondant&rdquo; aux évènements.
+</p>
+
+</div>
+
+<h2>Émettre un évènement</h2>
+<div class="level2">
+
+<p>
+ L&rsquo;objet jEvent sert à la fois d&rsquo;émetteur d&rsquo;évènement, et en même temps de conteneur des réponses.
+</p>
+
+<p>
+ sa principale méthode, qui est statique, est notify :
+</p>
+<pre class="code php">   <span class="re0">$ev</span> = jEvent::<span class="me2">notify</span><span class="br0">&#40;</span><span class="st0">'nom_evenement'</span>, <span class="re0">$parametre_event</span><span class="br0">&#41;</span>;</pre>
+<p>
+Elle accepte en paramètre un nom d&rsquo;évènement (qui n&rsquo;est constitué que de caractères alphanumériques), et un tableau facultatif de paramètres (à utiliser selon l&rsquo;évènement).
+</p>
+
+<p>
+Vous recevez en retour l&rsquo;objet jEvent instancié pour l&rsquo;occasion, et contenant les réponses. Les réponses sont un ensemble de valeurs dont la structure et le nombre dépend de l&rsquo;évènement et du nombre de modules ayant répondu.
+</p>
+
+<p>
+Pour avoir ces réponses :
+</p>
+<pre class="code php">  <span class="re0">$reponses</span> = <span class="re0">$ev</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;</pre>
+</div>
+
+<h2>Répondre à un évènement</h2>
+<div class="level2">
+
+<p>
+ Pour qu&rsquo;un module puisse répondre à un évènement, il faut créer un listener, et le déclarer dans le fichier events.xml du module.
+</p>
+
+</div>
+
+<h3>créer le listener</h3>
+<div class="level3">
+
+<p>
+ Il faut d&rsquo;abord lui donner un nom. Foo par exemple, ensuite il faut créer une classe fooListener (se termine toujours par &ldquo;Listener&rdquo;), héritant de jEventListener et stockée dans le fichier classes/foo.listener.php du module.
+</p>
+
+<p>
+Cette classe contient une méthode pour chaque évènement auquel le listener répond. Ces noms de méthodes commencent par &ldquo;on&rdquo; suivit du nom d&rsquo;évènement. Et ces méthodes prennent en paramètre l&rsquo;objet jEvent correspondant à l&rsquo;évènement. Exemple :
+</p>
+<pre class="code php"><span class="kw2">class</span> authListener extends jEventListener<span class="br0">&#123;</span>
+&nbsp;
+   <span class="kw2">function</span> onAuthCanLogin <span class="br0">&#40;</span><span class="re0">$event</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+        <span class="re0">$user</span> = <span class="re0">$event</span>-&gt;<span class="me1">getParam</span><span class="br0">&#40;</span><span class="st0">'user'</span><span class="br0">&#41;</span>;
+        <span class="re0">$ok</span> = <span class="kw2">true</span>;
+        <span class="kw1">if</span><span class="br0">&#40;</span><span class="kw3">isset</span><span class="br0">&#40;</span><span class="re0">$user</span>-&gt;<span class="me1">actif</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+            <span class="re0">$ok</span> = <span class="br0">&#40;</span><span class="re0">$user</span>-&gt;<span class="me1">actif</span> == <span class="st0">'1'</span><span class="br0">&#41;</span>;
+        <span class="br0">&#125;</span>
+&nbsp;
+        <span class="re0">$ok</span> = <span class="re0">$ok</span> &amp;&amp; <span class="br0">&#40;</span><span class="re0">$user</span>-&gt;<span class="me1">password</span> != <span class="st0">''</span><span class="br0">&#41;</span>;
+&nbsp;
+        <span class="re0">$event</span>-&gt;<span class="me1">Add</span><span class="br0">&#40;</span><span class="kw3">array</span><span class="br0">&#40;</span><span class="st0">'canlogin'</span>=&gt;<span class="re0">$ok</span><span class="br0">&#41;</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Ce listener répond à l&rsquo;évènement &ldquo;AuthCanLogin&rdquo;. La méthode récupère le paramètre &lsquo;user&rsquo; de l&rsquo;évènement. Et ajoute une donnée dans la réponse ($event&rarr;add). Ce paramètre et cette donnée de réponse dépendent uniquement de l&rsquo;évènement AuthCanLogin. Pour d&rsquo;autres évènements, il peut y avoir plusieurs paramètres ou aucun, d&rsquo;autres types de données de réponses ou aucune réponse.
+</p>
+
+</div>
+
+<h3>Déclarer le listener</h3>
+<div class="level3">
+
+<p>
+ il faut ensuite déclarer le listener. Cela se fait dans un fichier events.xml placé à la racine du module. Voici un exemple : 
+</p>
+<pre class="code xml"><span class="sc3"><span class="re1">&lt;events</span> <span class="re0">xmlns</span>=<span class="st0">"http://jelix.org/ns/events/1.0"</span><span class="re2">&gt;</span>
+   <span class="sc3"><span class="re1">&lt;listener</span> <span class="re0">name</span>=<span class="st0">"auth"</span><span class="re2">&gt;</span>
+       <span class="sc3"><span class="re1">&lt;event</span> <span class="re0">name</span>=<span class="st0">"AuthCanLogin"</span> <span class="re2">/&gt;</span>
+       <span class="sc3"><span class="re1">&lt;event</span> <span class="re0">name</span>=<span class="st0">"FetchXulOverlay"</span> <span class="re2">/&gt;</span>
+   <span class="sc3"><span class="re1">&lt;/listener<span class="re2">&gt;</span></span>
+<span class="sc3"><span class="re1">&lt;/events<span class="re2">&gt;</span></span></pre>
+<p>
+Vous mettez autant de balise listener que de listener stocké dans le répertoire classes du module. Et dans chacune d&rsquo;elles vous indiquez tous les évènements que prend en charge le listener, grâce à des balises event.
+</p>
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

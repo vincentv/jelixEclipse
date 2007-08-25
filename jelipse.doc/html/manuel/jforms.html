@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:jforms - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Créer et gérer de formulaire avec jForms</h1>
+<div class="level1">
+
+<p>
+ <strong>ATTENTION</strong> : jForms, tels qu&rsquo;il est décrit dans ces pages, n&rsquo;est disponible qu&rsquo;à partir de Jelix 1.0 beta3, ou en test dans les version nightlies actuelles de Jelix. L&rsquo;implémentation de jForms dans Jelix 1.0 beta2 n&rsquo;est pas aussi complète, totalement obsolète et ne sera pas documentée.
+</p>
+
+
+<p>
+ À l&rsquo;avenir, jForms pourra aussi générer d&rsquo;autres types de formulaires (en ajax, <acronym title="XML User Interface Language">XUL</acronym>, XForms etc..) sans changer une seule ligne de code, si ce n&rsquo;est le plugin de template qui est chargé de l&rsquo;afficher.
+</p>
+
+</div>
+
+<h2>Créer un formulaire</h2>
+<div class="level2">
+
+<p>
+ jForms se base sur des fichiers descriptifs en <acronym title="Extensible Markup Language">XML</acronym>. Tout formulaire est décrit en <acronym title="Extensible Markup Language">XML</acronym>, avec une grammaire assez simple, à mi-chemin entre <acronym title="HyperText Markup Language">HTML</acronym> et XForms.
+</p>
+
+<p>
+Ces fichiers <acronym title="Extensible Markup Language">XML</acronym> sont à placer dans un répertoire <em>forms</em> des modules et doivent avoir comme nom <em>foo.form.xml</em>, où foo est le nom identifiant du formulaire (que vous choisissez bien sûr). Cet identifiant est utilisé alors dans les selecteurs.
+</p>
+
+<p>
+Par exemple &ldquo;monModule~produit&rdquo; fait référence au formulaire monModule/forms/produit.form.xml.
+</p>
+
+<p>
+Pour un déscriptif des balises à utiliser dans un fichier jforms, voir <a href="formulaires_jforms_xml.html" class="wikilink2" title="manuel:formulaires:jforms:xml"  >la page correspondante</a>.
+</p>
+
+<p>
+Un fichier jForms xml est compilé par jForms en une classe <acronym title="Hypertext Preprocessor">PHP</acronym> qui est mise en cache à la première utilisation. L&rsquo;objet correspondant à un formulaire hérite de jFormsBase.
+</p>
+
+</div>
+
+<h2>utiliser un formulaire</h2>
+<div class="level2">
+
+</div>
+
+<h3>Créer une instance d'un formulaire</h3>
+<div class="level3">
+
+</div>
+
+<h3>Gérer un formulaire aprés submit</h3>
+<div class="level3">
+
+</div>
+
+<h3>Détruire un formulaire</h3>
+<div class="level3">
+
+</div>
+
+<h2>afficher un formulaire</h2>
+<div class="level2">
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>

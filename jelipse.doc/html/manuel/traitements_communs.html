@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<link rel="stylesheet" type="text/css" href="../design.css" media="screen" title="jelix" />
+		<title>manuel:traitements_communs - Jelix.org</title>
+	</head>
+	<body>
+		<div id="main">
+			<div id="content">
+			<h1>Définir des traitements communs</h1>
+<div class="level1">
+
+<p>
+ Il y a plusieurs types de traitements : les traitements métiers, et ceux dédiés à la génération de la page web. Pour les traitements métiers, vous utiliserez des classes métiers, des classes services, des daos. Celles-ci pouvant être utilisable par tous les modules, c&rsquo;est un premier moyen de réaliser des traitements métiers qui puissent être réutilisable. Voir <a href="classes-metiers.html" class="wikilink1" title="manuel:classes-metiers"  >classes metiers</a>.
+</p>
+
+<p>
+Pour ce qui concerne la génération d&rsquo;une page, c&rsquo;est un peu plus complexe que ça car il y a plusieurs façons de faire. Nous sommes donc devant le cas suivant : nous avons plusieurs pages qui ont des parties communes. Cela peut être par exemple un bandeau, un pied de page, un menu sur le coté etc.. Il peut y avoir aussi quelques pages qui ont un peu plus que ça en commun. Voici diverses solutions selon le contexte.
+</p>
+
+</div>
+
+<h2>Méthodes privées de contrôleurs</h2>
+<div class="level2">
+
+<p>
+ Si la similitude des pages se résument à quelques actions qui sont dans un même contrôleur, alors vous pouvez utiliser une méthode privée/protégée, qui va faire le travail commun à toutes ces actions.
+</p>
+<pre class="code php">&nbsp;
+<span class="kw2">class</span> defaultCtrl extends jController <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="kw2">function</span> common<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'Même titre pour tous le monde'</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>&gt;assign<span class="br0">&#40;</span><span class="st0">'menu'</span>, <span class="st0">'&lt;ul&gt;&lt;li&gt;item 1&lt;/li&gt;&lt;li&gt;item 2&lt;/li&gt;&lt;/ul&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;   
+   <span class="br0">&#125;</span>
+&nbsp;
+&nbsp;
+   <span class="kw2">function</span> index<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">common</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>,<span class="st0">'&lt;p&gt;Bienvenue sur cette application de test&lt;/p&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+&nbsp;
+   <span class="kw2">function</span> liste<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">common</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>,<span class="st0">'&lt;ul&gt;&lt;li&gt;une&lt;/li&gt;&lt;li&gt;liste&lt;/li&gt;&lt;/ul&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+&nbsp;
+&nbsp;
+<span class="br0">&#125;</span>
+&nbsp;</pre>
+<p>
+Dans cette exemple, les deux actions index et liste font appel à une méthode commune qui va réaliser le travail commun.
+</p>
+
+</div>
+
+<h2>Héritage de contrôleurs</h2>
+<div class="level2">
+
+<p>
+ Si plusieurs actions de plusieurs contrôleurs ont des traitements en commun, alors vous pouvez utiliser le mécanisme d&rsquo;héritage objet. C&rsquo;est à dire réaliser un contrôleur de base, qui ne sera pas utilisé directement, mais dont hériteront les contrôleurs concernés.
+</p>
+
+<p>
+Voici un exemple de contrôleur de base, dans le fichier controllers/myBaseController.php :
+</p>
+<pre class="code php"><span class="kw2">class</span> myBaseController extends jController <span class="br0">&#123;</span>
+&nbsp;
+   protected <span class="kw2">function</span> common<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">title</span> = <span class="st0">'Même titre pour tous le monde'</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>&gt;assign<span class="br0">&#40;</span><span class="st0">'menu'</span>, <span class="st0">'&lt;ul&gt;&lt;li&gt;item 1&lt;/li&gt;&lt;li&gt;item 2&lt;/li&gt;&lt;/ul&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;   
+   <span class="br0">&#125;</span>
+&nbsp;
+<span class="br0">&#125;</span></pre>
+<p>
+Et dans vos contrôleurs :
+</p>
+<pre class="code php"><span class="kw3">global</span> <span class="re0">$gJCoord</span>;
+<span class="kw1">include</span> <span class="re0">$gJCoord</span>-&gt;<span class="me1">getModulePath</span><span class="br0">&#40;</span><span class="st0">'monModule'</span><span class="br0">&#41;</span>.<span class="st0">'controllers/myBaseController.php'</span>;
+&nbsp;
+<span class="kw2">class</span> defaultCtrl extends myBaseController <span class="br0">&#123;</span>
+   
+   <span class="kw2">function</span> index<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">common</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>,<span class="st0">'&lt;p&gt;Bienvenue sur cette application de test&lt;/p&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+&nbsp;
+   <span class="kw2">function</span> liste<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+      <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">common</span><span class="br0">&#40;</span><span class="br0">&#41;</span>;
+      <span class="re0">$rep</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assign</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>,<span class="st0">'&lt;ul&gt;&lt;li&gt;une&lt;/li&gt;&lt;li&gt;liste&lt;/li&gt;&lt;/ul&gt;'</span><span class="br0">&#41;</span>;
+      <span class="kw1">return</span> <span class="re0">$rep</span>;
+   <span class="br0">&#125;</span>
+&nbsp;
+&nbsp;
+<span class="br0">&#125;</span>
+&nbsp;</pre>
+<p>
+Notez l&rsquo;include et le  <em>extends myBaseController</em>;
+</p>
+
+<p>
+Bien sûr, le contrôleur de base peut contenir des propriétés, d&rsquo;autres méthodes, voir même des méthodes d&rsquo;actions. C&rsquo;est à dire que vous pouvez ainsi avoir plusieurs contrôleurs qui possèdent au final des actions communes (qui peuvent elle-même tenir compte de propriétés ou d&rsquo;autres méthodes pour gérer des différences).
+</p>
+
+<p>
+Vous pouvez faire par exemple un contrôleur de base, qui définit une serie d&rsquo;action : <em>liste</em>, <em>creation</em>, <em>modification</em>, <em>suppression</em>. Ces actions se basant sur des propriétés pour savoir les daos et les templates à utiliser. Ainsi, il est aisé de réaliser plusieurs contrôleurs, héritant de ce contrôleur de base, et n&rsquo;ayant plus qu&rsquo;à indiquer dans des propriétés les daos et les templates. De quoi ainsi se faire une administration basique assez rapidement.
+</p>
+
+</div>
+
+<h2>Personnalisation de réponse commune</h2>
+<div class="level2">
+
+<p>
+ Les deux solutions précédentes sont intéressantes pour des cas peu courants, ou du moins, pas généraux à l&rsquo;application. Si vous avez des choses en commun pour la majorité des actions, il est préférable de faire autrement : surcharger un objet réponse.
+</p>
+
+<p>
+Vous créerez cet objet response de façon à ce que ce soit lui qui fasse le travail commun à toutes les actions. Imaginons par exemple que toutes les pages <acronym title="HyperText Markup Language">HTML</acronym> de votre site ait le même menu dynamique, la même feuille de style etc.. Vous créerez donc une classe response comme il est indiqué dans <a href="creer_response.html" class="wikilink1" title="manuel:creer_response"  >générer un contenu personnalisé</a>, et qui effectuera ce travail. 
+</p>
+
+<p>
+Cette classe héritera de jResponseHtml par exemple. Cette dernière possède, par un bien heureux hasard, une méthode, <em>_commonProcess</em>, qui n&rsquo;attend que d&rsquo;être redéfinie pour pouvoir insérer les traitements à faire avant l&rsquo;affichage. Voici l&rsquo;exemple de responses/myHtmlResponse.class.php dans testapp :
+</p>
+<pre class="code php"><span class="kw1">require_once</span> <span class="br0">&#40;</span>JELIX_LIB_RESPONSE_PATH.<span class="st0">'jResponseHtml.class.php'</span><span class="br0">&#41;</span>;
+&nbsp;
+<span class="kw2">class</span> myHtmlResponse extends jResponseHtml <span class="br0">&#123;</span>
+&nbsp;
+&nbsp;
+   public <span class="re0">$bodyTpl</span> = <span class="st0">'testapp~main'</span>;
+&nbsp;
+   <span class="co1">// modifications communes aux actions utilisant cette reponses</span>
+   protected <span class="kw2">function</span> _commonProcess<span class="br0">&#40;</span><span class="br0">&#41;</span><span class="br0">&#123;</span>
+       <span class="re0">$this</span>-&gt;<span class="me1">title</span> .= <span class="br0">&#40;</span><span class="re0">$this</span>-&gt;<span class="me1">title</span> !=<span class="st0">''</span>?<span class="st0">' - '</span>:<span class="st0">''</span><span class="br0">&#41;</span>.<span class="st0">' Test App'</span>;
+&nbsp;
+       <span class="re0">$this</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assignZone</span><span class="br0">&#40;</span><span class="st0">'menu'</span>,<span class="st0">'testapp~sommaire'</span><span class="br0">&#41;</span>;
+       <span class="re0">$this</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assignIfNone</span><span class="br0">&#40;</span><span class="st0">'MAIN'</span>,<span class="st0">'&lt;p&gt;No content&lt;/p&gt;'</span><span class="br0">&#41;</span>;
+       <span class="re0">$this</span>-&gt;<span class="me1">body</span>-&gt;<span class="me1">assignIfNone</span><span class="br0">&#40;</span><span class="st0">'page_title'</span>,<span class="st0">'Test App'</span><span class="br0">&#41;</span>;
+       <span class="re0">$this</span>-&gt;<span class="me1">addCSSLink</span><span class="br0">&#40;</span><span class="st0">'design/screen.css'</span><span class="br0">&#41;</span>;
+   <span class="br0">&#125;</span>
+<span class="br0">&#125;</span></pre>
+<p>
+Elle est déclarée comme ceci dans la configuration :
+</p>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>responses<span class="br0">&#93;</span></span>
+<span class="re1">html</span>=<span class="re2">myHtmlResponse</span></pre>
+<p>
+Toutes les actions qui feront alors appel à la réponse &ldquo;html&rdquo;, fourniront une page avec un menu généré par la zone &lsquo;testapp~sommaire&rsquo;, un contenu par défaut pour les variables de templates <em>MAIN</em> et <em>page_title</em> (si elles n&rsquo;ont pas été définies par l&rsquo;action), et l&rsquo;ajout d&rsquo;une feuille de style.
+</p>
+
+<p>
+Notez que vous pouvez définir plusieurs réponses html, dans le cas où votre site comporte plusieurs pages type. Par exemple :
+</p>
+<pre class="code ini"><span class="re0"><span class="br0">&#91;</span>responses<span class="br0">&#93;</span></span>
+<span class="re1">html</span>=<span class="re2">myHtmlResponse</span>
+<span class="re1">html2</span>=<span class="re2">myOtherHtmlResponse</span>
+<span class="re1">adm</span>=<span class="re2">adminHtmlresponse</span></pre>
+<p>
+Il suffira alors dans les actions d&rsquo;indiquer le bon code pour indiquer le type de réponse :
+</p>
+<pre class="code php">  <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span><span class="br0">&#41;</span>;
+  <span class="co1">// ou</span>
+  <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html2'</span><span class="br0">&#41;</span>;
+  <span class="co1">// ou</span>
+  <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'adm'</span><span class="br0">&#41;</span>;</pre>
+<p>
+<strong>remarque</strong> :  si vous voulez réaliser des modules réutilisables, cette façon de faire est d&rsquo;autant plus intéressantes puisqu&rsquo;alors tout ce qui ne concerne pas le module est réalisé à l&rsquo;extérieur de ce module. Il est donc plus indépendant de l&rsquo;application, contrairement au cas où il gère lui même dans ses actions les parties communes des pages du site (bandeau etc...).
+</p>
+
+<p>
+ <strong>remarque 2 </strong> : si dans une action, vous voulez absolument utiliser la classe d&rsquo;origine fourni par Jelix, et non celle qui redéfinit un type de réponse, vous pouvez alors l&rsquo;indiquer en indiquant <em>true</em> en deuxième paramètre de getResponse :
+</p>
+<pre class="code php"> <span class="re0">$rep</span> = <span class="re0">$this</span>-&gt;<span class="me1">getResponse</span><span class="br0">&#40;</span><span class="st0">'html'</span>, <span class="kw2">true</span><span class="br0">&#41;</span>;</pre>
+<p>
+$rep contiendra un objet de type jResponseHtml, et non myHtmlResponse.
+</p>
+
+</div>
+
+<h3>Utilisation de zone</h3>
+<div class="level3">
+
+<p>
+ Il se peut qu&rsquo;un ensemble de page ait une ou plusieurs zones identiques, sans que cela soit général à tous le site. Vous pouvez alors <a href="zones.html" class="wikilink1" title="manuel:zones"  >créer des zones</a>. 
+</p>
+
+
+</div>
+
+
+
+    </div>
+
+    
+		</div>
+		<div id="footer">
+			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
+			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
+			</a>
+		</div>
+	</body>
+</html>
