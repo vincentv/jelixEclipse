@@ -31,7 +31,7 @@ class JbmObject
   end
   
   def localPagePath href
-    return @manuelBasePath + '/' + fileName(href)
+    return (@manuelBasePath.nil?)?fileName(href):@manuelBasePath + '/' + fileName(href)
   end
   
   def cleanPage html

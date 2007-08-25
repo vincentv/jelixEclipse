@@ -12,10 +12,11 @@
 		<div id="main">
 			<div id="content">
 			{Content}
+		</div>
 		<div id="footer">
 			<p>Documentation générée à partir de la documentation du site Jelix avec JbManuel pour le projet JelixEclipse</p>
 			<a title="Creative Commons License" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
-				<img width="80" height="15" alt="Creative Commons License" src="/html/images/button-cc.gif"/>
+				<img width="80" height="15" alt="Creative Commons License" src="../button-cc.gif"/>
 			</a>
 		</div>
 	</body>

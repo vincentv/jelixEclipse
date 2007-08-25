@@ -3,10 +3,10 @@ require 'jbIndex'
 require 'ftools'
 
 class JbManuel
-  def initialize remoteIndex
+  def initialize remoteIndex, localDir
     puts "Initialisation du bot"
     @remoteIndex = remoteIndex
-    @localDir = "doc"
+    @localDir = localDir
   end
   
   def start
@@ -16,12 +16,14 @@ class JbManuel
     puts "Création de l'arborescence"
     File.makedirs(@localDir + '/html/manuel')
     File.copy('design.css', @localDir + '/html/design.css')
+    File.copy('button-cc.gif', @localDir + '/html/button-cc.gif')
     
     puts "Récupération de la documentation"
     createDocumentation
     
     puts "Création de l'index"
     createIndex
+    
     puts "Documentation locale terminée"
     puts "Documentation générée en #{Time.now - start}"
   end

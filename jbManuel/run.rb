@@ -2,5 +2,5 @@
 
 require 'jbManuel'
 
-manuel = JbManuel.new 'http://jelix.org/articles/manuel'
+manuel = JbManuel.new 'http://jelix.org/articles/manuel', 'doc'
 manuel.start

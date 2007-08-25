@@ -5,7 +5,7 @@ class JbPage < JbmObject
   def initialize href , localDir, agent = nil
     super href, localDir
     
-    @manuelBasePath = ""
+    @manuelBasePath = nil
     @saveBasePath = @saveBasePath + "/html/manuel" 
     
     unless agent.nil?
@@ -30,7 +30,7 @@ class JbPage < JbmObject
         lPage = lPage.gsub(/\{Content\}/, content)
       end
       
-      save lPage, @saveBasePath + localPagePath(href)
+      save lPage, @saveBasePath + '/' + localPagePath(href)
     end
     
     rPage.links.each do |link|
