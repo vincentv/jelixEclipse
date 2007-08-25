@@ -73,7 +73,7 @@ class JbIndex  < JbmObject
   def tTitreToc html
     rBegin = Regexp.new('<h1>[\w|\s]*<\/h1>\s*<div class="\w+">\s*<\/div>', Regexp::MULTILINE)
     html = html.gsub(rBegin) do |t|
-      label = t.match(/<h1>([\w|\s]*)<\/h1>/)[1]
+      label = 'Jelix : ' + t.match(/<h1>([\w|\s]*)<\/h1>/)[1]
       t= "<toc label='#{label}'>"
     end
     
