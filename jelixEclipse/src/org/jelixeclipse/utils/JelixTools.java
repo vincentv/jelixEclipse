@@ -148,7 +148,7 @@ public class JelixTools {
 		String phpDebuggerId = PHPDebugPlugin.getCurrentDebuggerId();
 		PHPexeItem phpExe = PHPexes.getInstance().getDefaultItem(phpDebuggerId);
 		if (null == phpExe) {
-			return null;
+			return null; 
 		} else {
 			return phpExe.getExecutable().getAbsolutePath();
 		}
