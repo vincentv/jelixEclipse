@@ -17,9 +17,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
+import org.eclipse.php.internal.debug.core.PHPDebugPlugin;
 import org.eclipse.php.internal.debug.core.preferences.PHPexeItem;
 import org.eclipse.php.internal.debug.core.preferences.PHPexes;
+import org.eclipse.php.internal.ui.util.PHPPluginImages;
 
 /**
  * @author vincent
@@ -144,14 +145,12 @@ public class JelixTools {
 	 * @return retourne le chemin de l'éxécutable php ou null
 	 */
 	public static String getDefaultPhpExe() {
-		PHPexes phps = new PHPexes();
-		phps.load(PHPProjectPreferences.getModelPreferences());
-		PHPexeItem phpExe = phps.getDefaultItem();
-
+		String phpDebuggerId = PHPDebugPlugin.getCurrentDebuggerId();
+		PHPexeItem phpExe = PHPexes.getInstance().getDefaultItem(phpDebuggerId);
 		if (null == phpExe) {
 			return null;
 		} else {
-			return phpExe.getPhpEXE().getAbsolutePath();
+			return phpExe.getExecutable().getAbsolutePath();
 		}
 	}
 
